@@ -1,0 +1,11 @@
+{
+  "name": "Mochi",
+  "description": "A soft pink mochi pet",
+  "colors": {
+    "body": "#F7C0D3",
+    "dark": "#C77F97",
+    "cheek": "#FFF0B0",
+    "eye": "#3A2036",
+    "white": "#FFFFFF"
+  }
+}
