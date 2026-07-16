@@ -111,6 +111,33 @@ footer a{color:var(--tint);text-decoration:none}
 .tray .toy-chip .em{font-size:22px}
 .tray .toy-chip .nm{color:var(--label-secondary)}
 .tray-empty{padding:12px 16px 16px;font-size:12px;color:var(--label-secondary)}
+/* Furniture palette */
+.palette{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+.palette-tile{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sys-fill);border-radius:12px;cursor:grab;user-select:none;border:2px solid transparent;transition:.15s}
+.palette-tile:active{cursor:grabbing;border-color:var(--tint)}
+.palette-tile .em{font-size:28px;line-height:1}
+.palette-tile .nm{font-weight:600;font-size:14px}
+.palette-tile .cap{font-size:11px;color:var(--label-secondary);margin-top:2px}
+.palette-tile .col{display:flex;flex-direction:column;justify-content:center}
+.palette-hint{padding:2px 16px 12px;font-size:12px;color:var(--label-secondary);line-height:1.5}
+.monitor canvas.stage.dragging-target{background:color-mix(in srgb,var(--tint) 6%,transparent);outline:2px dashed rgba(0,122,255,.35);outline-offset:-6px}
+/* Floating drag ghost */
+.drag-ghost{position:fixed;pointer-events:none;z-index:200;font-size:38px;line-height:1;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 12px rgba(0,0,0,.25));transition:none}
+/* Sign-in modal specific */
+.signin-body{padding:8px 20px 12px;text-align:center}
+.signin-body .streak-lg{font-size:44px;font-weight:700;line-height:1;margin:6px 0 4px;letter-spacing:-1px}
+.signin-body .streak-cap{font-size:13px;color:var(--label-secondary);margin-bottom:14px}
+.signin-body .reward-line{font-size:15px;font-weight:600;margin-bottom:4px}
+.signin-body .bonus-line{font-size:12px;color:var(--orange);margin-bottom:14px;min-height:16px}
+.signin-body .week-dots{display:flex;justify-content:center;gap:6px;margin:8px 0 16px}
+.signin-body .week-dots .d{width:34px;height:34px;border-radius:8px;background:var(--sys-fill);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--label-secondary);position:relative}
+.signin-body .week-dots .d.done{background:color-mix(in srgb,var(--green) 22%,var(--sys-surface));color:var(--green)}
+.signin-body .week-dots .d.today{background:color-mix(in srgb,var(--tint) 24%,var(--sys-surface));color:var(--tint);border:1.5px solid var(--tint)}
+.signin-body .week-dots .d b{font-size:12px;line-height:1;font-weight:700}
+.signin-body .week-dots .d span{font-size:9px}
+.signin-modal .card{max-width:380px}
+.signin-modal .btn-signin{width:calc(100% - 40px);margin:0 20px 18px;padding:14px 18px;border:0;background:var(--tint);color:#fff;font-weight:600;font-size:16px;border-radius:12px;cursor:pointer}
+.signin-modal .btn-signin:active{background:var(--tint-tap)}
 </style>
 </head>
 <body>
@@ -134,6 +161,7 @@ footer a{color:var(--tint);text-decoration:none}
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <div class="badge"><span class="dot"></span><span id="badge-state">walking</span></div>
         <div class="badge" id="badge-treats">🍬 <b>0</b></div>
+        <div class="badge" id="btn-signin" title="每日签到">🎁</div>
         <div class="badge" id="badge-shop">🛍 商店</div>
         <div class="badge pink" id="badge-event" style="display:none"></div>
       </div>
@@ -174,25 +202,18 @@ footer a{color:var(--tint);text-decoration:none}
 
     <div class="section-title">屋子</div>
     <div class="list-group">
-      <div class="room-panel">
-        <div class="room-grid">
-          <div class="h">家具</div><div class="h">屏幕</div><div class="h">角落快捷</div><div class="h">操作</div>
-          <div>🛏 窝</div>
-          <select data-kind="nest" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="nest"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
-          <button class="btn secondary" data-remove="nest" style="padding:6px 8px;font-size:12px">清除</button>
-          <div>🍚 食盆</div>
-          <select data-kind="bowl" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="bowl"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
-          <button class="btn secondary" data-remove="bowl" style="padding:6px 8px;font-size:12px">清除</button>
-          <div>🚽 便盆</div>
-          <select data-kind="litter" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="litter"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
-          <button class="btn secondary" data-remove="litter" style="padding:6px 8px;font-size:12px">清除</button>
+      <div class="palette" id="furn-palette">
+        <div class="palette-tile" data-kind="nest" draggable="false">
+          <div class="em">🛏</div>
+          <div class="col"><div class="nm">窝</div><div class="cap">拖到屏幕放置</div></div>
         </div>
-        <div style="padding:8px 0 4px;font-size:12px;color:var(--label-secondary);line-height:1.5">💡 直接在画面里 <b>拖动家具</b> 到任意位置；角落按钮是快捷键。</div>
-        <div style="padding:4px 0 4px"><button class="btn secondary" id="btn-reset-furn" style="padding:8px 12px;font-size:13px">重置家具位置</button></div>
+        <div class="palette-tile" data-kind="litter" draggable="false">
+          <div class="em">🚽</div>
+          <div class="col"><div class="nm">便盆</div><div class="cap">拖到屏幕放置</div></div>
+        </div>
       </div>
+      <div class="palette-hint">💡 从上方**拖起家具**丢到任意屏幕即可；已放置的会直接搬过去。</div>
+      <div style="padding:0 16px 12px"><button class="btn secondary" id="btn-reset-furn" style="padding:8px 12px;font-size:13px">重置家具位置</button></div>
     </div>
 
     <div class="section-title">控制</div>
@@ -236,6 +257,22 @@ footer a{color:var(--tint);text-decoration:none}
   </div>
 </div>
 <style>.wk-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--sys-separator);font-size:14px}.wk-row:first-child{border-top:0}.wk-row b{font-variant-numeric:tabular-nums}.wk-tip{padding:12px 0 4px;color:var(--label-secondary);font-size:13px}</style>
+
+<!-- Sign-in Modal -->
+<div class="modal signin-modal" id="signin-modal">
+  <div class="card">
+    <h3>🎁 今日签到</h3>
+    <div class="sub">连续签到领零食币，Day 7 满勤额外奖励 +50 🍬</div>
+    <div class="signin-body">
+      <div class="streak-lg" id="signin-streak">Day 1</div>
+      <div class="streak-cap" id="signin-caption">连续 1 天</div>
+      <div class="week-dots" id="signin-dots"></div>
+      <div class="reward-line" id="signin-reward">今日可领 +5 🍬</div>
+      <div class="bonus-line" id="signin-bonus"></div>
+    </div>
+    <button class="btn-signin" id="btn-do-signin">签到领 🍬</button>
+  </div>
+</div>
 
 <!-- Shop Modal (skins + toys tabs) -->
 <div class="modal" id="shop-modal">
@@ -326,17 +363,27 @@ const state = {
          todayDate:localStorage.getItem('kaka_pomo_date')||'',
          streak:parseInt(localStorage.getItem('kaka_pomo_streak')||'0'),
          running:false, startedAt:0 },
-  room:{nest:null,bowl:null,litter:null}, // kept for backward-compat, not used for positioning anymore
+  room:{nest:null,litter:null}, // kept for backward-compat, not used for positioning anymore
   furniture: (function(){
     try{
       const s = JSON.parse(localStorage.getItem('kaka_furniture_v2')||'null');
-      if(s && s.nest && s.bowl && s.litter) return s;
+      if(s && s.nest && s.litter){
+        // Silently drop legacy `bowl` field if present.
+        return {nest:s.nest, litter:s.litter};
+      }
     }catch(e){}
     return null; // will be filled by defaultFurniture() after canvas layout
   })(),
-  hoverFurniture:null,     // {kind, screen} for dashed hint
-  dragFurniture:null,      // {kind, offsetX, offsetY, screen}
+  paletteDrag:null,        // {kind, ghostEl} while dragging a palette tile
   dashUntil:0,             // performance.now() ms — pet speed x1.6 until this time (dash to food)
+  signin: (function(){
+    try{ return JSON.parse(localStorage.getItem('kaka_signin')||'null') || {lastDate:'',streak:0}; }
+    catch(e){ return {lastDate:'',streak:0}; }
+  })(),
+  clickBuf:[],             // recent empty-click timestamps for nuzzle trigger
+  lastClick:{screen:0,x:0,y:0},
+  nuzzleCoolUntil:0,       // ignore nuzzle triggers until this ts
+  nuzzlePlayUntil:0,       // active nuzzle animation until this ts
   friend:null,
   pet:{screen:0,x:SW(0)*.7,y:0,vx:0,vy:0,rot:0,angVel:0,facing:1,
        behaviour:'idle',until:0,floatPhase:Math.random()*Math.PI*2,
@@ -548,7 +595,6 @@ function renderShop(tab){
 function defaultFurniture(){
   return {
     nest:   {screen:0, x:12,                       y:12},
-    bowl:   {screen:0, x:Math.max(12, SW(0)-FURN-12), y:12},
     litter: {screen:1, x:Math.max(12, SW(1)-FURN-12), y:Math.max(12, SH(1)-FURN-16)},
   };
 }
@@ -557,9 +603,11 @@ if(!state.furniture){ state.furniture = defaultFurniture(); saveFurniture(); }
 // If localStorage had partial or bad data, backfill missing kinds with defaults.
 (function backfill(){
   const d = defaultFurniture();
-  ['nest','bowl','litter'].forEach(k=>{
+  ['nest','litter'].forEach(k=>{
     if(!state.furniture[k] || typeof state.furniture[k].x !== 'number') state.furniture[k] = d[k];
   });
+  // Ensure no lingering `bowl` field ever pollutes runtime state.
+  if('bowl' in state.furniture) delete state.furniture.bowl;
 })();
 
 // Snap furniture to a corner of the currently-selected screen (helper for the corner buttons).
@@ -570,49 +618,93 @@ function snapFurnitureToCorner(kind, screen, corner){
   state.furniture[kind] = {screen, x, y};
   saveFurniture();
 }
-function refreshCornerButtons(){
-  // Highlight the corner button only if the piece is exactly at that corner on the selected screen.
-  document.querySelectorAll('.cornerbox').forEach(box=>{
-    const kind=box.dataset.kind;
-    const sel = box.parentElement.querySelector(`select[data-kind="${kind}"]`);
-    const scr = parseInt(sel.value);
-    const cur = state.furniture[kind];
-    box.querySelectorAll('button').forEach(b=>{
-      let on = false;
-      if(cur && cur.screen===scr){
-        const w=SW(scr), h=SH(scr), m=12;
-        const cx = b.dataset.c.endsWith('l') ? m : w-FURN-m;
-        const cy = b.dataset.c.startsWith('t') ? m : h-FURN-m-4;
-        on = Math.abs(cur.x-cx) < 2 && Math.abs(cur.y-cy) < 2;
-      }
-      b.classList.toggle('on', on);
-    });
+// Corner buttons removed with the room-grid; snapFurnitureToCorner stays for any programmatic use.
+function refreshCornerButtons(){ /* no-op: legacy UI removed */ }
+
+// ---- Palette drag: grab tile → floating ghost → drop onto a canvas ----
+const FURN_META = {
+  nest:  {em:'🛏', name:'窝'},
+  litter:{em:'🚽', name:'便盆'},
+};
+function startPaletteDrag(kind, ev){
+  ev.preventDefault();
+  // Clean any prior ghost.
+  if(state.paletteDrag && state.paletteDrag.ghostEl && state.paletteDrag.ghostEl.parentNode){
+    state.paletteDrag.ghostEl.parentNode.removeChild(state.paletteDrag.ghostEl);
+  }
+  const ghost = document.createElement('div');
+  ghost.className = 'drag-ghost';
+  ghost.textContent = FURN_META[kind].em;
+  ghost.style.left = ev.clientX + 'px';
+  ghost.style.top  = ev.clientY + 'px';
+  document.body.appendChild(ghost);
+  document.body.style.cursor = 'grabbing';
+  state.paletteDrag = { kind, ghostEl: ghost };
+}
+function movePaletteGhost(ev){
+  if(!state.paletteDrag) return;
+  const g = state.paletteDrag.ghostEl;
+  g.style.left = ev.clientX + 'px';
+  g.style.top  = ev.clientY + 'px';
+  // Highlight whichever canvas the pointer is over.
+  let overIdx = -1;
+  SCREENS.forEach((canvas, idx)=>{
+    const r = canvas.getBoundingClientRect();
+    if(ev.clientX>=r.left && ev.clientX<=r.right && ev.clientY>=r.top && ev.clientY<=r.bottom) overIdx = idx;
+  });
+  SCREENS.forEach((canvas, idx)=>{
+    canvas.classList.toggle('dragging-target', idx===overIdx);
   });
 }
-document.querySelectorAll('.cornerbox').forEach(box=>{
-  const kind=box.dataset.kind;
-  box.querySelectorAll('button').forEach(b=>{
-    b.onclick=()=>{
-      const scr=parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);
-      snapFurnitureToCorner(kind, scr, b.dataset.c);
-      refreshCornerButtons();
-      showToast('📦 已放置');
-    };
+function endPaletteDrag(ev){
+  if(!state.paletteDrag) return;
+  const {kind, ghostEl} = state.paletteDrag;
+  // Find target canvas.
+  let dropped = false;
+  SCREENS.forEach((canvas, idx)=>{
+    const r = canvas.getBoundingClientRect();
+    if(dropped) return;
+    if(ev.clientX>=r.left && ev.clientX<=r.right && ev.clientY>=r.top && ev.clientY<=r.bottom){
+      const x = Math.max(0, Math.min(SW(idx)-FURN, ev.clientX - r.left - FURN/2));
+      const y = Math.max(0, Math.min(SH(idx)-FURN, ev.clientY - r.top  - FURN/2));
+      state.furniture[kind] = {screen: idx, x, y};
+      saveFurniture();
+      showToast('🏠 '+FURN_META[kind].name+' 已放置');
+      dropped = true;
+    }
   });
+  if(ghostEl && ghostEl.parentNode) ghostEl.parentNode.removeChild(ghostEl);
+  SCREENS.forEach(c=>c.classList.remove('dragging-target'));
+  document.body.style.cursor = '';
+  state.paletteDrag = null;
+}
+document.querySelectorAll('#furn-palette .palette-tile').forEach(tile=>{
+  const kind = tile.dataset.kind;
+  tile.addEventListener('mousedown', (ev)=>startPaletteDrag(kind, ev));
+  // Touch support
+  tile.addEventListener('touchstart', (ev)=>{
+    if(ev.touches && ev.touches[0]){
+      const t = ev.touches[0];
+      startPaletteDrag(kind, {clientX:t.clientX, clientY:t.clientY, preventDefault:()=>ev.preventDefault()});
+    }
+  }, {passive:false});
 });
-document.querySelectorAll('select[data-kind]').forEach(sel=>{ sel.onchange = refreshCornerButtons; });
-document.querySelectorAll('[data-remove]').forEach(b=>{
-  b.onclick=()=>{
-    state.furniture[b.dataset.remove]=null;
-    saveFurniture();
-    refreshCornerButtons();
-    showToast('已清除 '+b.dataset.remove);
-  };
+window.addEventListener('mousemove', movePaletteGhost);
+window.addEventListener('mouseup',   endPaletteDrag);
+window.addEventListener('touchmove', (ev)=>{
+  if(state.paletteDrag && ev.touches && ev.touches[0]){
+    movePaletteGhost({clientX:ev.touches[0].clientX, clientY:ev.touches[0].clientY});
+  }
+}, {passive:true});
+window.addEventListener('touchend', (ev)=>{
+  if(state.paletteDrag && ev.changedTouches && ev.changedTouches[0]){
+    endPaletteDrag({clientX:ev.changedTouches[0].clientX, clientY:ev.changedTouches[0].clientY});
+  }
 });
 const btnResetFurn=document.getElementById('btn-reset-furn');
 if(btnResetFurn) btnResetFurn.onclick=()=>{
-  state.furniture=defaultFurniture(); saveFurniture(); refreshCornerButtons();
-  showToast('🏠 家具已复位');
+  state.furniture=defaultFurniture(); saveFurniture();
+  showToast('🏠 家具已复位（窝 + 便盆）');
 };
 
 function furnitureXY(kind){
@@ -620,7 +712,7 @@ function furnitureXY(kind){
   return {screen:f.screen, x:f.x, y:f.y};
 }
 function hitFurniture(pos, scr){
-  const kinds=['nest','bowl','litter'];
+  const kinds=['nest','litter'];
   for(const k of kinds){
     const f=state.furniture[k]; if(!f || f.screen!==scr) continue;
     if(pos.x>=f.x && pos.x<=f.x+FURN && pos.y>=f.y && pos.y<=f.y+FURN) return k;
@@ -681,16 +773,8 @@ function drawPet(ctx,x,y,mood,flip,rot){
   if(mood==='zen'){ctx.font='16px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧘',x+size/2,y-6);}
 }
 function drawFurniture(ctx,kind,x,y,screen){
-  const em=kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';
-  // Always draw a very faint dashed rect to hint "draggable"; brighter on hover / drag.
-  const hovering = state.hoverFurniture && state.hoverFurniture.kind===kind && state.hoverFurniture.screen===screen;
-  const dragging = state.dragFurniture && state.dragFurniture.kind===kind;
-  ctx.save();
-  ctx.setLineDash([4,4]);
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = dragging ? 'rgba(0,122,255,.75)' : (hovering ? 'rgba(0,122,255,.55)' : 'rgba(60,60,67,.18)');
-  ctx.strokeRect(x-2, y-2, FURN+4, FURN+4);
-  ctx.restore();
+  const em=kind==='nest'?'🛏':'🚽';
+  // No more dashed hover frame — placement is done via the sidebar palette drag.
   ctx.font=(FURN*0.85)+'px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.save();ctx.globalAlpha=.9;ctx.fillText(em,x+FURN/2,y+FURN/2);ctx.restore();
 }
@@ -734,7 +818,7 @@ function drawScene(){
     const ctx=CTXES[i]; ctx.clearRect(0,0,SW(i),SH(i));
     const fy=SH(i)-FLOOR_MARGIN;
     ctx.strokeStyle='rgba(60,60,67,.10)';ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(SW(i),fy);ctx.stroke();ctx.setLineDash([]);
-    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p&&p.screen===i)drawFurniture(ctx,k,p.x,p.y,i);});
+    ['nest','litter'].forEach(k=>{const p=furnitureXY(k);if(p&&p.screen===i)drawFurniture(ctx,k,p.x,p.y,i);});
     // placed toys
     state.placedToys.forEach((t,idx)=>{if(t.screen===i)drawToyOnCanvas(ctx,t,idx);});
     // laser dot
@@ -772,6 +856,7 @@ function moodLabel(){
   if(p.behaviour==='lay')return 'lay';
   if(p.behaviour==='sleep')return 'sleep';
   if(p.behaviour==='sleep_ground')return 'sleep_ground';
+  if(p.behaviour==='nuzzle')return 'wink';
   if(p.behaviour==='play_toy' && p.playToyIdx>=0){
     const t=state.placedToys[p.playToyIdx]; if(t){
       const a=TOYS[t.key].action;
@@ -791,7 +876,7 @@ function moodLabel(){
 }
 function updateHeaderState(){
   const b=state.pet.behaviour;
-  const label={idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',stand_up:'站直中',sit:'坐着',lay:'躺着',sleep:'睡觉',sleep_ground:'地板小睡',play_toy:'玩玩具',to_furniture:'去指定位置'}[b]||b;
+  const label={idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',stand_up:'站直中',sit:'坐着',lay:'躺着',sleep:'睡觉',sleep_ground:'地板小睡',play_toy:'玩玩具',to_furniture:'去指定位置',nuzzle:'蹭蹭'}[b]||b;
   document.getElementById('badge-state').textContent=state.pet.visible?(state.event||label):'Hidden';
   const ev=document.getElementById('badge-event');
   if(state.event==='sing'){ev.style.display='';ev.innerHTML='<span class="dot"></span>🎤 周五 KTV';}
@@ -891,6 +976,17 @@ function tick(dtMs){
   } else if(p.behaviour==='sit'||p.behaviour==='lay'){
     state.stats.mood=clamp(state.stats.mood+0.02*dt);
     if(performance.now()>p.until){p.behaviour='idle';p.until=performance.now()+1500;}
+  } else if(p.behaviour==='nuzzle'){
+    // small body wobble left-right + up-down bob during the nuzzle
+    const t = performance.now()/70;
+    p.rot = Math.sin(t) * 12;
+    if(state.gravity){
+      const floorY = SH(p.screen)-PET-FLOOR_MARGIN;
+      p.y = floorY - Math.abs(Math.sin(t*1.3))*3;
+    }
+    if(performance.now()>p.until){
+      p.behaviour='stand_up'; p.until=performance.now()+400;
+    }
   } else if(p.behaviour==='play_toy' && p.playToyIdx>=0){
     const t=state.placedToys[p.playToyIdx];
     if(!t){p.behaviour='idle';p.playToyIdx=-1;}
@@ -1015,6 +1111,7 @@ function walkStep(dt){
       else if(kind && kind.startsWith('nest|')){p.behaviour='sleep';p.until=performance.now()+rand(4000,7000);bubble('💤 好舒服...',2000);}
       else if(kind && kind.startsWith('toy|')){const idx=parseInt(kind.split('|')[1]); startPlayToy(idx);}
       else if(kind === 'eat'){ state.dashUntil = 0; p.behaviour='idle'; p.until=performance.now()+rand(800,1500); }
+      else if(kind === 'nuzzle'){ startNuzzleArrival(); }
       else{p.behaviour='idle';p.until=performance.now()+rand(1500,3000);}
     }
   } else {
@@ -1084,10 +1181,12 @@ setInterval(()=>{for(let s=0;s<SCREENS.length;s++){state.entities[s]=state.entit
 function feed(){
   const glyphs=['🍪','🍔','🍎','🍣','🥕'];
   const g=glyphs[Math.floor(Math.random()*glyphs.length)];
-  let scr,x,y;
-  const bowl=furnitureXY('bowl');
-  if(bowl){scr=bowl.screen;x=bowl.x+FURN/2-WASTE/2;y=bowl.y+FURN/2-WASTE/2;}
-  else{scr=state.pet.screen;x=Math.random()*(SW(scr)-WASTE);y=SH(scr)-WASTE-FLOOR_MARGIN;}
+  // Bowl is gone: drop food on pet.screen floor, near the pet (with a small random offset).
+  const scr = state.pet.screen;
+  const petCx = state.pet.x + PET/2;
+  const jitter = rand(-80, 80);
+  const x = Math.max(0, Math.min(SW(scr)-WASTE, petCx - WASTE/2 + jitter));
+  const y = SH(scr)-WASTE-FLOOR_MARGIN;
   state.entities[scr].push({kind:'food',x,y,glyph:g});
   state.pet.screen=scr;
   state.pet.target=x;
@@ -1100,7 +1199,7 @@ function feed(){
     bubble('好饿呀，冲鸭 🍔', 1200);
     state.dashUntil = performance.now()+8000;
   }
-  showToast('丢了 '+g+(bowl?' → 食盆':''));
+  showToast('丢了 '+g);
 }
 setInterval(()=>{
   const p=state.pet;
@@ -1184,62 +1283,60 @@ function hitToy(pos,scr){for(let i=state.placedToys.length-1;i>=0;i--){const t=s
 SCREENS.forEach((canvas,scr)=>{
   canvas.addEventListener('mousedown',(e)=>{
     const pos=canvasPos(e,canvas);
-    // Furniture drag has priority so the user can always reposition it.
-    const fk = hitFurniture(pos, scr);
-    if(fk){
-      const f = state.furniture[fk];
-      state.dragFurniture = { kind: fk, offsetX: pos.x - f.x, offsetY: pos.y - f.y, screen: scr };
-      return;
-    }
+    let hitSomething = false;
+    // Pet drag
     if(state.pet.visible&&hitPet(pos,scr)){
+      hitSomething = true;
       state.pet.behaviour='drag';state.dragOffset={x:pos.x-state.pet.x,y:pos.y-state.pet.y};
       state.lastDragT=performance.now();state.lastDragX=pos.x;state.lastDragY=pos.y;state.dragScreen=scr;
       state.pet.vx=0;state.pet.vy=0;state.pet.angVel=0;
       state.pet.playToyIdx=-1;
-      return;
     }
-    // click on placed toy → remove
-    const toyIdx=hitToy(pos,scr);
-    if(toyIdx>=0){
-      if(e.shiftKey || e.ctrlKey || e.metaKey){
-        // shift/ctrl-click: send Kaka to play with it
-        goToToy(toyIdx); showToast('叫 Kaka 过来玩');
+    // Furniture hit? (still detect for nuzzle exclusion, no drag anymore — palette handles placement)
+    else if(hitFurniture(pos, scr)){
+      hitSomething = true;
+    }
+    // click on placed toy → remove or send Kaka
+    else {
+      const toyIdx=hitToy(pos,scr);
+      if(toyIdx>=0){
+        hitSomething = true;
+        if(e.shiftKey || e.ctrlKey || e.metaKey){
+          goToToy(toyIdx); showToast('叫 Kaka 过来玩');
+        } else {
+          const t=state.placedToys[toyIdx]; const T=TOYS[t.key];
+          state.placedToys.splice(toyIdx,1);
+          if(state.pet.playToyIdx===toyIdx){state.pet.playToyIdx=-1;state.pet.behaviour='idle';}
+          showToast('收起了 '+T.name);
+        }
       } else {
-        const t=state.placedToys[toyIdx]; const T=TOYS[t.key];
-        state.placedToys.splice(toyIdx,1);
-        if(state.pet.playToyIdx===toyIdx){state.pet.playToyIdx=-1;state.pet.behaviour='idle';}
-        showToast('收起了 '+T.name);
+        // click on entity (food / waste)
+        const hit=hitEntity(pos,scr);
+        if(hit){
+          hitSomething = true;
+          const e2=hit.entity;
+          if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}
+          else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('poop');earn(1,'清理');showToast('清理完成 +10 卫生');renderShop(currentShopTab);}
+        } else {
+          // if laser toy exists on this screen → set laser point (still counts as "hit" for nuzzle exclusion)
+          const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
+          if(hasLaser){
+            hitSomething = true;
+            state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+3500 };
+            const idx=state.placedToys.findIndex(t=>t.screen===scr && TOYS[t.key].action==='laser');
+            if(idx>=0){ goToToy(idx); }
+          }
+        }
       }
-      return;
     }
-    // click on entity
-    const hit=hitEntity(pos,scr);
-    if(hit){const e2=hit.entity;if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('poop');earn(1,'清理');showToast('清理完成 +10 卫生');renderShop(currentShopTab);}return;}
-    // otherwise: if a laser toy exists on this screen → set laser point
-    const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
-    if(hasLaser){
-      state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+3500 };
-      const idx=state.placedToys.findIndex(t=>t.screen===scr && TOYS[t.key].action==='laser');
-      if(idx>=0){ goToToy(idx); }
+    // Empty-desktop click → feed into nuzzle burst tracker.
+    if(!hitSomething){
+      registerEmptyClick(scr, pos.x, pos.y);
     }
   });
   canvas.addEventListener('mousemove',(e)=>{
     const pos=canvasPos(e,canvas);
-    // Furniture drag
-    if(state.dragFurniture){
-      const df = state.dragFurniture;
-      df.screen = scr;
-      const f = state.furniture[df.kind];
-      f.screen = scr;
-      f.x = Math.max(0, Math.min(SW(scr)-FURN, pos.x - df.offsetX));
-      f.y = Math.max(0, Math.min(SH(scr)-FURN, pos.y - df.offsetY));
-      return;
-    }
-    // Hover hint for furniture
-    const fk = hitFurniture(pos, scr);
-    state.hoverFurniture = fk ? {kind:fk, screen:scr} : null;
-    canvas.style.cursor = fk ? 'grab' : 'pointer';
-
+    canvas.style.cursor = 'pointer';
     if(state.pet.behaviour==='drag'&&state.dragScreen===scr){state.pet.x=pos.x-state.dragOffset.x;state.pet.y=pos.y-state.dragOffset.y;state.pet.screen=scr;const now=performance.now();const dt=Math.max(1,now-state.lastDragT);state.pet.vx=(pos.x-state.lastDragX)/dt*16;state.pet.vy=(pos.y-state.lastDragY)/dt*16;state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;}
     else if (state.pet.behaviour==='play_toy'){
       // when playing with laser, allow mouse to move the laser point continuously
@@ -1249,19 +1346,8 @@ SCREENS.forEach((canvas,scr)=>{
       }
     }
   });
-  canvas.addEventListener('mouseleave',()=>{
-    if(!state.dragFurniture) state.hoverFurniture = null;
-  });
 });
 window.addEventListener('mouseup',()=>{
-  // Finalize furniture drag first.
-  if(state.dragFurniture){
-    state.dragFurniture = null;
-    saveFurniture();
-    refreshCornerButtons();
-    showToast('🏠 家具就位');
-    return;
-  }
   if(state.pet.behaviour==='drag'){
     if(Math.abs(state.pet.vx)<1&&Math.abs(state.pet.vy)<1){
       if(Math.random()<persona().rejectPet){state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('哼！',1200);showToast('傲娇拒绝了摸头');}
@@ -1333,13 +1419,162 @@ function updateEventState(){const now=new Date();const rF=now.getDay()===5&&now.
 // ===== Bars =====
 function refreshBars(){const s=state.stats;const set=(id,v)=>document.getElementById('bar-'+id).style.width=v+'%';set('hunger',s.hunger);set('mood',s.mood);set('hygiene',s.hygiene);set('affinity',s.affinity);const setV=(id,v)=>document.getElementById('val-'+id).textContent=Math.round(v);setV('hunger',s.hunger);setV('mood',s.mood);setV('hygiene',s.hygiene);setV('affinity',s.affinity);document.getElementById('pomo-line').textContent=pomoLine();}
 
+// ===== Nuzzle (rapid-click) =====
+function registerEmptyClick(scr, x, y){
+  const now = performance.now();
+  state.lastClick = {screen:scr, x, y};
+  const buf = state.clickBuf;
+  buf.push(now);
+  // Trim to a 1s window.
+  while(buf.length && now - buf[0] > 1000) buf.shift();
+  if(buf.length >= 3 && now > state.nuzzleCoolUntil){
+    triggerNuzzle();
+    state.clickBuf.length = 0;
+  }
+}
+function triggerNuzzle(){
+  const p = state.pet;
+  if(!p.visible) return;
+  // Don't override an active nuzzle / drag / sleep.
+  if(['drag','nuzzle'].includes(p.behaviour)) return;
+  bubble('叫我啦？马上来 🐾', 1500);
+  // Wake the pet up from any rest state so it actually comes over.
+  if(['sleep','sleep_ground','sit','lay','play_toy'].includes(p.behaviour)){
+    p.playToyIdx = -1;
+    p.rot = 0;
+  }
+  const targetX = Math.max(0, Math.min(SW(state.lastClick.screen)-PET, state.lastClick.x - PET/2));
+  p.screen = state.lastClick.screen;
+  p.target = targetX;
+  p.targetKind = 'nuzzle';
+  p.behaviour = 'walk';
+  p.until = performance.now() + 15000;
+  state.dashUntil = performance.now() + 4000;
+  state.nuzzleCoolUntil = performance.now() + 6000; // absorb during-approach dupes
+}
+function startNuzzleArrival(){
+  const p = state.pet;
+  p.target = null; p.targetKind = null;
+  state.dashUntil = 0;
+  p.behaviour = 'nuzzle';
+  p.until = performance.now() + 1500;
+  bubble('💕', 1500);
+  state.stats.mood = clamp(state.stats.mood + 6);
+  state.stats.affinity = clamp(state.stats.affinity + 1);
+  earn(1, '蹭蹭');
+  bumpWeekly('pats');
+  renderShop(currentShopTab);
+  // Cool-down: 6s from *arrival* so nuzzle animation isn't spammed.
+  state.nuzzleCoolUntil = performance.now() + 6000;
+}
+// Document-level click for "overall click bursts": anywhere in the page counts
+// toward the timing burst, but the target coords still come from the last canvas click.
+document.addEventListener('mousedown', (e)=>{
+  // Ignore if this event will be handled as a canvas click (canvas listener already
+  // called registerEmptyClick when applicable) — detect canvas hits by checking target.
+  if(e.target && e.target.tagName === 'CANVAS') return;
+  // Ignore clicks inside modals / palette / sidebar controls — those aren't "empty desktop".
+  if(e.target && e.target.closest && (
+       e.target.closest('.modal') ||
+       e.target.closest('.palette') ||
+       e.target.closest('.tray') ||
+       e.target.closest('button') ||
+       e.target.closest('select') ||
+       e.target.closest('input')
+     )) return;
+  const now = performance.now();
+  state.clickBuf.push(now);
+  while(state.clickBuf.length && now - state.clickBuf[0] > 1000) state.clickBuf.shift();
+  if(state.clickBuf.length >= 3 && now > state.nuzzleCoolUntil && (state.lastClick.x||state.lastClick.y)){
+    triggerNuzzle();
+    state.clickBuf.length = 0;
+  }
+});
+
+// ===== Daily sign-in =====
+const SIGNIN_REWARDS = [5,8,12,15,20,25,30]; // Day 1..7 (Day 7+ = 30)
+function signinRewardFor(day){
+  const idx = Math.min(day, 7) - 1;
+  return SIGNIN_REWARDS[Math.max(0, idx)];
+}
+function yesterdayKeyOf(dateStr){
+  // dateStr = "YYYY-MM-DD" → previous day
+  if(!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0,10);
+}
+function nextStreak(){
+  const today = todayKey();
+  if(state.signin.lastDate === today) return state.signin.streak;
+  const y = yesterdayKeyOf(today);
+  if(state.signin.lastDate === y) return (state.signin.streak||0) + 1;
+  return 1;
+}
+function renderSigninModal(){
+  const streak = nextStreak();
+  const reward = signinRewardFor(streak);
+  const isBonus = (streak % 7 === 0) && streak >= 7;
+  document.getElementById('signin-streak').textContent = 'Day ' + streak;
+  document.getElementById('signin-caption').textContent = '连续签到 ' + streak + ' 天';
+  document.getElementById('signin-reward').textContent = '今日可领 +' + reward + ' 🍬';
+  document.getElementById('signin-bonus').textContent = isBonus ? '🎁 满勤奖 额外 +50 🍬' : '';
+  const dots = document.getElementById('signin-dots');
+  dots.innerHTML = '';
+  // Highlight days 1..7 within the current cycle.
+  const cyclePos = ((streak - 1) % 7) + 1; // 1..7
+  for(let i=1;i<=7;i++){
+    const el = document.createElement('div');
+    el.className = 'd' + (i < cyclePos ? ' done' : (i === cyclePos ? ' today' : ''));
+    el.innerHTML = `<b>${i}</b><span>+${signinRewardFor(i)}</span>`;
+    dots.appendChild(el);
+  }
+}
+function openSigninModal(){
+  renderSigninModal();
+  document.getElementById('signin-modal').classList.add('show');
+}
+function doSignin(){
+  const today = todayKey();
+  if(state.signin.lastDate === today){
+    showToast('今日已签到，明天再来 🎁');
+    document.getElementById('signin-modal').classList.remove('show');
+    return;
+  }
+  const streak = nextStreak();
+  const reward = signinRewardFor(streak);
+  earn(reward, `每日签到 · Day ${streak}`);
+  if((streak % 7 === 0) && streak >= 7){
+    earn(50, '🎁 满勤奖');
+  }
+  state.signin = {lastDate: today, streak};
+  localStorage.setItem('kaka_signin', JSON.stringify(state.signin));
+  document.getElementById('signin-modal').classList.remove('show');
+  renderShop(currentShopTab);
+}
+document.getElementById('btn-do-signin').onclick = doSignin;
+document.getElementById('btn-signin').onclick = ()=>{
+  if(state.signin.lastDate === todayKey()){
+    showToast('今日已签到，明天再来 🎁');
+  } else {
+    openSigninModal();
+  }
+};
+function maybePopSignin(){
+  if(state.signin.lastDate !== todayKey()){
+    // Small delay so it doesn't collide with the weekly modal.
+    setTimeout(openSigninModal, 500);
+  }
+}
+
 // ===== Main loop =====
 let last=performance.now();
 function loop(t){const dt=Math.min(64,t-last);last=t;tick(dt);maybePoop(t);maybeBubble(t);drawScene();requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 
-setPersonality('extrovert'); renderSkinGrid(); renderToyTray(); refreshBars(); refreshCornerButtons();
+setPersonality('extrovert'); renderSkinGrid(); renderToyTray(); refreshBars();
 updateTreatsBadge();
+maybePopSignin();
 maybeShowWeeklyReport();
 setTimeout(()=>showToast('欢迎 v0.5 · 甩两下扔飞它会自己站直 · 累了会自己坐/躺/睡'),400);
 })();
