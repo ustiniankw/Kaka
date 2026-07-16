@@ -9,7 +9,7 @@ import json
 import os
 import time
 from dataclasses import dataclass, asdict, field
-from typing import Dict
+from typing import Dict, List, Set
 
 from . import config
 from .personality import Personality, PERSONALITIES, random_personality, by_key, DEFAULT_KEY
@@ -28,10 +28,15 @@ class Stats:
     last_tick: float = field(default_factory=time.time)
     personality_key: str = ""  # empty = uninitialized → randomize on first load
     skin_key: str = "default"
+    owned_skins: List[str] = field(default_factory=lambda: ["default"])
+    room_layout: List[Dict] = field(default_factory=list)
+    payday_day: int = 15
 
     def __post_init__(self) -> None:
         if not self.personality_key or self.personality_key not in PERSONALITIES:
             self.personality_key = random_personality().key
+        if "default" not in self.owned_skins:
+            self.owned_skins.insert(0, "default")
 
     # ----- personality shortcut -----
     @property

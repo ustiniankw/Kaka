@@ -120,6 +120,10 @@ BUILTIN_VARIANTS: Dict[str, Dict[str, str]] = {
                 "cheek": "#FFC1E0", "eye": "#1D1132", "white": "#FFFFFF"},
     "cocoa":   {"body": "#8A5A3B", "dark": "#5B3720",
                 "cheek": "#F5B6A3", "eye": "#20120A", "white": "#FFF3E8"},
+    "sakura":  {"body": "#FFD7E2", "dark": "#D793A6",
+                "cheek": "#FFFFFF", "eye": "#3A1A28", "white": "#FFFDFB"},
+    "cyber":   {"body": "#7A3CFF", "dark": "#3B1670",
+                "cheek": "#12F5C6", "eye": "#F8F8F8", "white": "#00E0FF"},
 }
 
 
