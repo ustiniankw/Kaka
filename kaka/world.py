@@ -115,6 +115,9 @@ class World(QObject):
 
     # ---------------------------------------------------------------- helpers
     def _schedule_next_poop(self) -> None:
-        delay_s = random.uniform(config.POOP_INTERVAL_MIN_S,
-                                 config.POOP_INTERVAL_MAX_S)
+        mult = self.stats.personality.poop_freq_mult
+        # higher mult = shorter interval
+        lo = config.POOP_INTERVAL_MIN_S / max(0.4, mult)
+        hi = config.POOP_INTERVAL_MAX_S / max(0.4, mult)
+        delay_s = random.uniform(lo, hi)
         self._poop_timer.start(int(delay_s * 1000))

@@ -127,8 +127,8 @@ class Pet(QLabel):
         if event.button() == Qt.LeftButton and self._behaviour == Behaviour.DRAGGING:
             # release: if barely moved -> treat as pet
             if abs(self._vx) < 1 and abs(self._vy) < 1:
-                self.stats.pet()
-                self._pop_action("♥")
+                accepted = self.stats.pet()
+                self._pop_action("♥" if accepted else "哼！")
                 self._behaviour = Behaviour.IDLE
                 self._pick_next_idle()
             else:
@@ -199,7 +199,9 @@ class Pet(QLabel):
     def _walk_tick(self) -> None:
         screen = QGuiApplication.primaryScreen().availableGeometry()
         floor_y = screen.bottom() - self.height()
-        speed = config.WALK_SPEED_PX_PER_TICK * (0.6 + self.stats.mood / 100)
+        speed = (config.WALK_SPEED_PX_PER_TICK
+                 * (0.6 + self.stats.mood / 100)
+                 * self.stats.personality.walk_speed_mult)
         if self._target is not None:
             dx = self._target.x() - self.x()
             step = int(math.copysign(min(abs(dx), speed), dx or 1))
@@ -226,8 +228,8 @@ class Pet(QLabel):
 
     # ---------------------------------------------------------------- Behaviour picker
     def _pick_next_action(self) -> None:
-        # 60% walk, 40% idle
-        if random.random() < 0.6:
+        walk_prob = self.stats.personality.walk_prob
+        if random.random() < walk_prob:
             self._facing_left = random.choice([True, False])
             self._behaviour = Behaviour.WALK
             self._behaviour_until = time.time() + random.uniform(
