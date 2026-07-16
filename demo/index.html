@@ -176,7 +176,7 @@ footer a{color:var(--tint);text-decoration:none}
     <div class="list-group">
       <div class="room-panel">
         <div class="room-grid">
-          <div class="h">家具</div><div class="h">屏幕</div><div class="h">角落 (TL/TR/BL/BR)</div><div class="h">操作</div>
+          <div class="h">家具</div><div class="h">屏幕</div><div class="h">角落快捷</div><div class="h">操作</div>
           <div>🛏 窝</div>
           <select data-kind="nest" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
           <div class="cornerbox" data-kind="nest"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
@@ -190,6 +190,8 @@ footer a{color:var(--tint);text-decoration:none}
           <div class="cornerbox" data-kind="litter"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
           <button class="btn secondary" data-remove="litter" style="padding:6px 8px;font-size:12px">清除</button>
         </div>
+        <div style="padding:8px 0 4px;font-size:12px;color:var(--label-secondary);line-height:1.5">💡 直接在画面里 <b>拖动家具</b> 到任意位置；角落按钮是快捷键。</div>
+        <div style="padding:4px 0 4px"><button class="btn secondary" id="btn-reset-furn" style="padding:8px 12px;font-size:13px">重置家具位置</button></div>
       </div>
     </div>
 
@@ -324,7 +326,17 @@ const state = {
          todayDate:localStorage.getItem('kaka_pomo_date')||'',
          streak:parseInt(localStorage.getItem('kaka_pomo_streak')||'0'),
          running:false, startedAt:0 },
-  room:{nest:null,bowl:null,litter:null},
+  room:{nest:null,bowl:null,litter:null}, // kept for backward-compat, not used for positioning anymore
+  furniture: (function(){
+    try{
+      const s = JSON.parse(localStorage.getItem('kaka_furniture_v2')||'null');
+      if(s && s.nest && s.bowl && s.litter) return s;
+    }catch(e){}
+    return null; // will be filled by defaultFurniture() after canvas layout
+  })(),
+  hoverFurniture:null,     // {kind, screen} for dashed hint
+  dragFurniture:null,      // {kind, offsetX, offsetY, screen}
+  dashUntil:0,             // performance.now() ms — pet speed x1.6 until this time (dash to food)
   friend:null,
   pet:{screen:0,x:SW(0)*.7,y:0,vx:0,vy:0,rot:0,angVel:0,facing:1,
        behaviour:'idle',until:0,floatPhase:Math.random()*Math.PI*2,
@@ -531,12 +543,90 @@ function renderShop(tab){
   }
 }
 
-// ===== Room UI =====
-function refreshCornerButtons(){document.querySelectorAll('.cornerbox').forEach(box=>{const kind=box.dataset.kind;const cur=state.room[kind];box.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',!!cur&&cur.corner===b.dataset.c&&parseInt(box.parentElement.querySelector(`select[data-kind="${kind}"]`).value)===cur.screen);});});}
-document.querySelectorAll('.cornerbox').forEach(box=>{const kind=box.dataset.kind;box.querySelectorAll('button').forEach(b=>{b.onclick=()=>{const scr=parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);state.room[kind]={screen:scr,corner:b.dataset.c};refreshCornerButtons();showToast('📦 已放置');};});});
-document.querySelectorAll('select[data-kind]').forEach(sel=>{sel.onchange=refreshCornerButtons;});
-document.querySelectorAll('[data-remove]').forEach(b=>{b.onclick=()=>{state.room[b.dataset.remove]=null;refreshCornerButtons();showToast('已清除 '+b.dataset.remove);};});
-function furnitureXY(kind){const f=state.room[kind];if(!f)return null;const w=SW(f.screen),h=SH(f.screen),m=12;const x=f.corner.endsWith('l')?m:w-FURN-m;const y=f.corner.startsWith('t')?m:h-FURN-m-4;return{screen:f.screen,x,y};}
+// ===== Room / Furniture UI =====
+// Default corner positions (used when there's no saved data or when user hits "reset").
+function defaultFurniture(){
+  return {
+    nest:   {screen:0, x:12,                       y:12},
+    bowl:   {screen:0, x:Math.max(12, SW(0)-FURN-12), y:12},
+    litter: {screen:1, x:Math.max(12, SW(1)-FURN-12), y:Math.max(12, SH(1)-FURN-16)},
+  };
+}
+function saveFurniture(){ localStorage.setItem('kaka_furniture_v2', JSON.stringify(state.furniture)); }
+if(!state.furniture){ state.furniture = defaultFurniture(); saveFurniture(); }
+// If localStorage had partial or bad data, backfill missing kinds with defaults.
+(function backfill(){
+  const d = defaultFurniture();
+  ['nest','bowl','litter'].forEach(k=>{
+    if(!state.furniture[k] || typeof state.furniture[k].x !== 'number') state.furniture[k] = d[k];
+  });
+})();
+
+// Snap furniture to a corner of the currently-selected screen (helper for the corner buttons).
+function snapFurnitureToCorner(kind, screen, corner){
+  const w=SW(screen), h=SH(screen), m=12;
+  const x=corner.endsWith('l') ? m : w-FURN-m;
+  const y=corner.startsWith('t') ? m : h-FURN-m-4;
+  state.furniture[kind] = {screen, x, y};
+  saveFurniture();
+}
+function refreshCornerButtons(){
+  // Highlight the corner button only if the piece is exactly at that corner on the selected screen.
+  document.querySelectorAll('.cornerbox').forEach(box=>{
+    const kind=box.dataset.kind;
+    const sel = box.parentElement.querySelector(`select[data-kind="${kind}"]`);
+    const scr = parseInt(sel.value);
+    const cur = state.furniture[kind];
+    box.querySelectorAll('button').forEach(b=>{
+      let on = false;
+      if(cur && cur.screen===scr){
+        const w=SW(scr), h=SH(scr), m=12;
+        const cx = b.dataset.c.endsWith('l') ? m : w-FURN-m;
+        const cy = b.dataset.c.startsWith('t') ? m : h-FURN-m-4;
+        on = Math.abs(cur.x-cx) < 2 && Math.abs(cur.y-cy) < 2;
+      }
+      b.classList.toggle('on', on);
+    });
+  });
+}
+document.querySelectorAll('.cornerbox').forEach(box=>{
+  const kind=box.dataset.kind;
+  box.querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{
+      const scr=parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);
+      snapFurnitureToCorner(kind, scr, b.dataset.c);
+      refreshCornerButtons();
+      showToast('📦 已放置');
+    };
+  });
+});
+document.querySelectorAll('select[data-kind]').forEach(sel=>{ sel.onchange = refreshCornerButtons; });
+document.querySelectorAll('[data-remove]').forEach(b=>{
+  b.onclick=()=>{
+    state.furniture[b.dataset.remove]=null;
+    saveFurniture();
+    refreshCornerButtons();
+    showToast('已清除 '+b.dataset.remove);
+  };
+});
+const btnResetFurn=document.getElementById('btn-reset-furn');
+if(btnResetFurn) btnResetFurn.onclick=()=>{
+  state.furniture=defaultFurniture(); saveFurniture(); refreshCornerButtons();
+  showToast('🏠 家具已复位');
+};
+
+function furnitureXY(kind){
+  const f=state.furniture[kind]; if(!f) return null;
+  return {screen:f.screen, x:f.x, y:f.y};
+}
+function hitFurniture(pos, scr){
+  const kinds=['nest','bowl','litter'];
+  for(const k of kinds){
+    const f=state.furniture[k]; if(!f || f.screen!==scr) continue;
+    if(pos.x>=f.x && pos.x<=f.x+FURN && pos.y>=f.y && pos.y<=f.y+FURN) return k;
+  }
+  return null;
+}
 
 // ===== Payday select =====
 const paydaySel=document.getElementById('payday-select');
@@ -570,10 +660,40 @@ function drawPet(ctx,x,y,mood,flip,rot){
   ctx.restore();
   // extras
   if(mood==='sing'){ctx.font='18px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🎤',x+size-6,y+size-12);}
-  if(mood==='sleep'||mood==='sleep_ground'){ctx.font='16px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💤',x+size+2,y-2);}
+  if(mood==='sleep'||mood==='sleep_ground'){
+    // Animated floating zZz: 3 letters bobbing upward with fading opacity.
+    const t = performance.now()/500;
+    const letters = ['z','Z','z'];
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    for(let li=0; li<letters.length; li++){
+      const phase = (t + li*0.6) % 1.6;              // 0..1.6
+      const alpha = Math.max(0, 1 - phase/1.6);
+      const dy = -phase * 14;
+      const dx = phase * 5;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = (12 + li*4)+'px "SF Pro Display","PingFang SC",sans-serif';
+      ctx.fillStyle = '#5A5A5F';
+      ctx.fillText(letters[li], x+size-4 + dx + li*3, y-4 + dy);
+      ctx.restore();
+    }
+  }
   if(mood==='zen'){ctx.font='16px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧘',x+size/2,y-6);}
 }
-function drawFurniture(ctx,kind,x,y){const em=kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';ctx.font=(FURN*0.85)+'px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.save();ctx.globalAlpha=.9;ctx.fillText(em,x+FURN/2,y+FURN/2);ctx.restore();}
+function drawFurniture(ctx,kind,x,y,screen){
+  const em=kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';
+  // Always draw a very faint dashed rect to hint "draggable"; brighter on hover / drag.
+  const hovering = state.hoverFurniture && state.hoverFurniture.kind===kind && state.hoverFurniture.screen===screen;
+  const dragging = state.dragFurniture && state.dragFurniture.kind===kind;
+  ctx.save();
+  ctx.setLineDash([4,4]);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = dragging ? 'rgba(0,122,255,.75)' : (hovering ? 'rgba(0,122,255,.55)' : 'rgba(60,60,67,.18)');
+  ctx.strokeRect(x-2, y-2, FURN+4, FURN+4);
+  ctx.restore();
+  ctx.font=(FURN*0.85)+'px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.save();ctx.globalAlpha=.9;ctx.fillText(em,x+FURN/2,y+FURN/2);ctx.restore();
+}
 function drawToyOnCanvas(ctx,t,i){
   const T=TOYS[t.key]; if(!T) return;
   ctx.font=(TOY*0.9)+'px "Apple Color Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -614,7 +734,7 @@ function drawScene(){
     const ctx=CTXES[i]; ctx.clearRect(0,0,SW(i),SH(i));
     const fy=SH(i)-FLOOR_MARGIN;
     ctx.strokeStyle='rgba(60,60,67,.10)';ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(SW(i),fy);ctx.stroke();ctx.setLineDash([]);
-    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p&&p.screen===i)drawFurniture(ctx,k,p.x,p.y);});
+    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p&&p.screen===i)drawFurniture(ctx,k,p.x,p.y,i);});
     // placed toys
     state.placedToys.forEach((t,idx)=>{if(t.screen===i)drawToyOnCanvas(ctx,t,idx);});
     // laser dot
@@ -686,17 +806,30 @@ function pickNext(){
   if(state.placedToys.length>0 && Math.random()<0.35){
     const idx=nearestToy();
     if(idx>=0){
+      bubble('玩具！玩具！ 🎮', 1200);
       goToToy(idx); return;
     }
   }
   // Rest states
   if(state.loveRest){
     // low mood → sleep in nest
-    if(s.mood<28 && state.room.nest && Math.random()<0.5){goToFurniture('nest','sleep');return;}
+    if(s.mood<28 && state.furniture.nest && Math.random()<0.5){
+      bubble(pick(['好困好困 💤','要不打个盹','闭一下眼睛']), 1500);
+      goToFurniture('nest','sleep');return;
+    }
     const r=Math.random();
-    if(r<0.14){ p.behaviour='sit'; p.until=performance.now()+rand(3000,6000); return; }
-    if(r<0.22){ p.behaviour='lay'; p.until=performance.now()+rand(4000,8000); return; }
-    if(r<0.27 && s.mood>40){ p.behaviour='sleep_ground'; p.until=performance.now()+rand(6000,12000); return; }
+    if(r<0.14){
+      bubble(pick(['歇会儿好了','站累了','来坐坐']), 1500);
+      p.behaviour='sit'; p.until=performance.now()+rand(3000,6000); return;
+    }
+    if(r<0.22){
+      bubble(pick(['躺平真香','岁月静好','摊会儿']), 1500);
+      p.behaviour='lay'; p.until=performance.now()+rand(4000,8000); return;
+    }
+    if(r<0.27 && s.mood>40){
+      bubble(pick(['好困好困 💤','要不打个盹','闭一下眼睛']), 1500);
+      p.behaviour='sleep_ground'; p.until=performance.now()+rand(6000,12000); return;
+    }
   }
   if(Math.random()<persona().walkProb){p.facing=Math.random()<.5?-1:1;p.behaviour='walk';p.until=performance.now()+rand(2000,5500);}
   else{p.behaviour='idle';p.until=performance.now()+rand(1500,4000);}
@@ -747,7 +880,11 @@ function tick(dtMs){
   } else if(p.behaviour==='stand_up'){
     // interpolate rot to 0
     p.rot *= Math.pow(0.72, dt);
-    if(Math.abs(p.rot)<0.6){p.rot=0; p.behaviour='idle'; p.until=performance.now()+rand(1000,2500);}
+    if(Math.abs(p.rot)<0.6){
+      p.rot=0; p.behaviour='idle'; p.until=performance.now()+rand(1000,2500);
+      // Little post-crash monologue (optional, only when the pet was really tumbling).
+      if(Math.random()<0.55) bubble('哎哟摔死了……', 1000);
+    }
   } else if(p.behaviour==='sleep'||p.behaviour==='sleep_ground'){
     state.stats.mood=clamp(state.stats.mood+0.05*dt);
     if(performance.now()>p.until){p.behaviour='idle';p.until=performance.now()+2000;}
@@ -861,7 +998,8 @@ function tick(dtMs){
 }
 function walkStep(dt){
   const p=state.pet,per=persona();
-  const speed=1.6*(0.7+state.stats.mood/150)*per.walkSpeed*dt;
+  const isDash = state.dashUntil && performance.now() < state.dashUntil;
+  const speed=1.6*(0.7+state.stats.mood/150)*per.walkSpeed*(isDash?1.6:1)*dt;
   const sw=SW(p.screen);
   if(p.target!=null){
     const dx=p.target-p.x; p.facing=dx<0?-1:1;
@@ -869,9 +1007,14 @@ function walkStep(dt){
     if(state.gravity) p.y=SH(p.screen)-PET-FLOOR_MARGIN;
     if(Math.abs(p.target-p.x)<speed){
       const kind=p.targetKind; p.target=null; p.targetKind=null;
-      if(kind && kind.startsWith('litter|')){spawnPoopAtLitter();p.behaviour='idle';p.until=performance.now()+rand(800,1500);}
+      if(kind && (kind.startsWith('litter|')||kind==='litter|poop'||kind==='litter|pee')){
+        const isPee = kind==='litter|pee';
+        spawnPoopAtLitter(kind.endsWith('|pee')?true : kind.endsWith('|poop')?false : undefined);
+        p.behaviour='idle';p.until=performance.now()+rand(800,1500);
+      }
       else if(kind && kind.startsWith('nest|')){p.behaviour='sleep';p.until=performance.now()+rand(4000,7000);bubble('💤 好舒服...',2000);}
       else if(kind && kind.startsWith('toy|')){const idx=parseInt(kind.split('|')[1]); startPlayToy(idx);}
+      else if(kind === 'eat'){ state.dashUntil = 0; p.behaviour='idle'; p.until=performance.now()+rand(800,1500); }
       else{p.behaviour='idle';p.until=performance.now()+rand(1500,3000);}
     }
   } else {
@@ -882,7 +1025,16 @@ function walkStep(dt){
     if(performance.now()>p.until) pickNext();
   }
 }
-function bubble(text,dur=2000){state.pet.bubbleText=text;state.pet.bubbleUntil=performance.now()+dur;}
+function bubble(text,dur=2000){
+  // dedupe: if same text is already showing, just extend its life a bit instead of restarting.
+  const now = performance.now();
+  if(state.pet.bubbleText === text && state.pet.bubbleUntil > now){
+    state.pet.bubbleUntil = Math.max(state.pet.bubbleUntil, now + Math.min(dur, 1000));
+    return;
+  }
+  state.pet.bubbleText=text;state.pet.bubbleUntil=now+dur;
+}
+const pick = (arr)=>arr[Math.floor(Math.random()*arr.length)];
 
 // ===== Chatty & poop =====
 const CHATTY=['在吗？','烦了','摸鱼冠军','要吃的','嗨！','午安~'];
@@ -891,36 +1043,136 @@ function scheduleNextBubble(){nextBubbleAt=performance.now()+rand(6000,12000);}
 function maybeBubble(now){const bp=persona().bubble;if(bp<=0||now<nextBubbleAt)return;if(Math.random()<bp) bubble(CHATTY[Math.floor(Math.random()*CHATTY.length)],2200);scheduleNextBubble();}
 let nextPoopAt=performance.now()+rand(15000,45000);
 function scheduleNextPoop(){const m=persona().poopFreq;nextPoopAt=performance.now()+rand(15000/Math.max(.5,m),45000/Math.max(.5,m));}
-function maybePoop(now){if(now<nextPoopAt)return;if(state.event==='sing'||state.event==='dance'||['sleep','sleep_ground','play_toy','sit','lay'].includes(state.pet.behaviour)){scheduleNextPoop();return;}if(state.room.litter&&Math.random()<0.85)goToFurniture('litter','poop');else spawnPoop(false);scheduleNextPoop();}
-function spawnPoop(force=false){const p=state.pet;const isPee=Math.random()<.4;const glyph=isPee?'💦':'💩';const x=p.x+PET/2-WASTE/2;const y=state.gravity?(SH(p.screen)-WASTE-FLOOR_MARGIN):(p.y+PET/2);state.entities[p.screen].push({kind:isPee?'pee':'poop',x,y,glyph});state.stats.hygiene=clamp(state.stats.hygiene-12);state.stats.mood=clamp(state.stats.mood+2);if(force)showToast(isPee?'💦 尿了一泡':'💩 拉了一坨');}
-function spawnPoopAtLitter(){const f=furnitureXY('litter');if(!f){spawnPoop(false);return;}const isPee=Math.random()<.4;const glyph=isPee?'💦':'💩';state.entities[f.screen].push({kind:isPee?'pee':'poop',x:f.x+FURN/2-WASTE/2,y:f.y+FURN/2-WASTE/2,glyph,litter:true,until:performance.now()+15000});state.stats.hygiene=clamp(state.stats.hygiene-3);state.stats.mood=clamp(state.stats.mood+2);state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('🚽 呼~',1200);}
+function maybePoop(now){
+  if(now<nextPoopAt) return;
+  if(state.event==='sing'||state.event==='dance'||['sleep','sleep_ground','play_toy','sit','lay'].includes(state.pet.behaviour)){scheduleNextPoop();return;}
+  // Decide pee vs poop up-front so the inner monologue matches.
+  const isPee = Math.random() < 0.4;
+  bubble(isPee ? '等等，先去嘘嘘 🚽' : '嗯……有点憋不住 💩', 1500);
+  scheduleNextPoop();
+  // Delay actual excretion by ~1.2s so the bubble reads first.
+  setTimeout(()=>{
+    if(state.furniture.litter && Math.random()<0.85) goToFurniture('litter', isPee?'pee':'poop');
+    else spawnPoop(false, isPee);
+  }, 1200);
+}
+function spawnPoop(force=false, forcedPee){
+  const p=state.pet;
+  const isPee = (forcedPee===undefined) ? (Math.random()<.4) : forcedPee;
+  const glyph=isPee?'💦':'💩';
+  const x=p.x+PET/2-WASTE/2;
+  const y=state.gravity?(SH(p.screen)-WASTE-FLOOR_MARGIN):(p.y+PET/2);
+  state.entities[p.screen].push({kind:isPee?'pee':'poop',x,y,glyph});
+  state.stats.hygiene=clamp(state.stats.hygiene-12);
+  state.stats.mood=clamp(state.stats.mood+2);
+  if(force) showToast(isPee?'💦 尿了一泡':'💩 拉了一坨');
+}
+function spawnPoopAtLitter(forcedPee){
+  const f=furnitureXY('litter');
+  if(!f){ spawnPoop(false, forcedPee); return; }
+  const isPee = (forcedPee===undefined) ? (Math.random()<.4) : forcedPee;
+  const glyph=isPee?'💦':'💩';
+  state.entities[f.screen].push({kind:isPee?'pee':'poop',x:f.x+FURN/2-WASTE/2,y:f.y+FURN/2-WASTE/2,glyph,litter:true,until:performance.now()+15000});
+  state.stats.hygiene=clamp(state.stats.hygiene-3);
+  state.stats.mood=clamp(state.stats.mood+2);
+  state.stats.affinity=clamp(state.stats.affinity+0.3);
+  bubble('🚽 呼~',1200);
+}
 setInterval(()=>{for(let s=0;s<SCREENS.length;s++){state.entities[s]=state.entities[s].filter(e=>!(e.litter&&performance.now()>e.until));}},1000);
 
 // ===== Feed =====
-function feed(){const glyphs=['🍪','🍔','🍎','🍣','🥕'];const g=glyphs[Math.floor(Math.random()*glyphs.length)];let scr,x,y;const bowl=furnitureXY('bowl');if(bowl){scr=bowl.screen;x=bowl.x+FURN/2-WASTE/2;y=bowl.y+FURN/2-WASTE/2;}else{scr=state.pet.screen;x=Math.random()*(SW(scr)-WASTE);y=SH(scr)-WASTE-FLOOR_MARGIN;}state.entities[scr].push({kind:'food',x,y,glyph:g});state.pet.screen=scr;state.pet.target=x;state.pet.behaviour='walk';state.pet.until=performance.now()+12000;showToast('丢了 '+g+(bowl?' → 食盆':''));}
+function feed(){
+  const glyphs=['🍪','🍔','🍎','🍣','🥕'];
+  const g=glyphs[Math.floor(Math.random()*glyphs.length)];
+  let scr,x,y;
+  const bowl=furnitureXY('bowl');
+  if(bowl){scr=bowl.screen;x=bowl.x+FURN/2-WASTE/2;y=bowl.y+FURN/2-WASTE/2;}
+  else{scr=state.pet.screen;x=Math.random()*(SW(scr)-WASTE);y=SH(scr)-WASTE-FLOOR_MARGIN;}
+  state.entities[scr].push({kind:'food',x,y,glyph:g});
+  state.pet.screen=scr;
+  state.pet.target=x;
+  state.pet.targetKind='eat';
+  state.pet.behaviour='walk';
+  state.pet.until=performance.now()+12000;
+  state.pet.playToyIdx=-1;
+  // Bubble + dash only when the pet is actually hungry (otherwise it's rude to spam "冲鸭")
+  if(state.stats.hunger < 70){
+    bubble('好饿呀，冲鸭 🍔', 1200);
+    state.dashUntil = performance.now()+8000;
+  }
+  showToast('丢了 '+g+(bowl?' → 食盆':''));
+}
 setInterval(()=>{
   const p=state.pet;
-  // find nearest food on any screen; if hungry, interrupt sleep/play/idle to eat
+  // Skip entirely when pet is basically full — no scanning, no dashing.
+  if(state.stats.hunger >= 90) return;
+  // Quickly check if any food exists at all; if not, no work to do.
+  let anyFood = false;
+  for(let s=0;s<SCREENS.length;s++){
+    for(const e of state.entities[s]){ if(e.kind==='food'){ anyFood=true; break; } }
+    if(anyFood) break;
+  }
+  if(!anyFood) return;
+
+  // 1) Adjacency-eat: if pet is already touching food, eat it (regardless of hunger — never waste).
   for(let s=0;s<SCREENS.length;s++){
     for(let i=state.entities[s].length-1;i>=0;i--){
       const e=state.entities[s][i]; if(e.kind!=='food') continue;
-      // ensure pet is heading there
       if(p.screen===s && Math.abs(e.x+WASTE/2-(p.x+PET/2))<PET*0.7 && Math.abs(e.y+WASTE/2-(p.y+PET/2))<PET*0.9){
         state.entities[s].splice(i,1);
         const boost=30*(persona().name==='干饭王'?1.1:1);
         state.stats.hunger=clamp(state.stats.hunger+boost);
         state.stats.mood=clamp(state.stats.mood+5);
         state.stats.affinity=clamp(state.stats.affinity+2);
-        p.target=null; p.behaviour='idle'; p.until=performance.now()+1500;
+        p.target=null; p.targetKind=null; p.behaviour='idle'; p.until=performance.now()+1500;
+        state.dashUntil = 0;
         earn(3,'好吃！'); bumpWeekly('feeds');
-        renderShop(currentShopTab); continue;
-      }
-      // interrupt & path towards food if hungry, or just close
-      if((state.stats.hunger<45 || Math.random()<0.3) && !['drag','work'].includes(p.behaviour)){
-        p.screen=s; p.target=e.x; p.behaviour='walk'; p.until=performance.now()+15000; p.playToyIdx=-1;
+        renderShop(currentShopTab);
       }
     }
   }
+
+  // 2) Path-to-food: only when pet actually has appetite (< 70) and isn't otherwise occupied.
+  if(state.stats.hunger >= 70) return;
+  if(['drag','work','sleep','sleep_ground','play_toy'].includes(p.behaviour)) {
+    // sleeping/playing: only interrupt when really hungry
+    if(state.stats.hunger >= 30) return;
+  }
+
+  // Find the closest food, preferring the same screen the pet is on.
+  const petCx = p.x + PET/2, petCy = p.y + PET/2;
+  let target = null, bestD = Infinity;
+  for(const e of state.entities[p.screen]){
+    if(e.kind!=='food') continue;
+    const d = Math.hypot(e.x+WASTE/2 - petCx, e.y+WASTE/2 - petCy);
+    if(d < bestD){ bestD = d; target = {screen:p.screen, x:e.x, y:e.y}; }
+  }
+  if(!target){
+    // Fall back to other screens.
+    for(let s=0;s<SCREENS.length;s++){
+      if(s===p.screen) continue;
+      for(const e of state.entities[s]){
+        if(e.kind!=='food') continue;
+        // rough cross-screen distance (screens are stacked): count each screen-hop as SW extra.
+        const d = SW(s) + Math.hypot(e.x+WASTE/2, e.y+WASTE/2 - petCy);
+        if(d < bestD){ bestD = d; target = {screen:s, x:e.x, y:e.y}; }
+      }
+    }
+  }
+  if(!target) return;
+
+  // Only re-fire the "冲鸭" bubble when we newly commit to eating.
+  if(p.targetKind !== 'eat'){
+    bubble('好饿呀，冲鸭 🍔', 1200);
+  }
+  p.screen = target.screen;
+  p.target = target.x;
+  p.targetKind = 'eat';
+  p.behaviour = 'walk';
+  p.until = performance.now() + 15000;
+  p.playToyIdx = -1;
+  // Dash mode: speed x1.6 until eaten (or 8s safety).
+  state.dashUntil = performance.now() + 8000;
 },350);
 
 // ===== Interaction =====
@@ -932,6 +1184,13 @@ function hitToy(pos,scr){for(let i=state.placedToys.length-1;i>=0;i--){const t=s
 SCREENS.forEach((canvas,scr)=>{
   canvas.addEventListener('mousedown',(e)=>{
     const pos=canvasPos(e,canvas);
+    // Furniture drag has priority so the user can always reposition it.
+    const fk = hitFurniture(pos, scr);
+    if(fk){
+      const f = state.furniture[fk];
+      state.dragFurniture = { kind: fk, offsetX: pos.x - f.x, offsetY: pos.y - f.y, screen: scr };
+      return;
+    }
     if(state.pet.visible&&hitPet(pos,scr)){
       state.pet.behaviour='drag';state.dragOffset={x:pos.x-state.pet.x,y:pos.y-state.pet.y};
       state.lastDragT=performance.now();state.lastDragX=pos.x;state.lastDragY=pos.y;state.dragScreen=scr;
@@ -965,18 +1224,44 @@ SCREENS.forEach((canvas,scr)=>{
     }
   });
   canvas.addEventListener('mousemove',(e)=>{
-    if(state.pet.behaviour==='drag'&&state.dragScreen===scr){const pos=canvasPos(e,canvas);state.pet.x=pos.x-state.dragOffset.x;state.pet.y=pos.y-state.dragOffset.y;state.pet.screen=scr;const now=performance.now();const dt=Math.max(1,now-state.lastDragT);state.pet.vx=(pos.x-state.lastDragX)/dt*16;state.pet.vy=(pos.y-state.lastDragY)/dt*16;state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;}
+    const pos=canvasPos(e,canvas);
+    // Furniture drag
+    if(state.dragFurniture){
+      const df = state.dragFurniture;
+      df.screen = scr;
+      const f = state.furniture[df.kind];
+      f.screen = scr;
+      f.x = Math.max(0, Math.min(SW(scr)-FURN, pos.x - df.offsetX));
+      f.y = Math.max(0, Math.min(SH(scr)-FURN, pos.y - df.offsetY));
+      return;
+    }
+    // Hover hint for furniture
+    const fk = hitFurniture(pos, scr);
+    state.hoverFurniture = fk ? {kind:fk, screen:scr} : null;
+    canvas.style.cursor = fk ? 'grab' : 'pointer';
+
+    if(state.pet.behaviour==='drag'&&state.dragScreen===scr){state.pet.x=pos.x-state.dragOffset.x;state.pet.y=pos.y-state.dragOffset.y;state.pet.screen=scr;const now=performance.now();const dt=Math.max(1,now-state.lastDragT);state.pet.vx=(pos.x-state.lastDragX)/dt*16;state.pet.vy=(pos.y-state.lastDragY)/dt*16;state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;}
     else if (state.pet.behaviour==='play_toy'){
       // when playing with laser, allow mouse to move the laser point continuously
       const p=state.placedToys[state.pet.playToyIdx];
       if(p && TOYS[p.key].action==='laser'){
-        const pos=canvasPos(e,canvas);
         state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+2500 };
       }
     }
   });
+  canvas.addEventListener('mouseleave',()=>{
+    if(!state.dragFurniture) state.hoverFurniture = null;
+  });
 });
 window.addEventListener('mouseup',()=>{
+  // Finalize furniture drag first.
+  if(state.dragFurniture){
+    state.dragFurniture = null;
+    saveFurniture();
+    refreshCornerButtons();
+    showToast('🏠 家具就位');
+    return;
+  }
   if(state.pet.behaviour==='drag'){
     if(Math.abs(state.pet.vx)<1&&Math.abs(state.pet.vy)<1){
       if(Math.random()<persona().rejectPet){state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('哼！',1200);showToast('傲娇拒绝了摸头');}
@@ -1014,7 +1299,7 @@ document.getElementById('btn-pomo').onclick=startPomodoro;
 document.getElementById('btn-reset').onclick=()=>{
   state.entities=[[],[]]; state.stats={hunger:60,mood:65,hygiene:85,affinity:15};
   state.pet.x=SW(0)*.7;state.pet.y=SH(0)-PET-FLOOR_MARGIN;state.pet.screen=0;state.pet.behaviour='idle';state.pet.target=null;state.pet.targetKind=null;state.pet.rot=0;state.pet.angVel=0;state.pet.playToyIdx=-1;
-  state.placedToys=[]; state.laserPos=null;
+  state.placedToys=[]; state.laserPos=null; state.dashUntil=0;
   ['tg-gravity','tg-visible','tg-rest'].forEach(id=>document.getElementById(id).checked=true);
   ['tg-work','tg-friend','tg-sing','tg-dance'].forEach(id=>document.getElementById(id).checked=false);
   state.gravity=true;state.pet.visible=true;state.work.active=false;state.friend=null;state.forceSing=false;state.forceDance=false;state.event=null;state.loveRest=true;
