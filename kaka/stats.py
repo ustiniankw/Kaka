@@ -12,6 +12,7 @@ from dataclasses import dataclass, asdict, field
 from typing import Dict
 
 from . import config
+from .personality import Personality, PERSONALITIES, random_personality, by_key, DEFAULT_KEY
 
 
 def _clamp(v: float, lo: float = 0.0, hi: float = 100.0) -> float:
@@ -25,6 +26,24 @@ class Stats:
     hygiene: float = 80.0
     affinity: float = 0.0
     last_tick: float = field(default_factory=time.time)
+    personality_key: str = ""  # empty = uninitialized → randomize on first load
+
+    def __post_init__(self) -> None:
+        if not self.personality_key or self.personality_key not in PERSONALITIES:
+            self.personality_key = random_personality().key
+
+    # ----- personality shortcut -----
+    @property
+    def personality(self) -> Personality:
+        return by_key(self.personality_key)
+
+    def reroll_personality(self) -> Personality:
+        old = self.personality_key
+        while True:
+            new = random_personality()
+            if new.key != old:
+                self.personality_key = new.key
+                return new
 
     # ----- persistence -----
     def save(self) -> None:
@@ -43,30 +62,41 @@ class Stats:
 
     # ----- update loop -----
     def natural_decay(self) -> None:
-        """Apply per-minute decay proportional to elapsed real time."""
+        """Apply per-minute decay proportional to elapsed real time, modulated
+        by the current personality."""
         now = time.time()
         dt_min = (now - self.last_tick) / 60.0
-        for k, delta in config.STAT_DECAY_PER_MIN.items():
+        p = self.personality
+        deltas = dict(config.STAT_DECAY_PER_MIN)
+        deltas["hunger"] *= p.hunger_decay_mult
+        deltas["mood"]   *= p.mood_decay_mult
+        for k, delta in deltas.items():
             cur = getattr(self, k)
             setattr(self, k, _clamp(cur + delta * dt_min))
-        # mood also depends on hunger — being hungry sucks
         if self.hunger < 20:
             self.mood = _clamp(self.mood - 0.5 * dt_min)
         self.last_tick = now
 
     # ----- interactions -----
-    def pet(self) -> None:
+    def pet(self) -> bool:
+        """Returns True if the pet accepted the petting (tsundere may reject)."""
+        import random
+        if random.random() < self.personality.reject_petting_chance:
+            # tsundere rejects: no mood gain, tiny affinity gain
+            self.affinity = _clamp(self.affinity + 0.3)
+            return False
         self.mood = _clamp(self.mood + 3)
         self.affinity = _clamp(self.affinity + 1)
+        return True
 
     def feed(self) -> None:
-        self.hunger = _clamp(self.hunger + 30)
+        boost = 30 * (1.1 if self.personality.key == "foodie" else 1.0)
+        self.hunger = _clamp(self.hunger + boost)
         self.mood = _clamp(self.mood + 5)
         self.affinity = _clamp(self.affinity + 2)
 
     def poop(self) -> None:
         self.hygiene = _clamp(self.hygiene - 12)
-        # relief boost
         self.mood = _clamp(self.mood + 2)
 
     def cleaned(self) -> None:
@@ -89,4 +119,5 @@ class Stats:
             "mood": round(self.mood, 1),
             "hygiene": round(self.hygiene, 1),
             "affinity": round(self.affinity, 1),
+            "personality": self.personality_key,
         }

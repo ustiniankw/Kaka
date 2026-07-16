@@ -7,6 +7,7 @@ from PySide6.QtCore import QPoint
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu, QMessageBox
 
+from .personality import PERSONALITIES
 from .pet import Pet
 from .stats import Stats
 from .world import World
@@ -15,6 +16,13 @@ from .world import World
 def build_and_show(parent: Pet, world: World, stats: Stats,
                    pos: QPoint, on_quit: Callable[[], None]) -> None:
     menu = QMenu(parent)
+
+    # ----- personality label header -----
+    p = stats.personality
+    header = QAction(f"{p.emoji}  {p.name_zh} · Kaka", parent)
+    header.setEnabled(False)
+    menu.addAction(header)
+    menu.addSeparator()
 
     feed = QAction("🍪 喂食", parent)
     feed.triggered.connect(lambda: world.spawn_food())
@@ -26,6 +34,22 @@ def build_and_show(parent: Pet, world: World, stats: Stats,
     menu.addAction(grav)
 
     menu.addSeparator()
+
+    # ----- personality submenu -----
+    pers_menu = menu.addMenu("🎭 性格")
+    for key, per in PERSONALITIES.items():
+        text = f"{per.emoji} {per.name_zh}"
+        if key == stats.personality_key:
+            text = "✓ " + text
+        act = QAction(text, parent)
+        act.triggered.connect(
+            lambda _=False, k=key: (setattr(stats, "personality_key", k), stats.save())
+        )
+        pers_menu.addAction(act)
+    pers_menu.addSeparator()
+    reroll = QAction("🎲 随机换一个", parent)
+    reroll.triggered.connect(lambda: (stats.reroll_personality(), stats.save()))
+    pers_menu.addAction(reroll)
 
     stat_action = QAction("📊 查看状态", parent)
     stat_action.triggered.connect(lambda: _show_stats(parent, stats))
@@ -50,7 +74,9 @@ def build_and_show(parent: Pet, world: World, stats: Stats,
 
 def _show_stats(parent, stats: Stats) -> None:
     s = stats.snapshot()
+    p = stats.personality
     msg = (
+        f"{p.emoji}  性格 : {p.name_zh}   《{p.flavor}》\n\n"
         f"💛  好感度  Affinity : {s['affinity']:>5} / 100\n"
         f"🍚  饥饿   Hunger   : {s['hunger']:>5} / 100\n"
         f"😊  心情   Mood     : {s['mood']:>5} / 100\n"
