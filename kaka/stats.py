@@ -29,6 +29,8 @@ class Stats:
     personality_key: str = ""  # empty = uninitialized → randomize on first load
     skin_key: str = "default"
     owned_skins: List[str] = field(default_factory=lambda: ["default"])
+    owned_toys: List[str] = field(default_factory=list)
+    placed_toys: List[Dict] = field(default_factory=list)
     room_layout: List[Dict] = field(default_factory=list)
     payday_day: int = 15
 
