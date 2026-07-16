@@ -133,6 +133,7 @@ footer a{color:var(--tint);text-decoration:none}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <div class="badge"><span class="dot"></span><span id="badge-state">walking</span></div>
+        <div class="badge" id="badge-treats">🍬 <b>0</b></div>
         <div class="badge" id="badge-shop">🛍 商店</div>
         <div class="badge pink" id="badge-event" style="display:none"></div>
       </div>
@@ -223,6 +224,17 @@ footer a{color:var(--tint);text-decoration:none}
 <footer>Made with ❤️ · <a href="https://github.com/ustiniankw/Kaka">github.com/ustiniankw/Kaka</a></footer>
 </div>
 
+<!-- Weekly report Modal -->
+<div class="modal" id="weekly-modal">
+  <div class="card">
+    <h3>📊 上周摸鱼/番茄小报</h3>
+    <div class="sub">周一自动生成 · 数据来自你在本机上使用 Kaka 的记录</div>
+    <div class="shop-list" style="display:block;padding:8px 20px 4px" id="weekly-body"></div>
+    <div class="close"><button class="btn" onclick="document.getElementById('weekly-modal').classList.remove('show')" style="width:auto;padding:8px 18px">收起</button></div>
+  </div>
+</div>
+<style>.wk-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--sys-separator);font-size:14px}.wk-row:first-child{border-top:0}.wk-row b{font-variant-numeric:tabular-nums}.wk-tip{padding:12px 0 4px;color:var(--label-secondary);font-size:13px}</style>
+
 <!-- Shop Modal (skins + toys tabs) -->
 <div class="modal" id="shop-modal">
   <div class="card">
@@ -249,29 +261,30 @@ const SKINS = {
   sakura: {body:'#FFD7E2',dark:'#D793A6',cheek:'#FFFFFF',eye:'#3A1A28',white:'#FFFDFB',name:'樱雪'},
   cyber:  {body:'#7A3CFF',dark:'#3B1670',cheek:'#12F5C6',eye:'#F8F8F8',white:'#00E0FF',name:'赛博'},
 };
+// 零食币经济：cost = 需要花费；bonusPer = 性格 → 该性格购买享 30% 折扣（不再硬挡）
 const SHOP_SKINS = [
-  {key:'default',aff:0, per:null, desc:'刚认识时候的样子，永久拥有'},
-  {key:'mochi',  aff:25,per:null, desc:'圆滚滚粉粉的 Q 弹皮肤'},
-  {key:'matcha', aff:40,per:null, desc:'带一点苦涩的成熟绿'},
-  {key:'berry',  aff:55,per:'tsundere', desc:'傲娇专属'},
-  {key:'cocoa',  aff:70,per:'foodie', desc:'干饭王专属'},
-  {key:'sakura', aff:85,per:'introvert', desc:'社恐专属'},
-  {key:'cyber',  aff:90,per:'extrovert', desc:'社牛专属'},
+  {key:'default',cost:0,  bonusPer:null,        desc:'刚认识时候的样子，永久拥有'},
+  {key:'mochi',  cost:80, bonusPer:null,        desc:'圆滚滚粉粉的 Q 弹皮肤'},
+  {key:'matcha', cost:120,bonusPer:null,        desc:'带一点苦涩的成熟绿'},
+  {key:'berry',  cost:180,bonusPer:'tsundere',  desc:'傲娇性格 -30%'},
+  {key:'cocoa',  cost:220,bonusPer:'foodie',    desc:'干饭王性格 -30%'},
+  {key:'sakura', cost:280,bonusPer:'introvert', desc:'社恐性格 -30%'},
+  {key:'cyber',  cost:340,bonusPer:'extrovert', desc:'社牛性格 -30%'},
 ];
-// Toy shop
+// 玩具：cost 币价 · cooldown_s 冷却 · durability 使用次数（0 = 无限）· bonusPer 性格 30% 折扣
 const TOYS = {
-  cardboard:  {em:'📦',name:'瓦楞纸箱',aff:10,per:null,        desc:'永恒的浪漫。看到就想钻',              action:'tunnel', mood:4.0, aff_gain:0.6},
-  ball:       {em:'🧶',name:'毛线球',  aff:15,per:null,        desc:'扑一扑抓一抓，最基础的猫式快乐',      action:'ball',   mood:3.5, aff_gain:0.4},
-  swing:      {em:'🪄',name:'秋千',    aff:20,per:null,        desc:'咯吱咯吱的荡秋千，Kaka 会蹲上去自动摇',action:'swing', mood:5.0, aff_gain:0.6},
-  laser:      {em:'🔴',name:'激光笔',  aff:25,per:null,        desc:'点哪追哪，你的手指就是它的宿敌',      action:'laser',  mood:5.5, aff_gain:0.8},
-  scratcher:  {em:'🪵',name:'抓板',    aff:30,per:null,        desc:'磨爪子解压',                          action:'scratch',mood:4.0, aff_gain:0.5},
-  tunnel:     {em:'🕳',name:'钻洞',    aff:35,per:'introvert', desc:'社恐限定，钻进去就假装不在',          action:'tunnel', mood:6.5, aff_gain:0.9},
-  teddy:      {em:'🧸',name:'小熊玩偶',aff:40,per:null,        desc:'抱着睡觉的软软朋友',                  action:'cuddle', mood:5.5, aff_gain:1.0},
-  wheel:      {em:'🛞',name:'跑轮',    aff:45,per:null,        desc:'空转选手的最爱',                      action:'wheel',  mood:6.0, aff_gain:0.7},
-  hammock:    {em:'🛌',name:'吊床',    aff:50,per:'lazy',      desc:'懒鬼限定，一躺就是三小时',            action:'cuddle', mood:7.0, aff_gain:1.1},
-  cat_tree:   {em:'🌳',name:'猫爬架',  aff:55,per:null,        desc:'顶上有个小平台，爬上去俯瞰',          action:'climb',  mood:5.0, aff_gain:0.6},
-  zen_stone:  {em:'🪨',name:'禅意石',  aff:60,per:null,        desc:'坐下来打坐冥想 · 心情大幅回升',        action:'zen',    mood:8.0, aff_gain:0.5},
-  gaming_pad: {em:'🎮',name:'游戏手柄',aff:65,per:'chatty',    desc:'话痨专属，一边玩一边解说',            action:'ball',   mood:6.0, aff_gain:0.9},
+  cardboard:  {em:'📦',name:'瓦楞纸箱',cost:30, bonusPer:null,        desc:'永恒的浪漫',              action:'tunnel', mood:4.0, aff_gain:0.6, cooldown_s:20, durability:0},
+  ball:       {em:'🧶',name:'毛线球',  cost:50, bonusPer:null,        desc:'扑一扑抓一抓',            action:'ball',   mood:3.5, aff_gain:0.4, cooldown_s:15, durability:0},
+  swing:      {em:'🪄',name:'秋千',    cost:80, bonusPer:null,        desc:'咯吱咯吱地摇',            action:'swing',  mood:5.0, aff_gain:0.6, cooldown_s:25, durability:0},
+  laser:      {em:'🔴',name:'激光笔',  cost:100,bonusPer:null,        desc:'点哪追哪',                action:'laser',  mood:5.5, aff_gain:0.8, cooldown_s:20, durability:60},
+  scratcher:  {em:'🪵',name:'抓板',    cost:120,bonusPer:null,        desc:'磨爪子解压',              action:'scratch',mood:4.0, aff_gain:0.5, cooldown_s:15, durability:25},
+  tunnel:     {em:'🕳',name:'钻洞',    cost:150,bonusPer:'introvert', desc:'钻进去假装不在',          action:'tunnel', mood:6.5, aff_gain:0.9, cooldown_s:30, durability:0},
+  teddy:      {em:'🧸',name:'小熊玩偶',cost:170,bonusPer:null,        desc:'抱着睡的软软朋友',        action:'cuddle', mood:5.5, aff_gain:1.0, cooldown_s:45, durability:0},
+  wheel:      {em:'🛞',name:'跑轮',    cost:200,bonusPer:null,        desc:'空转选手的最爱',          action:'wheel',  mood:6.0, aff_gain:0.7, cooldown_s:35, durability:40},
+  hammock:    {em:'🛌',name:'吊床',    cost:230,bonusPer:'lazy',      desc:'一躺就是三小时',          action:'cuddle', mood:7.0, aff_gain:1.1, cooldown_s:60, durability:0},
+  cat_tree:   {em:'🌳',name:'猫爬架',  cost:260,bonusPer:null,        desc:'爬上去俯瞰',              action:'climb',  mood:5.0, aff_gain:0.6, cooldown_s:30, durability:0},
+  zen_stone:  {em:'🪨',name:'禅意石',  cost:300,bonusPer:null,        desc:'打坐冥想 · 心情大幅回升', action:'zen',    mood:8.0, aff_gain:0.5, cooldown_s:90, durability:0},
+  gaming_pad: {em:'🎮',name:'游戏手柄',cost:350,bonusPer:'chatty',    desc:'一边玩一边解说',          action:'ball',   mood:6.0, aff_gain:0.9, cooldown_s:30, durability:80},
 };
 const TOY_ORDER = ['cardboard','ball','swing','laser','scratcher','tunnel','teddy','wheel','hammock','cat_tree','zen_stone','gaming_pad'];
 
@@ -299,6 +312,11 @@ const state = {
   ownedSkins:new Set(['default']),
   ownedToys:new Set(['cardboard']),   // free starter
   placedToys:[],  // {key, screen, x, y}
+  toyCd:{},       // key: `${uid}` → cooldownUntilMs
+  toyUses:{},     // key: `${uid}` → uses left (only for finite durability toys)
+  treats: parseInt(localStorage.getItem('kaka_treats')||'0'),
+  weekly: JSON.parse(localStorage.getItem('kaka_weekly')||'{}'), // { 'yyyy-mm-dd': {pomodoro, pats, poop, feeds, toyPlays, throws, treats} }
+  weeklyLastShown: localStorage.getItem('kaka_weekly_shown')||'',
   paydayDay:15, forceSing:false, forceDance:false,
   loveRest:true,
   pomo:{ total:parseInt(localStorage.getItem('kaka_pomo_total')||'0'),
@@ -331,6 +349,67 @@ const skin=()=>SKINS[skinKey];
 let skinKey='default';
 
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2000);}
+
+// ===== Economy & weekly stats =====
+function todayKey(){return new Date().toISOString().slice(0,10);}
+function bumpWeekly(field, n=1){
+  const k=todayKey();
+  if(!state.weekly[k]) state.weekly[k]={pomodoro:0,pats:0,poop:0,feeds:0,toyPlays:0,throws:0,treats:0};
+  state.weekly[k][field] = (state.weekly[k][field]||0) + n;
+  localStorage.setItem('kaka_weekly', JSON.stringify(state.weekly));
+}
+function earn(n, reason){
+  state.treats = Math.max(0, state.treats + n);
+  localStorage.setItem('kaka_treats', state.treats);
+  bumpWeekly('treats', n);
+  updateTreatsBadge();
+  if(n>0) showToast(`+${n} 🍬 ${reason||''}`);
+}
+function spend(n){
+  if(state.treats < n) return false;
+  state.treats -= n;
+  localStorage.setItem('kaka_treats', state.treats);
+  updateTreatsBadge();
+  return true;
+}
+function priceFor(item){
+  const bonus = (item.bonusPer && item.bonusPer === state.personality) ? 0.7 : 1.0;
+  return Math.round(item.cost * bonus);
+}
+function updateTreatsBadge(){
+  const b=document.getElementById('badge-treats');
+  if(b) b.innerHTML = '🍬 <b>'+state.treats+'</b>';
+}
+// weekly summary card (shown Mondays)
+function maybeShowWeeklyReport(){
+  const now = new Date();
+  if(now.getDay() !== 1) return;             // Monday only
+  // stamp = ISO of this Monday
+  const monday = new Date(now); monday.setHours(0,0,0,0);
+  const stamp = monday.toISOString().slice(0,10);
+  if(state.weeklyLastShown === stamp) return;
+  // build report from last 7 days (previous week)
+  const days=[]; const d=new Date(monday); d.setDate(d.getDate()-1);
+  for(let i=0;i<7;i++){ days.push(new Date(d).toISOString().slice(0,10)); d.setDate(d.getDate()-1); }
+  let sum={pomodoro:0,pats:0,poop:0,feeds:0,toyPlays:0,throws:0,treats:0};
+  days.forEach(k=>{const r=state.weekly[k]; if(r)for(const f in sum) sum[f]+=(r[f]||0);});
+  const modal=document.getElementById('weekly-modal');
+  document.getElementById('weekly-body').innerHTML = `
+    <div class="wk-row"><span>🍅 番茄</span><b>${sum.pomodoro}</b></div>
+    <div class="wk-row"><span>🤚 摸头次数</span><b>${sum.pats}</b></div>
+    <div class="wk-row"><span>🧻 清理次数</span><b>${sum.poop}</b></div>
+    <div class="wk-row"><span>🍽 喂食次数</span><b>${sum.feeds}</b></div>
+    <div class="wk-row"><span>🎮 玩具游玩</span><b>${sum.toyPlays}</b></div>
+    <div class="wk-row"><span>💫 抛掷次数</span><b>${sum.throws}</b></div>
+    <div class="wk-row"><span>🍬 币收入</span><b>${sum.treats}</b></div>
+    <div class="wk-tip">${sum.pomodoro>=10?'非常猛，上周高产 💪':(sum.pomodoro>=3?'还行，本周继续冲 🍅':'摸鱼可以，但也要留点番茄 ☺️')}</div>`;
+  modal.classList.add('show');
+  state.weeklyLastShown = stamp;
+  localStorage.setItem('kaka_weekly_shown', stamp);
+  // clear previous week's daily records so next week starts fresh
+  days.forEach(k=>{ delete state.weekly[k]; });
+  localStorage.setItem('kaka_weekly', JSON.stringify(state.weekly));
+}
 
 // ===== UI: personality =====
 const pGrid=document.getElementById('pers-grid');
@@ -383,7 +462,7 @@ SCREENS.forEach((canvas,scr)=>{
     const r=canvas.getBoundingClientRect();
     const x=Math.max(0,Math.min(SW(scr)-TOY,e.clientX-r.left-TOY/2));
     const y=Math.max(0,Math.min(SH(scr)-TOY,e.clientY-r.top-TOY/2));
-    state.placedToys.push({key,screen:scr,x,y});
+    state.placedToys.push({key,screen:scr,x,y,uid:'t'+Date.now()+Math.random().toString(36).slice(2,6)});
     showToast('放好啦：'+TOYS[key].name);
   });
 });
@@ -400,25 +479,28 @@ document.querySelectorAll('.modal .tab').forEach(tab=>{
 let currentShopTab='skins';
 function openShop(tab){currentShopTab=tab||'skins';document.querySelectorAll('.modal .tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===currentShopTab));renderShop(currentShopTab);modal.classList.add('show');}
 function renderShop(tab){
-  document.getElementById('shop-sub').textContent=`当前 · 好感度 ${Math.round(state.stats.affinity)} · 性格 ${persona().name}`;
+  document.getElementById('shop-sub').textContent=`🍬 你有 ${state.treats} 币 · 性格 ${persona().name}（购买匹配性格享 30% 折扣）`;
   const list=document.getElementById('shop-list'); list.innerHTML='';
   if(tab==='skins'){
     SHOP_SKINS.forEach(it=>{
       const s=SKINS[it.key];
       const owned=state.ownedSkins.has(it.key);
-      const meets=state.stats.affinity>=it.aff&&(!it.per||it.per===state.personality);
-      const st=owned?'owned':(meets?'available':'locked');
-      const req=[]; if(it.aff>0)req.push(`好感度 ≥ ${it.aff}`); if(it.per)req.push(`性格 = ${PERSONALITIES[it.per].name}`); if(req.length===0)req.push('永久拥有');
-      const el=document.createElement('div');el.className='shop-item '+st;
+      const price = priceFor(it);
+      const canBuy = state.treats >= price;
+      const st = owned ? 'owned' : (canBuy ? 'available' : 'locked');
+      const req = it.cost === 0 ? '永久拥有' :
+                  (`💰 ${price} 🍬` + (it.bonusPer===state.personality?` (原价 ${it.cost} · 已减)`:''));
+      const el=document.createElement('div'); el.className='shop-item '+st;
       el.innerHTML=`
         <div class="top"><div class="swatch" style="background:${s.body}"></div><div class="nm">${s.name}</div></div>
-        <div class="desc">${it.desc}</div><div class="req">${req.join(' · ')}</div>
-        <button class="btn-mini">${owned?'已拥有 · 试穿':(meets?'解锁':'未解锁')}</button>`;
+        <div class="desc">${it.desc}</div><div class="req">${req}</div>
+        <button class="btn-mini">${owned?'已拥有 · 试穿':(canBuy?'购买':'币不够')}</button>`;
       el.querySelector('button').onclick=()=>{
         if(owned){setSkin(it.key);modal.classList.remove('show');return;}
-        if(!meets)return;
+        if(!canBuy)return;
+        if(!spend(price))return;
         state.ownedSkins.add(it.key); setSkin(it.key); renderShop('skins'); renderSkinGrid();
-        showToast('🎉 解锁了 '+s.name);
+        showToast('🎉 解锁 '+s.name+' (-'+price+' 🍬)');
       };
       list.appendChild(el);
     });
@@ -426,19 +508,23 @@ function renderShop(tab){
     TOY_ORDER.forEach(key=>{
       const t=TOYS[key];
       const owned=state.ownedToys.has(key);
-      const meets=state.stats.affinity>=t.aff&&(!t.per||t.per===state.personality);
-      const st=owned?'owned':(meets?'available':'locked');
-      const req=[]; if(t.aff>0)req.push(`好感度 ≥ ${t.aff}`); if(t.per)req.push(`性格 = ${PERSONALITIES[t.per].name}`); if(req.length===0)req.push('免费入手');
-      const el=document.createElement('div');el.className='shop-item '+st;
+      const price = priceFor(t);
+      const canBuy = state.treats >= price;
+      const st = owned ? 'owned' : (canBuy ? 'available' : 'locked');
+      const req = `💰 ${price} 🍬` + (t.bonusPer===state.personality?` (性格已减)`:'')
+                + (t.durability>0 ? ` · 耐久 ${t.durability} 次` : ' · 永久')
+                + ` · 冷却 ${t.cooldown_s}s`;
+      const el=document.createElement('div'); el.className='shop-item '+st;
       el.innerHTML=`
         <div class="top"><div class="em">${t.em}</div><div class="nm">${t.name}</div></div>
-        <div class="desc">${t.desc}</div><div class="req">${req.join(' · ')}</div>
-        <button class="btn-mini">${owned?'已拥有':(meets?'入手':'未解锁')}</button>`;
+        <div class="desc">${t.desc}</div><div class="req">${req}</div>
+        <button class="btn-mini">${owned?'已拥有':(canBuy?'购买':'币不够')}</button>`;
       el.querySelector('button').onclick=()=>{
-        if(owned){modal.classList.remove('show');showToast('从右侧「玩具」面板拖到桌面即可 ↓');return;}
-        if(!meets)return;
+        if(owned){modal.classList.remove('show');showToast('从右侧「玩具」拖到桌面即可');return;}
+        if(!canBuy)return;
+        if(!spend(price))return;
         state.ownedToys.add(key); renderShop('toys'); renderToyTray();
-        showToast('🎉 入手了 '+t.name+' · 从「玩具」面板拖到桌面');
+        showToast('🎉 入手 '+t.name+' (-'+price+' 🍬) · 拖到桌面');
       };
       list.appendChild(el);
     });
@@ -495,6 +581,31 @@ function drawToyOnCanvas(ctx,t,i){
   // swing animation: if pet is playing swing here, draw the pet swinging
   ctx.fillText(T.em, t.x+TOY/2, t.y+TOY/2);
   ctx.restore();
+  // overlays: cooldown remaining & durability left
+  const now=performance.now();
+  const cdUntil = t.uid ? state.toyCd[t.uid] : 0;
+  if(cdUntil && cdUntil > now){
+    const s = Math.ceil((cdUntil-now)/1000);
+    ctx.save();
+    ctx.font='11px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillStyle='rgba(28,28,30,.75)';
+    const label='⏳'+s+'s';
+    const w=ctx.measureText(label).width+8;
+    ctx.fillRect(t.x+TOY/2-w/2, t.y+TOY-2, w, 15);
+    ctx.fillStyle='#fff';
+    ctx.fillText(label, t.x+TOY/2, t.y+TOY);
+    ctx.restore();
+  }
+  if(T.durability>0){
+    const left = (t.uid && state.toyUses[t.uid]!=null) ? state.toyUses[t.uid] : T.durability;
+    ctx.save();
+    ctx.font='10px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillStyle='rgba(255,45,85,.85)';
+    ctx.fillText('❤️'+left, t.x+2, t.y-4);
+    ctx.restore();
+  }
 }
 function drawEntity(ctx,e){ctx.font=(WASTE*0.85)+'px "Apple Color Emoji"';ctx.textBaseline='middle';ctx.textAlign='center';ctx.fillText(e.glyph,e.x+WASTE/2,e.y+WASTE/2);}
 function drawBubble(ctx,text,cx,cy){ctx.save();ctx.font='13px -apple-system,"PingFang SC"';const w=ctx.measureText(text).width+16,h=22,x=cx-w/2,y=cy-h-8,r=10;ctx.fillStyle='rgba(28,28,30,.92)';ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+w/2+5,y+h);ctx.lineTo(x+w/2,y+h+6);ctx.lineTo(x+w/2-5,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,cx,y+h/2);ctx.restore();}
@@ -592,8 +703,10 @@ function pickNext(){
 }
 function nearestToy(){
   let best=-1,bd=1e18;
+  const now=performance.now();
   state.placedToys.forEach((t,i)=>{
     if(t.screen!==state.pet.screen)return;
+    if(t.uid && state.toyCd[t.uid] && state.toyCd[t.uid] > now) return; // skip on cooldown
     const d=(t.x-state.pet.x)**2+(t.y-state.pet.y)**2;
     if(d<bd){bd=d;best=i;}
   });
@@ -683,6 +796,26 @@ function tick(dtMs){
       if(performance.now() > p.until){
         state.stats.mood = clamp(state.stats.mood + T.mood);
         state.stats.affinity = clamp(state.stats.affinity + T.aff_gain);
+        // cooldown
+        if(!t.uid) t.uid='t'+Date.now()+Math.random().toString(36).slice(2,6);
+        state.toyCd[t.uid] = performance.now() + (T.cooldown_s||0)*1000;
+        // durability
+        let broken=false;
+        if(T.durability>0){
+          state.toyUses[t.uid] = (state.toyUses[t.uid]||T.durability) - 1;
+          if(state.toyUses[t.uid] <= 0){
+            broken=true;
+            // remove placed toy (placedToys is a flat array across screens)
+            const rmIdx = state.placedToys.indexOf(t);
+            if(rmIdx>=0) state.placedToys.splice(rmIdx,1);
+            showToast('玩具用坏了：'+(T.label||T.name));
+            delete state.toyUses[t.uid];
+            delete state.toyCd[t.uid];
+          }
+        }
+        // rewards & stats
+        bumpWeekly('toyPlays');
+        earn(1,'玩具好玩');
         renderShop(currentShopTab);
         p.behaviour='idle'; p.playToyIdx=-1; p.rot=0;
         p.until=performance.now()+rand(1500,3500);
@@ -765,7 +898,30 @@ setInterval(()=>{for(let s=0;s<SCREENS.length;s++){state.entities[s]=state.entit
 
 // ===== Feed =====
 function feed(){const glyphs=['🍪','🍔','🍎','🍣','🥕'];const g=glyphs[Math.floor(Math.random()*glyphs.length)];let scr,x,y;const bowl=furnitureXY('bowl');if(bowl){scr=bowl.screen;x=bowl.x+FURN/2-WASTE/2;y=bowl.y+FURN/2-WASTE/2;}else{scr=state.pet.screen;x=Math.random()*(SW(scr)-WASTE);y=SH(scr)-WASTE-FLOOR_MARGIN;}state.entities[scr].push({kind:'food',x,y,glyph:g});state.pet.screen=scr;state.pet.target=x;state.pet.behaviour='walk';state.pet.until=performance.now()+12000;showToast('丢了 '+g+(bowl?' → 食盆':''));}
-setInterval(()=>{for(let s=0;s<SCREENS.length;s++){for(let i=state.entities[s].length-1;i>=0;i--){const e=state.entities[s][i];if(e.kind!=='food'||state.pet.screen!==s)continue;if(Math.abs(e.x+WASTE/2-(state.pet.x+PET/2))<PET*0.55){state.entities[s].splice(i,1);const boost=30*(persona().name==='干饭王'?1.1:1);state.stats.hunger=clamp(state.stats.hunger+boost);state.stats.mood=clamp(state.stats.mood+5);state.stats.affinity=clamp(state.stats.affinity+2);state.pet.target=null;state.pet.behaviour='idle';if(persona().name==='干饭王') bubble('干！',1500);showToast('好吃！+5心情 +2好感');renderShop(currentShopTab);}}}},250);
+setInterval(()=>{
+  const p=state.pet;
+  // find nearest food on any screen; if hungry, interrupt sleep/play/idle to eat
+  for(let s=0;s<SCREENS.length;s++){
+    for(let i=state.entities[s].length-1;i>=0;i--){
+      const e=state.entities[s][i]; if(e.kind!=='food') continue;
+      // ensure pet is heading there
+      if(p.screen===s && Math.abs(e.x+WASTE/2-(p.x+PET/2))<PET*0.7 && Math.abs(e.y+WASTE/2-(p.y+PET/2))<PET*0.9){
+        state.entities[s].splice(i,1);
+        const boost=30*(persona().name==='干饭王'?1.1:1);
+        state.stats.hunger=clamp(state.stats.hunger+boost);
+        state.stats.mood=clamp(state.stats.mood+5);
+        state.stats.affinity=clamp(state.stats.affinity+2);
+        p.target=null; p.behaviour='idle'; p.until=performance.now()+1500;
+        earn(3,'好吃！'); bumpWeekly('feeds');
+        renderShop(currentShopTab); continue;
+      }
+      // interrupt & path towards food if hungry, or just close
+      if((state.stats.hunger<45 || Math.random()<0.3) && !['drag','work'].includes(p.behaviour)){
+        p.screen=s; p.target=e.x; p.behaviour='walk'; p.until=performance.now()+15000; p.playToyIdx=-1;
+      }
+    }
+  }
+},350);
 
 // ===== Interaction =====
 function canvasPos(e,c){const r=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
@@ -799,7 +955,7 @@ SCREENS.forEach((canvas,scr)=>{
     }
     // click on entity
     const hit=hitEntity(pos,scr);
-    if(hit){const e2=hit.entity;if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);showToast('清理完成 +10 卫生');renderShop(currentShopTab);}return;}
+    if(hit){const e2=hit.entity;if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('poop');earn(1,'清理');showToast('清理完成 +10 卫生');renderShop(currentShopTab);}return;}
     // otherwise: if a laser toy exists on this screen → set laser point
     const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
     if(hasLaser){
@@ -824,11 +980,12 @@ window.addEventListener('mouseup',()=>{
   if(state.pet.behaviour==='drag'){
     if(Math.abs(state.pet.vx)<1&&Math.abs(state.pet.vy)<1){
       if(Math.random()<persona().rejectPet){state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('哼！',1200);showToast('傲娇拒绝了摸头');}
-      else{state.stats.mood=clamp(state.stats.mood+3);state.stats.affinity=clamp(state.stats.affinity+1);showToast('摸头成功 +3 心情');renderShop(currentShopTab);}
+      else{state.stats.mood=clamp(state.stats.mood+3);state.stats.affinity=clamp(state.stats.affinity+1);bumpWeekly('pats');earn(2,'摸头');showToast('摸头成功 +3 心情');renderShop(currentShopTab);}
       state.pet.behaviour='idle';
     } else {
       state.pet.angVel=state.pet.vx*3;
       state.pet.behaviour=state.gravity?'fall':'float';
+      bumpWeekly('throws');
       // in weightless mode, auto-stand after a moment
       if(!state.gravity){
         setTimeout(()=>{
@@ -875,7 +1032,7 @@ function pomoLine(){return `今日 ${state.pomo.today} · 累计 ${state.pomo.to
 function startPomodoro(){rollDay();state.pomo.running=true;state.pomo.startedAt=performance.now();showToast('🍅 番茄钟开始（演示：45s = 25min）');document.getElementById('btn-pomo').textContent='🍅 取消番茄';document.getElementById('btn-pomo').onclick=cancelPomodoro;}
 function cancelPomodoro(){state.pomo.running=false;state.pomo.startedAt=0;document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;showToast('番茄钟已取消');}
 const POMO_DURATION_MS=45*1000;
-function tickPomodoro(){if(!state.pomo.running)return;if(performance.now()-state.pomo.startedAt>=POMO_DURATION_MS){rollDay();if(state.pomo.today===0)state.pomo.streak+=1;state.pomo.today+=1;state.pomo.total+=1;state.pomo.running=false;state.pomo.startedAt=0;savePomo();document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;popReminder(true);state.stats.mood=clamp(state.stats.mood+4);state.stats.affinity=clamp(state.stats.affinity+0.5);renderShop(currentShopTab);}}
+function tickPomodoro(){if(!state.pomo.running)return;if(performance.now()-state.pomo.startedAt>=POMO_DURATION_MS){rollDay();if(state.pomo.today===0)state.pomo.streak+=1;state.pomo.today+=1;state.pomo.total+=1;state.pomo.running=false;state.pomo.startedAt=0;savePomo();document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;popReminder(true);state.stats.mood=clamp(state.stats.mood+4);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('pomodoro');earn(5,'一颗🍅');renderShop(currentShopTab);}}
 function popReminder(fromPomo=false){notifMsg.textContent=fromPomo?'一颗番茄完成啦！休息 5 分钟 ☕️':REMIND[Math.floor(Math.random()*REMIND.length)];notifStats.textContent='🍅 '+pomoLine();notif.classList.add('show');clearTimeout(popReminder._t);popReminder._t=setTimeout(()=>notif.classList.remove('show'),25000);}
 document.getElementById('n-dismiss').onclick=()=>notif.classList.remove('show');
 document.getElementById('n-snooze').onclick=()=>{notif.classList.remove('show');setTimeout(popReminder,20000);};
@@ -897,6 +1054,8 @@ function loop(t){const dt=Math.min(64,t-last);last=t;tick(dt);maybePoop(t);maybe
 requestAnimationFrame(loop);
 
 setPersonality('extrovert'); renderSkinGrid(); renderToyTray(); refreshBars(); refreshCornerButtons();
+updateTreatsBadge();
+maybeShowWeeklyReport();
 setTimeout(()=>showToast('欢迎 v0.5 · 甩两下扔飞它会自己站直 · 累了会自己坐/躺/睡'),400);
 })();
 </script>
