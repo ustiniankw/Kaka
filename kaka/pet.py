@@ -24,6 +24,11 @@ class Behaviour(Enum):
     DRAGGING = auto()
     EATING = auto()
     WORKING = auto()
+    SITTING = auto()
+    LYING = auto()
+    SLEEPING = auto()
+    STANDING_UP = auto()   # brief rotation snap-back after landing
+    PLAY_TOY = auto()
 
 
 class Pet(QLabel):

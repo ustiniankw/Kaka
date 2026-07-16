@@ -20,34 +20,32 @@ html,body{margin:0;background:var(--sys-bg);color:var(--label);font-family:var(-
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
 .stage-card{background:var(--sys-surface);border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow-2);border:1px solid var(--sys-separator)}
 .stage-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--sys-separator);min-height:40px;gap:8px;flex-wrap:wrap}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sys-fill);font-size:12px;color:var(--label-secondary)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sys-fill);font-size:12px;color:var(--label-secondary);cursor:pointer}
 .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
-.badge.warn .dot{background:var(--orange)}
 .badge.pink .dot{background:var(--pink)}
 .stage-header .name-line{font-size:14px;font-weight:600}
 .stage-header .name-line .quirk{color:var(--label-secondary);font-weight:400;margin-left:6px}
 .monitors{padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--sys-bg)}
 .monitor{position:relative;background:var(--sys-surface);border-radius:10px;border:1px solid var(--sys-separator);overflow:hidden}
 .monitor .mtag{position:absolute;top:8px;left:10px;font-size:11px;color:var(--label-tertiary);z-index:2;pointer-events:none}
-canvas.stage{display:block;width:100%;height:230px;cursor:pointer}
-.toast{position:absolute;top:60px;left:50%;transform:translate(-50%,-8px);background:rgba(28,28,30,.92);color:#fff;font-size:13px;font-weight:500;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;backdrop-filter:blur(20px);pointer-events:none;z-index:5}
+canvas.stage{display:block;width:100%;height:240px;cursor:pointer;touch-action:none}
+.toast{position:absolute;top:60px;left:50%;transform:translate(-50%,-8px);background:rgba(28,28,30,.92);color:#fff;font-size:13px;font-weight:500;padding:8px 14px;border-radius:999px;opacity:0;transition:.25s;backdrop-filter:blur(20px);pointer-events:none;z-index:5}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .section-title{padding:8px 16px 6px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--label-secondary);font-weight:500;display:flex;justify-content:space-between;align-items:center}
-.section-title a{color:var(--tint);text-decoration:none;font-size:12px;text-transform:none;letter-spacing:0}
+.section-title a{color:var(--tint);text-decoration:none;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer}
 .list-group{background:var(--sys-surface);border-radius:var(--radius-card);overflow:hidden;border:1px solid var(--sys-separator);margin-bottom:16px}
 .row{display:flex;align-items:center;padding:12px 16px;border-top:1px solid var(--sys-separator);min-height:44px}
 .row:first-child{border-top:0}
 .row .icon{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:16px;margin-right:12px;flex-shrink:0}
 .icon.blue{background:var(--tint)}.icon.green{background:var(--green)}.icon.orange{background:var(--orange)}.icon.pink{background:var(--pink)}.icon.purple{background:var(--purple)}.icon.gray{background:var(--gray)}.icon.yellow{background:var(--yellow);color:#000}.icon.red{background:var(--red)}
 .row .label{flex:1;font-size:15px}
-.row .value{font-size:14px;color:var(--label-secondary)}
 .switch{position:relative;width:51px;height:31px;flex-shrink:0}
 .switch input{opacity:0;width:0;height:0}
 .switch .slider{position:absolute;inset:0;background:var(--sys-fill);border-radius:999px;transition:background .2s}
 .switch .slider::before{content:"";position:absolute;height:27px;width:27px;left:2px;top:2px;background:white;border-radius:50%;box-shadow:0 3px 8px rgba(0,0,0,.15);transition:transform .2s}
 .switch input:checked+.slider{background:var(--green)}
 .switch input:checked+.slider::before{transform:translateX(20px)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px 18px;background:var(--tint);color:#fff;font-weight:600;font-size:16px;border-radius:var(--radius-btn);border:0;cursor:pointer;transition:background .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px 18px;background:var(--tint);color:#fff;font-weight:600;font-size:16px;border-radius:var(--radius-btn);border:0;cursor:pointer;transition:.15s}
 .btn:active{background:var(--tint-tap)}
 .btn.secondary{background:var(--sys-fill);color:var(--tint)}
 .btn.destructive{background:var(--sys-fill);color:var(--red)}
@@ -58,10 +56,9 @@ canvas.stage{display:block;width:100%;height:230px;cursor:pointer}
 .pers-tile .em{font-size:22px;line-height:1}.pers-tile .nm{font-size:12px;font-weight:500}
 .pers-flavor{padding:4px 16px 14px;font-size:12px;color:var(--label-secondary);line-height:1.5}
 .bar-row{display:flex;align-items:center;padding:10px 16px;border-top:1px solid var(--sys-separator);gap:12px}
-.bar-row:first-child{border-top:0}
-.bar-row .bar-label{width:60px;font-size:14px}
+.bar-row:first-child{border-top:0}.bar-row .bar-label{width:60px;font-size:14px}
 .bar-row .bar{flex:1;height:6px;background:var(--sys-fill);border-radius:999px;overflow:hidden}
-.bar-row .bar>i{display:block;height:100%;border-radius:999px;background:var(--tint);transition:width .3s}
+.bar-row .bar>i{display:block;height:100%;border-radius:999px;background:var(--tint);transition:.3s}
 .bar-row .bar.mood>i{background:var(--pink)}.bar-row .bar.hygiene>i{background:var(--green)}.bar-row .bar.affinity>i{background:var(--orange)}
 .bar-row .bar-value{width:42px;text-align:right;font-size:13px;color:var(--label-secondary);font-variant-numeric:tabular-nums}
 .hint{padding:10px 16px 14px;font-size:12px;color:var(--label-secondary)}
@@ -77,19 +74,21 @@ footer a{color:var(--tint);text-decoration:none}
 .notif button{background:#F2F2F7;color:var(--tint);border:0;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;cursor:pointer}
 .notif button.p{background:var(--tint);color:#fff}
 @media (prefers-color-scheme:dark){.notif{background:rgba(28,28,30,.98);color:#fff}.notif .m{color:#bbb}.notif .stats{color:#999}.notif button{background:#3A3A3C;color:#0A84FF}}
-/* Modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal.show{display:flex}
-.modal .card{background:var(--sys-surface);border-radius:16px;padding:0;max-width:520px;width:100%;max-height:88vh;overflow:auto;box-shadow:var(--shadow-2)}
-.modal .card h3{margin:0;padding:16px 20px 8px;font-size:18px}
+.modal .card{background:var(--sys-surface);border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;box-shadow:var(--shadow-2)}
+.modal .card h3{margin:0;padding:16px 20px 4px;font-size:18px}
 .modal .card .sub{padding:0 20px 8px;font-size:13px;color:var(--label-secondary)}
-.modal .card .close{padding:14px 20px;text-align:right}
+.modal .tabs{display:flex;gap:6px;padding:0 20px;border-bottom:1px solid var(--sys-separator);margin-bottom:8px}
+.modal .tab{padding:10px 14px;font-size:14px;font-weight:600;color:var(--label-secondary);border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px}
+.modal .tab.active{color:var(--tint);border-bottom-color:var(--tint)}
+.modal .card .close{padding:8px 20px 16px;text-align:right}
 .shop-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 20px 12px}
 .shop-item{background:var(--sys-fill);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;border:2px solid transparent;transition:.15s}
-.shop-item .swatch{width:32px;height:32px;border-radius:50%;border:2px solid rgba(0,0,0,.06)}
 .shop-item .top{display:flex;align-items:center;gap:8px}
+.shop-item .top .em{font-size:22px}
 .shop-item .top .nm{font-weight:600;font-size:14px}
-.shop-item .top .em{margin-left:auto}
+.shop-item .top .swatch{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,.06)}
 .shop-item .desc{font-size:12px;color:var(--label-secondary);line-height:1.4;min-height:32px}
 .shop-item .req{font-size:11px;color:var(--label-secondary)}
 .shop-item.owned{border-color:var(--green)}
@@ -98,14 +97,20 @@ footer a{color:var(--tint);text-decoration:none}
 .shop-item .btn-mini{margin-top:6px;padding:6px 8px;border:0;background:var(--tint);color:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
 .shop-item.owned .btn-mini{background:var(--green)}
 .shop-item.locked .btn-mini{background:var(--gray);cursor:not-allowed}
-/* Room placement */
 .room-panel{padding:12px 16px 4px}
-.room-grid{display:grid;grid-template-columns:80px 1fr 1fr 1fr 1fr;gap:6px;font-size:12px;align-items:center}
+.room-grid{display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:6px;font-size:12px;align-items:center}
 .room-grid .h{color:var(--label-secondary);text-transform:uppercase;letter-spacing:.4px;font-size:11px}
 .room-grid select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--sys-separator);background:var(--sys-surface);color:var(--label);font-size:13px}
 .room-grid .cornerbox{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;height:44px}
 .room-grid .cornerbox button{border:1px solid var(--sys-separator);background:var(--sys-fill);border-radius:5px;font-size:11px;cursor:pointer;padding:0}
 .room-grid .cornerbox button.on{background:var(--tint);color:#fff;border-color:var(--tint)}
+/* Tray of owned toys ready to drop */
+.tray{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px}
+.tray .toy-chip{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;background:var(--sys-fill);border-radius:10px;cursor:grab;min-width:70px;user-select:none;font-size:11px;border:2px solid transparent}
+.tray .toy-chip:active{cursor:grabbing;border-color:var(--tint)}
+.tray .toy-chip .em{font-size:22px}
+.tray .toy-chip .nm{color:var(--label-secondary)}
+.tray-empty{padding:12px 16px 16px;font-size:12px;color:var(--label-secondary)}
 </style>
 </head>
 <body>
@@ -113,7 +118,7 @@ footer a{color:var(--tint);text-decoration:none}
 <div class="navbar">
   <div>
     <div class="title">🐾 Kaka</div>
-    <div class="subtitle">桌面摸鱼搭子 · v0.4 · Web 试玩版</div>
+    <div class="subtitle">桌面摸鱼搭子 · v0.5 · Web 试玩版</div>
   </div>
   <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">GitHub ›</a>
 </div>
@@ -136,7 +141,7 @@ footer a{color:var(--tint);text-decoration:none}
       <div class="monitor"><div class="mtag">Screen 1 · 主屏</div><canvas class="stage" id="s0"></canvas></div>
       <div class="monitor"><div class="mtag">Screen 2 · 副屏</div><canvas class="stage" id="s1"></canvas></div>
     </div>
-    <div class="toast" id="toast">欢迎来到 Kaka</div>
+    <div class="toast" id="toast">欢迎 v0.5</div>
     <div class="notif" id="notif">
       <div class="t">🐾 Kaka 提醒</div>
       <div class="m" id="notif-msg">已经 25 分钟啦，起来喝口水～</div>
@@ -155,74 +160,52 @@ footer a{color:var(--tint);text-decoration:none}
       <div class="pers-flavor" id="pers-flavor"></div>
     </div>
 
-    <div class="section-title"><span>皮肤</span><a href="#" id="open-shop">打开商店 ›</a></div>
+    <div class="section-title"><span>皮肤</span><a id="open-shop-skins">打开商店 ›</a></div>
     <div class="list-group">
       <div class="pers-grid" id="skin-grid"></div>
+    </div>
+
+    <div class="section-title"><span>玩具</span><a id="open-shop-toys">去买玩具 ›</a></div>
+    <div class="list-group">
+      <div id="toy-tray"></div>
+      <div class="hint" style="padding-top:0">从上方**拖起玩具**丢到画面里任意位置 · 单击已放置的玩具可**移除**</div>
     </div>
 
     <div class="section-title">屋子</div>
     <div class="list-group">
       <div class="room-panel">
         <div class="room-grid">
-          <div class="h">家具</div><div class="h">屏幕</div><div class="h" style="grid-column:span 2">角落 (TL/TR/BL/BR)</div><div class="h">操作</div>
+          <div class="h">家具</div><div class="h">屏幕</div><div class="h">角落 (TL/TR/BL/BR)</div><div class="h">操作</div>
           <div>🛏 窝</div>
           <select data-kind="nest" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="nest">
-            <button data-c="tl">↖</button><button data-c="tr">↗</button>
-            <button data-c="bl">↙</button><button data-c="br">↘</button>
-          </div>
-          <div></div>
+          <div class="cornerbox" data-kind="nest"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
           <button class="btn secondary" data-remove="nest" style="padding:6px 8px;font-size:12px">清除</button>
-
           <div>🍚 食盆</div>
           <select data-kind="bowl" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="bowl">
-            <button data-c="tl">↖</button><button data-c="tr">↗</button>
-            <button data-c="bl">↙</button><button data-c="br">↘</button>
-          </div>
-          <div></div>
+          <div class="cornerbox" data-kind="bowl"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
           <button class="btn secondary" data-remove="bowl" style="padding:6px 8px;font-size:12px">清除</button>
-
           <div>🚽 便盆</div>
           <select data-kind="litter" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
-          <div class="cornerbox" data-kind="litter">
-            <button data-c="tl">↖</button><button data-c="tr">↗</button>
-            <button data-c="bl">↙</button><button data-c="br">↘</button>
-          </div>
-          <div></div>
+          <div class="cornerbox" data-kind="litter"><button data-c="tl">↖</button><button data-c="tr">↗</button><button data-c="bl">↙</button><button data-c="br">↘</button></div>
           <button class="btn secondary" data-remove="litter" style="padding:6px 8px;font-size:12px">清除</button>
         </div>
-        <div class="hint" style="padding-left:0;padding-right:0">摆好便盆后 Kaka 会走到便盆再拉，卫生下降更少 · 摸头会去窝里眯眼 · 喂食会先掉进食盆</div>
       </div>
     </div>
 
     <div class="section-title">控制</div>
     <div class="list-group">
-      <div class="row"><div class="icon green">🌍</div><div class="label">重力</div>
-        <label class="switch"><input type="checkbox" id="tg-gravity" checked /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon gray">👀</div><div class="label">显示 Kaka</div>
-        <label class="switch"><input type="checkbox" id="tg-visible" checked /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon purple">💼</div><div class="label">代打工模式</div>
-        <label class="switch"><input type="checkbox" id="tg-work" /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon pink">👋</div><div class="label">好友互访（模拟）</div>
-        <label class="switch"><input type="checkbox" id="tg-friend" /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon orange">🎤</div><div class="label">强制周五唱歌（Demo）</div>
-        <label class="switch"><input type="checkbox" id="tg-sing" /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon yellow">💃</div><div class="label">强制发薪日跳舞（Demo）</div>
-        <label class="switch"><input type="checkbox" id="tg-dance" /><span class="slider"></span></label></div>
-      <div class="row"><div class="icon blue">📅</div><div class="label">发薪日日期</div>
+      <div class="row"><div class="icon green">🌍</div><div class="label">重力</div><label class="switch"><input type="checkbox" id="tg-gravity" checked /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon blue">🧘</div><div class="label">爱休息（更多躺/坐/睡）</div><label class="switch"><input type="checkbox" id="tg-rest" checked /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon gray">👀</div><div class="label">显示 Kaka</div><label class="switch"><input type="checkbox" id="tg-visible" checked /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon purple">💼</div><div class="label">代打工模式</div><label class="switch"><input type="checkbox" id="tg-work" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon pink">👋</div><div class="label">好友互访</div><label class="switch"><input type="checkbox" id="tg-friend" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon orange">🎤</div><div class="label">强制周五唱歌</div><label class="switch"><input type="checkbox" id="tg-sing" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon yellow">💃</div><div class="label">强制发薪日跳舞</div><label class="switch"><input type="checkbox" id="tg-dance" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon blue">📅</div><div class="label">发薪日</div>
         <select id="payday-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--sys-separator);background:var(--sys-surface);color:var(--label);font-size:14px"></select></div>
-      <div class="btn-row">
-        <button class="btn" id="btn-feed">🍪 喂食</button>
-        <button class="btn secondary" id="btn-poop">💩 立刻拉</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn secondary" id="btn-remind">⏱ 测试提醒</button>
-        <button class="btn secondary" id="btn-pomo">🍅 开始番茄</button>
-      </div>
-      <div class="btn-row" style="grid-template-columns:1fr">
-        <button class="btn destructive" id="btn-reset">重置</button>
-      </div>
+      <div class="btn-row"><button class="btn" id="btn-feed">🍪 喂食</button><button class="btn secondary" id="btn-poop">💩 立刻拉</button></div>
+      <div class="btn-row"><button class="btn secondary" id="btn-remind">⏱ 测试提醒</button><button class="btn secondary" id="btn-pomo">🍅 开始番茄</button></div>
+      <div class="btn-row" style="grid-template-columns:1fr"><button class="btn destructive" id="btn-reset">重置</button></div>
     </div>
 
     <div class="section-title">状态</div>
@@ -231,21 +214,24 @@ footer a{color:var(--tint);text-decoration:none}
       <div class="bar-row"><div class="icon pink">😊</div><div class="bar-label">心情</div><div class="bar mood"><i id="bar-mood"></i></div><div class="bar-value" id="val-mood">0</div></div>
       <div class="bar-row"><div class="icon green">🧼</div><div class="bar-label">卫生</div><div class="bar hygiene"><i id="bar-hygiene"></i></div><div class="bar-value" id="val-hygiene">0</div></div>
       <div class="bar-row"><div class="icon orange">💛</div><div class="bar-label">好感度</div><div class="bar affinity"><i id="bar-affinity"></i></div><div class="bar-value" id="val-affinity">0</div></div>
-      <div class="bar-row"><div class="icon red">🍅</div><div class="bar-label">番茄</div>
-        <div style="flex:1;font-size:13px;color:var(--label-secondary)" id="pomo-line">今日已完成 0 · 累计 0 · 连续 0 天</div></div>
+      <div class="bar-row"><div class="icon red">🍅</div><div class="bar-label">番茄</div><div style="flex:1;font-size:13px;color:var(--label-secondary)" id="pomo-line">今日 0 · 累计 0 · 连续 0 天</div></div>
     </div>
 
-    <div class="hint">点 Kaka <b>摸头</b> · 拖动 <b>扔飞</b>（旋转+回弹） · 单击地上物 <b>清理</b><br>桌面版全局老板键：<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd></div>
+    <div class="hint">拖动 Kaka <b>扔飞</b>（旋转+回弹） · 松手后它会**自己站直** · 累了会自动**坐/躺/睡** · 玩具从"玩具"面板拖到桌面任意位置</div>
   </aside>
 </div>
 <footer>Made with ❤️ · <a href="https://github.com/ustiniankw/Kaka">github.com/ustiniankw/Kaka</a></footer>
 </div>
 
-<!-- Shop Modal -->
+<!-- Shop Modal (skins + toys tabs) -->
 <div class="modal" id="shop-modal">
   <div class="card">
-    <h3>🛍 皮肤商店</h3>
-    <div class="sub" id="shop-sub">好感度越高、性格越对得上，能解锁的皮肤越多</div>
+    <h3>🛍 商店</h3>
+    <div class="sub" id="shop-sub">好感度越高、性格越对得上，能解锁的物品越多</div>
+    <div class="tabs">
+      <div class="tab active" data-tab="skins">🎨 皮肤</div>
+      <div class="tab" data-tab="toys">🧸 玩具</div>
+    </div>
     <div class="shop-list" id="shop-list"></div>
     <div class="close"><button class="btn secondary" id="shop-close" style="width:auto;padding:8px 18px">关闭</button></div>
   </div>
@@ -253,28 +239,42 @@ footer a{color:var(--tint);text-decoration:none}
 
 <script>
 (() => {
-// ===== Skins =====
+// ===== Data =====
 const SKINS = {
-  default:{body:'#F5C542',dark:'#C08A18',cheek:'#F58A8A',eye:'#222',white:'#fff',name:'原味',em:'🟡'},
-  mochi:  {body:'#F7C0D3',dark:'#C77F97',cheek:'#FFF0B0',eye:'#3A2036',white:'#fff',name:'麻薯',em:'🌸'},
-  matcha: {body:'#A6C97E',dark:'#6D8C4F',cheek:'#F5C4D0',eye:'#2A3A1A',white:'#F5FFEA',name:'抹茶',em:'🍵'},
-  berry:  {body:'#8C6BE8',dark:'#5E43B0',cheek:'#FFC1E0',eye:'#1D1132',white:'#fff',name:'莓紫',em:'🫐'},
-  cocoa:  {body:'#8A5A3B',dark:'#5B3720',cheek:'#F5B6A3',eye:'#20120A',white:'#FFF3E8',name:'可可',em:'🍫'},
-  sakura: {body:'#FFD7E2',dark:'#D793A6',cheek:'#FFFFFF',eye:'#3A1A28',white:'#FFFDFB',name:'樱雪',em:'🌸'},
-  cyber:  {body:'#7A3CFF',dark:'#3B1670',cheek:'#12F5C6',eye:'#F8F8F8',white:'#00E0FF',name:'赛博',em:'🤖'},
+  default:{body:'#F5C542',dark:'#C08A18',cheek:'#F58A8A',eye:'#222',white:'#fff',name:'原味'},
+  mochi:  {body:'#F7C0D3',dark:'#C77F97',cheek:'#FFF0B0',eye:'#3A2036',white:'#fff',name:'麻薯'},
+  matcha: {body:'#A6C97E',dark:'#6D8C4F',cheek:'#F5C4D0',eye:'#2A3A1A',white:'#F5FFEA',name:'抹茶'},
+  berry:  {body:'#8C6BE8',dark:'#5E43B0',cheek:'#FFC1E0',eye:'#1D1132',white:'#fff',name:'莓紫'},
+  cocoa:  {body:'#8A5A3B',dark:'#5B3720',cheek:'#F5B6A3',eye:'#20120A',white:'#FFF3E8',name:'可可'},
+  sakura: {body:'#FFD7E2',dark:'#D793A6',cheek:'#FFFFFF',eye:'#3A1A28',white:'#FFFDFB',name:'樱雪'},
+  cyber:  {body:'#7A3CFF',dark:'#3B1670',cheek:'#12F5C6',eye:'#F8F8F8',white:'#00E0FF',name:'赛博'},
 };
-const SHOP = [
-  {key:'default',aff:0, per:null,        desc:'刚认识时候的样子，永久拥有'},
-  {key:'mochi',  aff:25,per:null,        desc:'圆滚滚粉粉的 Q 弹皮肤'},
-  {key:'matcha', aff:40,per:null,        desc:'带一点苦涩的成熟绿'},
-  {key:'berry',  aff:55,per:'tsundere',  desc:'傲娇专属，微微高冷'},
-  {key:'cocoa',  aff:70,per:'foodie',    desc:'干饭王专属，吃出来的巧克力色'},
-  {key:'sakura', aff:85,per:'introvert', desc:'社恐专属，柔粉带雪白'},
-  {key:'cyber',  aff:90,per:'extrovert', desc:'社牛专属，霓虹紫电'},
+const SHOP_SKINS = [
+  {key:'default',aff:0, per:null, desc:'刚认识时候的样子，永久拥有'},
+  {key:'mochi',  aff:25,per:null, desc:'圆滚滚粉粉的 Q 弹皮肤'},
+  {key:'matcha', aff:40,per:null, desc:'带一点苦涩的成熟绿'},
+  {key:'berry',  aff:55,per:'tsundere', desc:'傲娇专属'},
+  {key:'cocoa',  aff:70,per:'foodie', desc:'干饭王专属'},
+  {key:'sakura', aff:85,per:'introvert', desc:'社恐专属'},
+  {key:'cyber',  aff:90,per:'extrovert', desc:'社牛专属'},
 ];
-let skinKey = 'default';
+// Toy shop
+const TOYS = {
+  cardboard:  {em:'📦',name:'瓦楞纸箱',aff:10,per:null,        desc:'永恒的浪漫。看到就想钻',              action:'tunnel', mood:4.0, aff_gain:0.6},
+  ball:       {em:'🧶',name:'毛线球',  aff:15,per:null,        desc:'扑一扑抓一抓，最基础的猫式快乐',      action:'ball',   mood:3.5, aff_gain:0.4},
+  swing:      {em:'🪄',name:'秋千',    aff:20,per:null,        desc:'咯吱咯吱的荡秋千，Kaka 会蹲上去自动摇',action:'swing', mood:5.0, aff_gain:0.6},
+  laser:      {em:'🔴',name:'激光笔',  aff:25,per:null,        desc:'点哪追哪，你的手指就是它的宿敌',      action:'laser',  mood:5.5, aff_gain:0.8},
+  scratcher:  {em:'🪵',name:'抓板',    aff:30,per:null,        desc:'磨爪子解压',                          action:'scratch',mood:4.0, aff_gain:0.5},
+  tunnel:     {em:'🕳',name:'钻洞',    aff:35,per:'introvert', desc:'社恐限定，钻进去就假装不在',          action:'tunnel', mood:6.5, aff_gain:0.9},
+  teddy:      {em:'🧸',name:'小熊玩偶',aff:40,per:null,        desc:'抱着睡觉的软软朋友',                  action:'cuddle', mood:5.5, aff_gain:1.0},
+  wheel:      {em:'🛞',name:'跑轮',    aff:45,per:null,        desc:'空转选手的最爱',                      action:'wheel',  mood:6.0, aff_gain:0.7},
+  hammock:    {em:'🛌',name:'吊床',    aff:50,per:'lazy',      desc:'懒鬼限定，一躺就是三小时',            action:'cuddle', mood:7.0, aff_gain:1.1},
+  cat_tree:   {em:'🌳',name:'猫爬架',  aff:55,per:null,        desc:'顶上有个小平台，爬上去俯瞰',          action:'climb',  mood:5.0, aff_gain:0.6},
+  zen_stone:  {em:'🪨',name:'禅意石',  aff:60,per:null,        desc:'坐下来打坐冥想 · 心情大幅回升',        action:'zen',    mood:8.0, aff_gain:0.5},
+  gaming_pad: {em:'🎮',name:'游戏手柄',aff:65,per:'chatty',    desc:'话痨专属，一边玩一边解说',            action:'ball',   mood:6.0, aff_gain:0.9},
+};
+const TOY_ORDER = ['cardboard','ball','swing','laser','scratcher','tunnel','teddy','wheel','hammock','cat_tree','zen_stone','gaming_pad'];
 
-// ===== Personalities =====
 const PERSONALITIES = {
   introvert:{emoji:'🫥',name:'社恐',walkSpeed:.75,walkProb:.30,poopFreq:1.0,hungerDecay:.9,moodDecay:1.1,rejectPet:0,bubble:0,flavor:'喜欢待在墙角'},
   chatty:   {emoji:'🗣️',name:'话痨',walkSpeed:1.1,walkProb:.60,poopFreq:1.0,hungerDecay:1.0,moodDecay:.9,rejectPet:0,bubble:.35,flavor:'总有话想说'},
@@ -285,333 +285,449 @@ const PERSONALITIES = {
   extrovert:{emoji:'🥳',name:'社牛',walkSpeed:1.4,walkProb:.75,poopFreq:1.0,hungerDecay:1.1,moodDecay:.8,rejectPet:0,bubble:.15,flavor:'满屏跑'},
 };
 
-// ===== Canvas / world =====
-const SCREENS = ['s0','s1'].map(id => document.getElementById(id));
-const CTXES = SCREENS.map(c => c.getContext('2d'));
+// ===== Canvas =====
+const SCREENS=['s0','s1'].map(id=>document.getElementById(id));
+const CTXES=SCREENS.map(c=>c.getContext('2d'));
 function resizeAll(){const dpr=window.devicePixelRatio||1;SCREENS.forEach((c,i)=>{const r=c.getBoundingClientRect();c.width=r.width*dpr;c.height=r.height*dpr;CTXES[i].setTransform(dpr,0,0,dpr,0,0);});}
-window.addEventListener('resize',resizeAll); resizeAll();
+window.addEventListener('resize',resizeAll);resizeAll();
 
-const PET=80, WASTE=28, FURN=40, FLOOR_MARGIN=6;
-const SW=i=>SCREENS[i].clientWidth, SH=i=>SCREENS[i].clientHeight;
+const PET=80,WASTE=28,FURN=40,TOY=44,FLOOR_MARGIN=6;
+const SW=i=>SCREENS[i].clientWidth,SH=i=>SCREENS[i].clientHeight;
 
 const state = {
   personality:'extrovert',
-  ownedSkins: new Set(['default']),
-  paydayDay: 15,
-  forceSing:false, forceDance:false,
-  pomo:{ total: parseInt(localStorage.getItem('kaka_pomo_total')||'0'),
-         today: parseInt(localStorage.getItem('kaka_pomo_today')||'0'),
-         todayDate: localStorage.getItem('kaka_pomo_date')||'',
-         streak: parseInt(localStorage.getItem('kaka_pomo_streak')||'0'),
+  ownedSkins:new Set(['default']),
+  ownedToys:new Set(['cardboard']),   // free starter
+  placedToys:[],  // {key, screen, x, y}
+  paydayDay:15, forceSing:false, forceDance:false,
+  loveRest:true,
+  pomo:{ total:parseInt(localStorage.getItem('kaka_pomo_total')||'0'),
+         today:parseInt(localStorage.getItem('kaka_pomo_today')||'0'),
+         todayDate:localStorage.getItem('kaka_pomo_date')||'',
+         streak:parseInt(localStorage.getItem('kaka_pomo_streak')||'0'),
          running:false, startedAt:0 },
-  room:{ nest:null, bowl:null, litter:null },  // each: {screen, corner}
+  room:{nest:null,bowl:null,litter:null},
   friend:null,
-  pet:{ screen:0, x:SW(0)*.7, y:0, vx:0, vy:0, rot:0, angVel:0, facing:1,
-        behaviour:'idle', until:0, floatPhase:Math.random()*Math.PI*2,
-        target:null, targetKind:null, visible:true,
-        bubbleUntil:0, bubbleText:'' },
-  work:{ active:false, kbScreen:0, kbX:0, kbY:0, glyphIdx:0 },
-  event:null,  // 'sing' | 'dance' | null
-  eventNextAt:0,
+  pet:{screen:0,x:SW(0)*.7,y:0,vx:0,vy:0,rot:0,angVel:0,facing:1,
+       behaviour:'idle',until:0,floatPhase:Math.random()*Math.PI*2,
+       target:null,targetKind:null,visible:true,
+       bubbleUntil:0,bubbleText:'',
+       playToyIdx:-1, playPhase:0},
+  work:{active:false,kbScreen:0,kbX:0,kbY:0,glyphIdx:0},
+  event:null,eventNextAt:0,
   gravity:true,
   entities:[[],[]],
-  stats:{ hunger:60, mood:65, hygiene:85, affinity:15 },
-  dragOffset:null, lastDragT:0, lastDragX:0, lastDragY:0, dragScreen:0,
+  stats:{hunger:60,mood:65,hygiene:85,affinity:15},
+  dragOffset:null,lastDragT:0,lastDragX:0,lastDragY:0,dragScreen:0,
+  laserPos:null,   // {screen, x, y, until} for laser toy
 };
-state.pet.y = SH(0) - PET - FLOOR_MARGIN;
+state.pet.y=SH(0)-PET-FLOOR_MARGIN;
 rollDay();
 
-function rand(a,b){return a+Math.random()*(b-a)}
-function clamp(v,lo=0,hi=100){return Math.max(lo,Math.min(hi,v))}
-const persona = ()=>PERSONALITIES[state.personality];
-const skin    = ()=>SKINS[skinKey];
+const rand=(a,b)=>a+Math.random()*(b-a);
+const clamp=(v,lo=0,hi=100)=>Math.max(lo,Math.min(hi,v));
+const persona=()=>PERSONALITIES[state.personality];
+const skin=()=>SKINS[skinKey];
+let skinKey='default';
 
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2000);}
 
-// ===== Personality UI =====
-const pGrid = document.getElementById('pers-grid');
+// ===== UI: personality =====
+const pGrid=document.getElementById('pers-grid');
 Object.keys(PERSONALITIES).forEach(k=>{const p=PERSONALITIES[k];const el=document.createElement('div');el.className='pers-tile';el.dataset.key=k;el.innerHTML=`<div class="em">${p.emoji}</div><div class="nm">${p.name}</div>`;el.onclick=()=>setPersonality(k);pGrid.appendChild(el);});
-function setPersonality(k){state.personality=k;document.getElementById('header-emoji').textContent=persona().emoji;document.getElementById('header-quirk').textContent='· '+persona().name;document.getElementById('pers-flavor').textContent=persona().flavor;document.querySelectorAll('.pers-tile').forEach(el=>el.classList.toggle('active',el.dataset.key===k));renderSkinGrid();renderShop();scheduleNextPoop();scheduleNextBubble();showToast(persona().emoji+' '+persona().name);}
+function setPersonality(k){state.personality=k;document.getElementById('header-emoji').textContent=persona().emoji;document.getElementById('header-quirk').textContent='· '+persona().name;document.getElementById('pers-flavor').textContent=persona().flavor;document.querySelectorAll('.pers-tile').forEach(el=>el.classList.toggle('active',el.dataset.key===k));renderSkinGrid();renderToyTray();renderShop();scheduleNextPoop();scheduleNextBubble();showToast(persona().emoji+' '+persona().name);}
 
-// ===== Skin Grid (only owned) =====
-const sGrid = document.getElementById('skin-grid');
+// ===== UI: skins grid (only owned) =====
+const sGrid=document.getElementById('skin-grid');
 function renderSkinGrid(){
-  sGrid.innerHTML = '';
-  const owned = [...state.ownedSkins];
-  owned.forEach(k=>{
-    const s = SKINS[k]; if (!s) return;
-    const el = document.createElement('div');
+  sGrid.innerHTML='';
+  [...state.ownedSkins].forEach(k=>{
+    const s=SKINS[k]; if(!s) return;
+    const el=document.createElement('div');
     el.className='pers-tile'+(k===skinKey?' active':'');
-    el.innerHTML = `<div class="em" style="width:26px;height:26px;border-radius:50%;background:${s.body};border:2px solid rgba(0,0,0,.06)"></div><div class="nm">${s.name}</div>`;
-    el.onclick = ()=>setSkin(k);
-    sGrid.appendChild(el);
+    el.innerHTML=`<div class="em" style="width:26px;height:26px;border-radius:50%;background:${s.body};border:2px solid rgba(0,0,0,.06)"></div><div class="nm">${s.name}</div>`;
+    el.onclick=()=>setSkin(k); sGrid.appendChild(el);
   });
-  // + shop shortcut tile
-  const el = document.createElement('div');
-  el.className='pers-tile';
-  el.innerHTML = `<div class="em">🛍</div><div class="nm">商店</div>`;
-  el.onclick = ()=>openShop();
-  sGrid.appendChild(el);
+  const el=document.createElement('div');el.className='pers-tile';
+  el.innerHTML=`<div class="em">🛍</div><div class="nm">商店</div>`;
+  el.onclick=()=>openShop('skins'); sGrid.appendChild(el);
 }
-function setSkin(k){if(!state.ownedSkins.has(k)){openShop();return;}skinKey=k;renderSkinGrid();showToast('皮肤：'+SKINS[k].name);}
+function setSkin(k){if(!state.ownedSkins.has(k)){openShop('skins');return;}skinKey=k;renderSkinGrid();showToast('皮肤：'+SKINS[k].name);}
 
-// ===== Shop Modal =====
-const modal = document.getElementById('shop-modal');
-document.getElementById('open-shop').onclick=(e)=>{e.preventDefault();openShop();};
-document.getElementById('badge-shop').onclick=openShop;
-document.getElementById('shop-close').onclick=()=>modal.classList.remove('show');
-function openShop(){renderShop();modal.classList.add('show');}
-function renderShop(){
-  document.getElementById('shop-sub').textContent =
-    `当前 · 好感度 ${Math.round(state.stats.affinity)} · 性格 ${persona().name}`;
-  const list = document.getElementById('shop-list'); list.innerHTML='';
-  SHOP.forEach(it=>{
-    const s = SKINS[it.key];
-    const owned = state.ownedSkins.has(it.key);
-    const meets = state.stats.affinity >= it.aff && (!it.per || it.per === state.personality);
-    const st = owned ? 'owned' : (meets ? 'available' : 'locked');
-    const el = document.createElement('div'); el.className='shop-item '+st;
-    const reqBits = [];
-    if (it.aff>0) reqBits.push(`好感度 ≥ ${it.aff}`);
-    if (it.per) reqBits.push(`性格 = ${PERSONALITIES[it.per].name}`);
-    if (reqBits.length===0) reqBits.push('永久拥有');
-    el.innerHTML = `
-      <div class="top">
-        <div class="swatch" style="background:${s.body}"></div>
-        <div class="nm">${s.name} <span style="color:var(--label-secondary);font-weight:400">${s.em}</span></div>
-      </div>
-      <div class="desc">${it.desc}</div>
-      <div class="req">${reqBits.join(' · ')}</div>
-      <button class="btn-mini">${owned?'已拥有 · 试穿':(meets?'解锁':'未解锁')}</button>
-    `;
-    el.querySelector('button').onclick = ()=>{
-      if (owned) { setSkin(it.key); modal.classList.remove('show'); return; }
-      if (!meets) return;
-      state.ownedSkins.add(it.key);
-      setSkin(it.key);
-      renderShop(); renderSkinGrid();
-      showToast('🎉 解锁了 ' + s.name);
-    };
-    list.appendChild(el);
+// ===== UI: toy tray + drag-to-place =====
+const tray=document.getElementById('toy-tray');
+function renderToyTray(){
+  tray.innerHTML='';
+  const owned=[...state.ownedToys];
+  if(owned.length===0){
+    tray.innerHTML='<div class="tray-empty">还没有玩具，去商店买一个先 🛍</div>'; return;
+  }
+  const inner=document.createElement('div'); inner.className='tray';
+  owned.forEach(k=>{
+    const t=TOYS[k]; if(!t) return;
+    const chip=document.createElement('div');
+    chip.className='toy-chip'; chip.draggable=true; chip.dataset.key=k;
+    chip.innerHTML=`<div class="em">${t.em}</div><div class="nm">${t.name}</div>`;
+    chip.addEventListener('dragstart',(e)=>{e.dataTransfer.setData('text/plain','toy:'+k);e.dataTransfer.effectAllowed='copy';});
+    inner.appendChild(chip);
   });
+  tray.appendChild(inner);
+}
+SCREENS.forEach((canvas,scr)=>{
+  canvas.addEventListener('dragover',(e)=>{e.preventDefault();e.dataTransfer.dropEffect='copy';});
+  canvas.addEventListener('drop',(e)=>{
+    e.preventDefault();
+    const raw=e.dataTransfer.getData('text/plain');
+    if(!raw.startsWith('toy:')) return;
+    const key=raw.slice(4); if(!TOYS[key]) return;
+    const r=canvas.getBoundingClientRect();
+    const x=Math.max(0,Math.min(SW(scr)-TOY,e.clientX-r.left-TOY/2));
+    const y=Math.max(0,Math.min(SH(scr)-TOY,e.clientY-r.top-TOY/2));
+    state.placedToys.push({key,screen:scr,x,y});
+    showToast('放好啦：'+TOYS[key].name);
+  });
+});
+
+// ===== Shop modal =====
+const modal=document.getElementById('shop-modal');
+document.getElementById('badge-shop').onclick=()=>openShop('skins');
+document.getElementById('open-shop-skins').onclick=(e)=>{e.preventDefault();openShop('skins');};
+document.getElementById('open-shop-toys').onclick=(e)=>{e.preventDefault();openShop('toys');};
+document.getElementById('shop-close').onclick=()=>modal.classList.remove('show');
+document.querySelectorAll('.modal .tab').forEach(tab=>{
+  tab.onclick=()=>{document.querySelectorAll('.modal .tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');renderShop(tab.dataset.tab);};
+});
+let currentShopTab='skins';
+function openShop(tab){currentShopTab=tab||'skins';document.querySelectorAll('.modal .tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===currentShopTab));renderShop(currentShopTab);modal.classList.add('show');}
+function renderShop(tab){
+  document.getElementById('shop-sub').textContent=`当前 · 好感度 ${Math.round(state.stats.affinity)} · 性格 ${persona().name}`;
+  const list=document.getElementById('shop-list'); list.innerHTML='';
+  if(tab==='skins'){
+    SHOP_SKINS.forEach(it=>{
+      const s=SKINS[it.key];
+      const owned=state.ownedSkins.has(it.key);
+      const meets=state.stats.affinity>=it.aff&&(!it.per||it.per===state.personality);
+      const st=owned?'owned':(meets?'available':'locked');
+      const req=[]; if(it.aff>0)req.push(`好感度 ≥ ${it.aff}`); if(it.per)req.push(`性格 = ${PERSONALITIES[it.per].name}`); if(req.length===0)req.push('永久拥有');
+      const el=document.createElement('div');el.className='shop-item '+st;
+      el.innerHTML=`
+        <div class="top"><div class="swatch" style="background:${s.body}"></div><div class="nm">${s.name}</div></div>
+        <div class="desc">${it.desc}</div><div class="req">${req.join(' · ')}</div>
+        <button class="btn-mini">${owned?'已拥有 · 试穿':(meets?'解锁':'未解锁')}</button>`;
+      el.querySelector('button').onclick=()=>{
+        if(owned){setSkin(it.key);modal.classList.remove('show');return;}
+        if(!meets)return;
+        state.ownedSkins.add(it.key); setSkin(it.key); renderShop('skins'); renderSkinGrid();
+        showToast('🎉 解锁了 '+s.name);
+      };
+      list.appendChild(el);
+    });
+  } else {
+    TOY_ORDER.forEach(key=>{
+      const t=TOYS[key];
+      const owned=state.ownedToys.has(key);
+      const meets=state.stats.affinity>=t.aff&&(!t.per||t.per===state.personality);
+      const st=owned?'owned':(meets?'available':'locked');
+      const req=[]; if(t.aff>0)req.push(`好感度 ≥ ${t.aff}`); if(t.per)req.push(`性格 = ${PERSONALITIES[t.per].name}`); if(req.length===0)req.push('免费入手');
+      const el=document.createElement('div');el.className='shop-item '+st;
+      el.innerHTML=`
+        <div class="top"><div class="em">${t.em}</div><div class="nm">${t.name}</div></div>
+        <div class="desc">${t.desc}</div><div class="req">${req.join(' · ')}</div>
+        <button class="btn-mini">${owned?'已拥有':(meets?'入手':'未解锁')}</button>`;
+      el.querySelector('button').onclick=()=>{
+        if(owned){modal.classList.remove('show');showToast('从右侧「玩具」面板拖到桌面即可 ↓');return;}
+        if(!meets)return;
+        state.ownedToys.add(key); renderShop('toys'); renderToyTray();
+        showToast('🎉 入手了 '+t.name+' · 从「玩具」面板拖到桌面');
+      };
+      list.appendChild(el);
+    });
+  }
 }
 
 // ===== Room UI =====
-function refreshCornerButtons(){
-  document.querySelectorAll('.cornerbox').forEach(box=>{
-    const kind = box.dataset.kind;
-    const cur = state.room[kind];
-    box.querySelectorAll('button').forEach(b=>{
-      b.classList.toggle('on', !!cur && cur.corner === b.dataset.c &&
-        parseInt(box.parentElement.querySelector(`select[data-kind="${kind}"]`).value) === cur.screen);
-    });
-  });
-}
-document.querySelectorAll('.cornerbox').forEach(box=>{
-  const kind = box.dataset.kind;
-  box.querySelectorAll('button').forEach(b=>{
-    b.onclick = ()=>{
-      const scr = parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);
-      state.room[kind] = { screen: scr, corner: b.dataset.c };
-      refreshCornerButtons();
-      showToast('📦 已放置：' + ({nest:'🛏 窝',bowl:'🍚 食盆',litter:'🚽 便盆'}[kind]));
-    };
-  });
-});
+function refreshCornerButtons(){document.querySelectorAll('.cornerbox').forEach(box=>{const kind=box.dataset.kind;const cur=state.room[kind];box.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',!!cur&&cur.corner===b.dataset.c&&parseInt(box.parentElement.querySelector(`select[data-kind="${kind}"]`).value)===cur.screen);});});}
+document.querySelectorAll('.cornerbox').forEach(box=>{const kind=box.dataset.kind;box.querySelectorAll('button').forEach(b=>{b.onclick=()=>{const scr=parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);state.room[kind]={screen:scr,corner:b.dataset.c};refreshCornerButtons();showToast('📦 已放置');};});});
 document.querySelectorAll('select[data-kind]').forEach(sel=>{sel.onchange=refreshCornerButtons;});
 document.querySelectorAll('[data-remove]').forEach(b=>{b.onclick=()=>{state.room[b.dataset.remove]=null;refreshCornerButtons();showToast('已清除 '+b.dataset.remove);};});
-function furnitureXY(kind){
-  const f = state.room[kind]; if (!f) return null;
-  const w = SW(f.screen), h = SH(f.screen);
-  const m = 12;
-  const x = f.corner.endsWith('l') ? m : w - FURN - m;
-  const y = f.corner.startsWith('t') ? m : h - FURN - m - 4;
-  return { screen: f.screen, x, y };
-}
+function furnitureXY(kind){const f=state.room[kind];if(!f)return null;const w=SW(f.screen),h=SH(f.screen),m=12;const x=f.corner.endsWith('l')?m:w-FURN-m;const y=f.corner.startsWith('t')?m:h-FURN-m-4;return{screen:f.screen,x,y};}
 
 // ===== Payday select =====
-const paydaySel = document.getElementById('payday-select');
-for (let d=1; d<=28; d++){const o=document.createElement('option');o.value=d;o.textContent=`每月 ${d} 号`;if(d===15)o.selected=true;paydaySel.appendChild(o);}
+const paydaySel=document.getElementById('payday-select');
+for(let d=1;d<=28;d++){const o=document.createElement('option');o.value=d;o.textContent=`${d} 号`;if(d===15)o.selected=true;paydaySel.appendChild(o);}
 paydaySel.onchange=()=>{state.paydayDay=parseInt(paydaySel.value);showToast('发薪日：每月 '+state.paydayDay+' 号');};
 
 // ===== Sprite draw =====
 function drawPet(ctx,x,y,mood,flip,rot){
   const g=16,size=PET,c=size/g;
-  ctx.save(); ctx.translate(x+size/2,y+size/2); if(rot)ctx.rotate(rot*Math.PI/180);
-  if(flip)ctx.scale(-1,1); ctx.translate(-size/2,-size/2); ctx.imageSmoothingEnabled=false;
+  ctx.save();ctx.translate(x+size/2,y+size/2);if(rot)ctx.rotate(rot*Math.PI/180);
+  if(flip)ctx.scale(-1,1);
+  // pose transform for sit/lay
+  if(mood==='sit'){ctx.translate(0,size*0.10);ctx.scale(1,0.9);}
+  else if(mood==='lay'||mood==='sleep_ground'){ctx.rotate(Math.PI/2*(flip?-1:1));ctx.scale(1,0.85);}
+  ctx.translate(-size/2,-size/2);ctx.imageSmoothingEnabled=false;
   const R=(px,py,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(px*c,py*c,w*c,h*c);};
   const S=skin();
-  R(4,3,8,1,S.body); R(3,4,10,1,S.body); R(2,5,12,6,S.body);
-  R(3,11,10,1,S.body); R(4,12,8,1,S.body); R(4,13,3,1,S.body); R(9,13,3,1,S.body);
-  R(3,10,10,1,S.dark); R(4,11,8,1,S.dark);
+  R(4,3,8,1,S.body);R(3,4,10,1,S.body);R(2,5,12,6,S.body);
+  R(3,11,10,1,S.body);R(4,12,8,1,S.body);R(4,13,3,1,S.body);R(9,13,3,1,S.body);
+  R(3,10,10,1,S.dark);R(4,11,8,1,S.dark);
+  const eyesClosed = (mood==='sleep'||mood==='sleep_ground'||mood==='work'||mood==='sit'||mood==='lay'||mood==='zen');
   if(mood==='wink'||mood==='sing'||mood==='dance'){R(5,6,2,2,S.white);R(6,7,1,1,S.eye);R(9,7,2,1,S.eye);}
   else if(mood==='angry'){R(4,5,2,1,S.eye);R(10,5,2,1,S.eye);R(5,7,2,1,S.eye);R(9,7,2,1,S.eye);}
-  else if(mood==='work'||mood==='sleep'){R(5,7,2,1,S.eye);R(9,7,2,1,S.eye);}
+  else if(eyesClosed){R(5,7,2,1,S.eye);R(9,7,2,1,S.eye);}
   else{R(5,6,2,2,S.white);R(9,6,2,2,S.white);R(6,7,1,1,S.eye);R(10,7,1,1,S.eye);}
-  R(4,9,1,1,S.cheek); R(11,9,1,1,S.cheek);
+  R(4,9,1,1,S.cheek);R(11,9,1,1,S.cheek);
   if(mood==='sad'){R(6,9,1,1,S.eye);R(9,9,1,1,S.eye);R(7,10,2,1,S.eye);}
   else if(mood==='hungry'){R(7,9,2,2,S.eye);}
   else if(mood==='sing'){R(7,9,2,3,S.eye);}
   else{R(7,10,2,1,S.eye);}
   ctx.restore();
   // extras
-  if(mood==='sing'){ ctx.font='18px "Apple Color Emoji","Segoe UI Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🎤', x + size - 6, y + size - 12);}
-  if(mood==='sleep'){ ctx.font='16px "Apple Color Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('💤', x + size + 2, y - 2);}
+  if(mood==='sing'){ctx.font='18px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🎤',x+size-6,y+size-12);}
+  if(mood==='sleep'||mood==='sleep_ground'){ctx.font='16px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💤',x+size+2,y-2);}
+  if(mood==='zen'){ctx.font='16px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧘',x+size/2,y-6);}
 }
-function drawFurniture(ctx, kind, x, y){
-  const em = kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';
-  ctx.font = (FURN*0.85)+'px "Apple Color Emoji","Segoe UI Emoji"';
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.save(); ctx.globalAlpha=0.9;
-  ctx.fillText(em, x + FURN/2, y + FURN/2);
+function drawFurniture(ctx,kind,x,y){const em=kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';ctx.font=(FURN*0.85)+'px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.save();ctx.globalAlpha=.9;ctx.fillText(em,x+FURN/2,y+FURN/2);ctx.restore();}
+function drawToyOnCanvas(ctx,t,i){
+  const T=TOYS[t.key]; if(!T) return;
+  ctx.font=(TOY*0.9)+'px "Apple Color Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.save();
+  // swing animation: if pet is playing swing here, draw the pet swinging
+  ctx.fillText(T.em, t.x+TOY/2, t.y+TOY/2);
   ctx.restore();
 }
-function drawEntity(ctx,e){ctx.font=(WASTE*0.85)+'px "Apple Color Emoji","Segoe UI Emoji"';ctx.textBaseline='middle';ctx.textAlign='center';ctx.fillText(e.glyph,e.x+WASTE/2,e.y+WASTE/2);}
-function drawBubble(ctx,text,cx,cy){
-  ctx.save(); ctx.font='13px -apple-system,"PingFang SC"';
-  const w=ctx.measureText(text).width+16,h=22,x=cx-w/2,y=cy-h-8,r=10;
-  ctx.fillStyle='rgba(28,28,30,.92)';
-  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+w/2+5,y+h);ctx.lineTo(x+w/2,y+h+6);ctx.lineTo(x+w/2-5,y+h);
-  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fill();
-  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(text,cx,y+h/2); ctx.restore();
-}
+function drawEntity(ctx,e){ctx.font=(WASTE*0.85)+'px "Apple Color Emoji"';ctx.textBaseline='middle';ctx.textAlign='center';ctx.fillText(e.glyph,e.x+WASTE/2,e.y+WASTE/2);}
+function drawBubble(ctx,text,cx,cy){ctx.save();ctx.font='13px -apple-system,"PingFang SC"';const w=ctx.measureText(text).width+16,h=22,x=cx-w/2,y=cy-h-8,r=10;ctx.fillStyle='rgba(28,28,30,.92)';ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+w/2+5,y+h);ctx.lineTo(x+w/2,y+h+6);ctx.lineTo(x+w/2-5,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fill();ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,cx,y+h/2);ctx.restore();}
 function drawScene(){
   for(let i=0;i<SCREENS.length;i++){
-    const ctx=CTXES[i];
-    ctx.clearRect(0,0,SW(i),SH(i));
-    // floor
+    const ctx=CTXES[i]; ctx.clearRect(0,0,SW(i),SH(i));
     const fy=SH(i)-FLOOR_MARGIN;
-    ctx.strokeStyle='rgba(60,60,67,.10)';ctx.setLineDash([4,8]);
-    ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(SW(i),fy);ctx.stroke();ctx.setLineDash([]);
-    // furniture
-    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p && p.screen===i) drawFurniture(ctx,k,p.x,p.y);});
-    // keyboard prop
-    if(state.work.active && state.work.kbScreen===i){
-      ctx.font='26px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText('⌨️',state.work.kbX+PET/2,state.work.kbY+PET/2+4);
+    ctx.strokeStyle='rgba(60,60,67,.10)';ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(SW(i),fy);ctx.stroke();ctx.setLineDash([]);
+    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p&&p.screen===i)drawFurniture(ctx,k,p.x,p.y);});
+    // placed toys
+    state.placedToys.forEach((t,idx)=>{if(t.screen===i)drawToyOnCanvas(ctx,t,idx);});
+    // laser dot
+    if(state.laserPos && state.laserPos.screen===i && performance.now()<state.laserPos.until){
+      ctx.fillStyle='rgba(255,45,85,.85)'; ctx.beginPath(); ctx.arc(state.laserPos.x,state.laserPos.y,5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,45,85,.35)'; ctx.beginPath(); ctx.arc(state.laserPos.x,state.laserPos.y,10,0,Math.PI*2); ctx.stroke();
     }
-    // entities
+    if(state.work.active&&state.work.kbScreen===i){ctx.font='26px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('⌨️',state.work.kbX+PET/2,state.work.kbY+PET/2+4);}
     state.entities[i].forEach(e=>drawEntity(ctx,e));
-    // friend
-    if(state.friend && state.friend.screen===i){ctx.save();ctx.globalAlpha=0.85;drawPet(ctx,state.friend.x,state.friend.y,'happy',state.friend.vx<0,0);ctx.restore();drawBubble(ctx,'👋',state.friend.x+PET/2,state.friend.y);}
-    // event overlays: dance sparks
-    if(state.event==='dance' && state.pet.screen===i){
-      const t=performance.now()/120;
-      for(let k=0;k<4;k++){const ang=t+k*1.57;ctx.font='16px "Apple Color Emoji"';ctx.fillText('✨', state.pet.x+PET/2+Math.cos(ang)*45, state.pet.y+PET/2+Math.sin(ang)*25);}
-    }
-    // pet
-    if(state.pet.visible && state.pet.screen===i){
+    if(state.friend&&state.friend.screen===i){ctx.save();ctx.globalAlpha=.85;drawPet(ctx,state.friend.x,state.friend.y,'happy',state.friend.vx<0,0);ctx.restore();drawBubble(ctx,'👋',state.friend.x+PET/2,state.friend.y);}
+    if(state.event==='dance'&&state.pet.screen===i){const t=performance.now()/120;for(let k=0;k<4;k++){const ang=t+k*1.57;ctx.font='16px "Apple Color Emoji"';ctx.fillText('✨',state.pet.x+PET/2+Math.cos(ang)*45,state.pet.y+PET/2+Math.sin(ang)*25);}}
+    if(state.pet.visible&&state.pet.screen===i){
+      // If swinging, draw a "rope" attaching pet to swing
+      if(state.pet.behaviour==='play_toy' && state.pet.playToyIdx>=0){
+        const t=state.placedToys[state.pet.playToyIdx];
+        if(t && t.screen===i && TOYS[t.key].action==='swing'){
+          ctx.strokeStyle='rgba(60,60,67,.35)'; ctx.beginPath();
+          ctx.moveTo(t.x+TOY/2,t.y+2);
+          ctx.lineTo(state.pet.x+PET/2,state.pet.y+8);
+          ctx.stroke();
+        }
+      }
       drawPet(ctx,state.pet.x,state.pet.y,moodLabel(),state.pet.facing<0,state.pet.rot);
       if(performance.now()<state.pet.bubbleUntil) drawBubble(ctx,state.pet.bubbleText,state.pet.x+PET/2,state.pet.y);
-      if(state.work.active && state.work.kbScreen===i && state.pet.behaviour==='work'){
-        const gs=['⌨️','💻','📊','📝','☕️'];
-        drawBubble(ctx,gs[state.work.glyphIdx%gs.length],state.pet.x+PET/2+30,state.pet.y);
-      }
+      if(state.work.active&&state.work.kbScreen===i&&state.pet.behaviour==='work'){const gs=['⌨️','💻','📊','📝','☕️'];drawBubble(ctx,gs[state.work.glyphIdx%gs.length],state.pet.x+PET/2+30,state.pet.y);}
     }
   }
 }
 function moodLabel(){
-  const s=state.stats;
-  if(state.pet.behaviour==='drag') return 'wink';
-  if(state.event==='sing') return 'sing';
-  if(state.event==='dance') return 'wink';
-  if(state.pet.behaviour==='sleep') return 'sleep';
-  if(state.work.active && state.pet.behaviour==='work') return 'work';
-  if(s.hunger<20) return 'hungry';
-  if(s.mood<15) return persona().name==='暴躁'?'angry':'sad';
-  if(s.mood<30) return 'sad';
-  if(s.mood>80) return 'wink';
+  const s=state.stats,p=state.pet;
+  if(p.behaviour==='drag')return 'wink';
+  if(state.event==='sing')return 'sing';
+  if(state.event==='dance')return 'wink';
+  if(p.behaviour==='sit')return 'sit';
+  if(p.behaviour==='lay')return 'lay';
+  if(p.behaviour==='sleep')return 'sleep';
+  if(p.behaviour==='sleep_ground')return 'sleep_ground';
+  if(p.behaviour==='play_toy' && p.playToyIdx>=0){
+    const t=state.placedToys[p.playToyIdx]; if(t){
+      const a=TOYS[t.key].action;
+      if(a==='zen') return 'zen';
+      if(a==='cuddle') return 'sleep';
+      if(a==='tunnel') return 'sleep_ground';
+      if(a==='swing'||a==='ball'||a==='laser'||a==='wheel'||a==='climb') return 'wink';
+      if(a==='scratch') return 'angry';
+    }
+  }
+  if(state.work.active&&p.behaviour==='work')return 'work';
+  if(s.hunger<20)return 'hungry';
+  if(s.mood<15)return persona().name==='暴躁'?'angry':'sad';
+  if(s.mood<30)return 'sad';
+  if(s.mood>80)return 'wink';
   return 'happy';
 }
 function updateHeaderState(){
   const b=state.pet.behaviour;
-  const label = state.event ? state.event : ({idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',toLitter:'走去便盆',sleep:'眯眼中'}[b] || b);
-  document.getElementById('badge-state').textContent = state.pet.visible ? label : 'Hidden';
-  const ev = document.getElementById('badge-event');
-  if (state.event === 'sing') { ev.style.display=''; ev.innerHTML='<span class="dot"></span>🎤 周五 KTV'; }
-  else if (state.event === 'dance') { ev.style.display=''; ev.innerHTML='<span class="dot"></span>💃 发薪日狂欢'; }
+  const label={idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',stand_up:'站直中',sit:'坐着',lay:'躺着',sleep:'睡觉',sleep_ground:'地板小睡',play_toy:'玩玩具',to_furniture:'去指定位置'}[b]||b;
+  document.getElementById('badge-state').textContent=state.pet.visible?(state.event||label):'Hidden';
+  const ev=document.getElementById('badge-event');
+  if(state.event==='sing'){ev.style.display='';ev.innerHTML='<span class="dot"></span>🎤 周五 KTV';}
+  else if(state.event==='dance'){ev.style.display='';ev.innerHTML='<span class="dot"></span>💃 发薪日狂欢';}
   else ev.style.display='none';
 }
 
 // ===== Behaviour =====
 function pickNext(){
-  const p=state.pet;
-  // if mood is low and nest is placed → sleep in nest
-  if(state.stats.mood < 30 && state.room.nest && Math.random() < 0.35){
-    goToFurniture('nest','sleep'); return;
+  const p=state.pet, s=state.stats;
+  // Toy affinity: often go play with a nearby toy
+  if(state.placedToys.length>0 && Math.random()<0.35){
+    const idx=nearestToy();
+    if(idx>=0){
+      goToToy(idx); return;
+    }
   }
-  if(Math.random()<persona().walkProb){
-    p.facing=Math.random()<.5?-1:1; p.behaviour='walk'; p.until=performance.now()+rand(2000,5500);
-  } else { p.behaviour='idle'; p.until=performance.now()+rand(1500,4000); }
+  // Rest states
+  if(state.loveRest){
+    // low mood → sleep in nest
+    if(s.mood<28 && state.room.nest && Math.random()<0.5){goToFurniture('nest','sleep');return;}
+    const r=Math.random();
+    if(r<0.14){ p.behaviour='sit'; p.until=performance.now()+rand(3000,6000); return; }
+    if(r<0.22){ p.behaviour='lay'; p.until=performance.now()+rand(4000,8000); return; }
+    if(r<0.27 && s.mood>40){ p.behaviour='sleep_ground'; p.until=performance.now()+rand(6000,12000); return; }
+  }
+  if(Math.random()<persona().walkProb){p.facing=Math.random()<.5?-1:1;p.behaviour='walk';p.until=performance.now()+rand(2000,5500);}
+  else{p.behaviour='idle';p.until=performance.now()+rand(1500,4000);}
 }
-function goToFurniture(kind, thenBehaviour){
-  const f = furnitureXY(kind); if (!f) return false;
-  const p = state.pet;
-  if (p.screen !== f.screen){ p.screen = f.screen; p.x = f.screen > p.screen ? 4 : SW(f.screen) - PET - 4; }
-  p.target = f.x + FURN/2 - PET/2;
-  p.targetKind = kind + '|' + thenBehaviour;
-  p.behaviour = 'walk';
-  p.until = performance.now() + 15000;
-  return true;
+function nearestToy(){
+  let best=-1,bd=1e18;
+  state.placedToys.forEach((t,i)=>{
+    if(t.screen!==state.pet.screen)return;
+    const d=(t.x-state.pet.x)**2+(t.y-state.pet.y)**2;
+    if(d<bd){bd=d;best=i;}
+  });
+  return best;
+}
+function goToFurniture(kind,thenBehaviour){
+  const f=furnitureXY(kind);if(!f)return false;
+  const p=state.pet;
+  if(p.screen!==f.screen){p.screen=f.screen;p.x=f.screen>p.screen?4:SW(f.screen)-PET-4;}
+  p.target=f.x+FURN/2-PET/2; p.targetKind=kind+'|'+thenBehaviour;
+  p.behaviour='walk'; p.until=performance.now()+15000; return true;
+}
+function goToToy(idx){
+  const t=state.placedToys[idx];if(!t)return false;
+  const p=state.pet;
+  if(p.screen!==t.screen){p.screen=t.screen;p.x=t.screen>p.screen?4:SW(t.screen)-PET-4;}
+  p.target=t.x+TOY/2-PET/2; p.targetKind='toy|'+idx;
+  p.behaviour='walk'; p.until=performance.now()+15000; return true;
+}
+function startPlayToy(idx){
+  const t=state.placedToys[idx]; if(!t) return;
+  const p=state.pet;
+  p.playToyIdx=idx; p.playPhase=0;
+  p.behaviour='play_toy';
+  p.until=performance.now()+rand(6000,10000);
+  const T=TOYS[t.key];
+  const bubbles={swing:'咯吱~',ball:'嗷！',scratch:'磨爪',wheel:'呼呼~',laser:'点点点！',climb:'高高的~',tunnel:'钻进去',cuddle:'抱抱~',zen:'嗯——'};
+  bubble(bubbles[T.action]||'玩！',1600);
 }
 function tick(dtMs){
   const p=state.pet, per=persona(); const dt=dtMs/16.67;
-
-  // Events (sing/dance) — override normal behaviour visually but still walk around
   updateEventState();
 
   if(state.work.active){
     if(p.screen!==state.work.kbScreen){p.screen=state.work.kbScreen;p.x=0;}
     if(Math.abs(p.x-state.work.kbX)>3){p.facing=state.work.kbX>p.x?1:-1;p.x+=p.facing*2.4*dt;p.y=state.gravity?(SH(p.screen)-PET-FLOOR_MARGIN):p.y;p.behaviour='walk';}
     else{p.x=state.work.kbX;p.y=state.work.kbY+Math.sin(performance.now()/60)*1.6;p.behaviour='work';state.work.glyphIdx=Math.floor(performance.now()/700);}
-  } else if(p.behaviour==='sleep'){
-    // stay in nest, boost mood slowly
-    state.stats.mood = clamp(state.stats.mood + 0.05*dt);
-    if (performance.now() > p.until) { p.behaviour='idle'; p.until=performance.now()+2000; }
+  } else if(p.behaviour==='stand_up'){
+    // interpolate rot to 0
+    p.rot *= Math.pow(0.72, dt);
+    if(Math.abs(p.rot)<0.6){p.rot=0; p.behaviour='idle'; p.until=performance.now()+rand(1000,2500);}
+  } else if(p.behaviour==='sleep'||p.behaviour==='sleep_ground'){
+    state.stats.mood=clamp(state.stats.mood+0.05*dt);
+    if(performance.now()>p.until){p.behaviour='idle';p.until=performance.now()+2000;}
+  } else if(p.behaviour==='sit'||p.behaviour==='lay'){
+    state.stats.mood=clamp(state.stats.mood+0.02*dt);
+    if(performance.now()>p.until){p.behaviour='idle';p.until=performance.now()+1500;}
+  } else if(p.behaviour==='play_toy' && p.playToyIdx>=0){
+    const t=state.placedToys[p.playToyIdx];
+    if(!t){p.behaviour='idle';p.playToyIdx=-1;}
+    else {
+      const T=TOYS[t.key];
+      p.playPhase += dtMs/1000;
+      // action-specific movement
+      const cx=t.x+TOY/2, cy=t.y+TOY/2;
+      if(T.action==='swing'){
+        const swing=Math.sin(p.playPhase*2.4)*30;
+        p.x = cx - PET/2 + swing; p.y = cy + 10;
+        p.rot = swing * 0.8; p.facing = swing<0?-1:1;
+      } else if (T.action==='ball'){
+        p.x = cx - PET/2 + Math.sin(p.playPhase*6)*18;
+        p.y = SH(p.screen)-PET-FLOOR_MARGIN - Math.abs(Math.sin(p.playPhase*8))*14;
+        p.facing = Math.sin(p.playPhase*6)>0?1:-1;
+      } else if (T.action==='wheel'){
+        p.x = cx - PET/2; p.y = cy - PET/2 + 6;
+        p.rot = (p.rot + 12*dt) % 360;
+      } else if (T.action==='scratch'){
+        p.x = cx - PET/2 - 6 + Math.sin(p.playPhase*10)*3;
+        p.y = SH(p.screen)-PET-FLOOR_MARGIN;
+      } else if (T.action==='laser'){
+        const target = state.laserPos && state.laserPos.screen===p.screen && performance.now()<state.laserPos.until
+          ? state.laserPos : {x: cx, y: cy};
+        const dx = target.x - (p.x+PET/2), dy = SH(p.screen)-PET-FLOOR_MARGIN - p.y;
+        p.x += Math.sign(dx)*Math.min(Math.abs(dx),4.5*dt);
+        p.y = SH(p.screen)-PET-FLOOR_MARGIN;
+        p.facing = dx>0?1:-1;
+      } else if (T.action==='climb'){
+        p.x = cx - PET/2; p.y = cy - PET*0.6;
+      } else if (T.action==='tunnel'){
+        // hide inside
+        p.x = cx - PET/2; p.y = cy - PET/2 + 8;
+      } else if (T.action==='cuddle'){
+        p.x = cx - PET/2; p.y = cy - PET/2 + 8;
+      } else if (T.action==='zen'){
+        p.x = cx - PET/2; p.y = cy - PET*0.7;
+      }
+      if(performance.now() > p.until){
+        state.stats.mood = clamp(state.stats.mood + T.mood);
+        state.stats.affinity = clamp(state.stats.affinity + T.aff_gain);
+        renderShop(currentShopTab);
+        p.behaviour='idle'; p.playToyIdx=-1; p.rot=0;
+        p.until=performance.now()+rand(1500,3500);
+      }
+    }
   } else if(p.behaviour!=='drag'){
     const sw=SW(p.screen), floorY=SH(p.screen)-PET-FLOOR_MARGIN;
     if(state.gravity){
-      if(p.y<floorY){p.vy=Math.min(22,p.vy+1.2*dt);p.y+=p.vy*dt;p.vx*=Math.pow(.9,dt);p.x+=p.vx*dt;
-        if(p.y>=floorY){p.y=floorY;p.vy=0;if(Math.abs(p.vx)<0.5){p.vx=0;p.angVel=0;p.rot=0;}}
-        p.behaviour=p.y>=floorY?'idle':'fall';
+      if(p.y<floorY){
+        p.vy=Math.min(22,p.vy+1.2*dt); p.y+=p.vy*dt; p.vx*=Math.pow(.9,dt); p.x+=p.vx*dt;
+        if(p.y>=floorY){
+          p.y=floorY; p.vy=0;
+          if(Math.abs(p.vx)<0.5){p.vx=0;}
+          // land → if rotated, stand up
+          if (Math.abs(p.rot) > 3){
+            p.behaviour='stand_up'; p.angVel=0;
+          } else { p.rot=0; p.angVel=0; }
+        }
+        if(p.behaviour!=='stand_up') p.behaviour=p.y>=floorY?'idle':'fall';
       } else if(p.behaviour==='walk'){walkStep(dt);}
-      else{ if(performance.now()>p.until) pickNext(); }
+      else{if(performance.now()>p.until) pickNext();}
     } else {
       if(p.behaviour==='walk'){walkStep(dt);}
       else{p.floatPhase+=(dtMs/2600)*Math.PI*2;const bob=Math.sin(p.floatPhase)*1.5;p.x+=p.vx*dt;p.y+=p.vy*dt+bob;p.vx*=Math.pow(.98,dt);p.vy*=Math.pow(.98,dt);p.behaviour='float';if(performance.now()>p.until)pickNext();}
     }
-    // dance jitter
-    if (state.event === 'dance' && p.behaviour === 'idle') {
-      p.y = floorY - Math.abs(Math.sin(performance.now()/180))*10;
-      p.x += Math.sin(performance.now()/240)*0.6*dt;
+    if(state.event==='dance'&&p.behaviour==='idle'){p.y=floorY-Math.abs(Math.sin(performance.now()/180))*10;p.x+=Math.sin(performance.now()/240)*0.6*dt;}
+    if(p.behaviour!=='stand_up'){
+      p.rot=(p.rot+p.angVel*(dtMs/1000))%360; p.angVel*=0.94;
+      if(Math.abs(p.angVel)<0.5) p.angVel=0;
     }
-    p.rot = (p.rot + p.angVel*(dtMs/1000)) % 360;
-    p.angVel *= 0.94; if (Math.abs(p.angVel) < 0.5) p.angVel = 0;
     p.x=Math.max(0,Math.min(sw-PET,p.x)); p.y=Math.max(0,Math.min(SH(p.screen)-PET,p.y));
   }
 
-  // Friend animation
   if(state.friend){state.friend.x+=state.friend.vx*dt;if(state.friend.x<-PET||state.friend.x>SW(state.friend.screen)+PET)state.friend=null;}
 
-  // stats decay
-  state.stats.hunger  = clamp(state.stats.hunger  - .02*dt*per.hungerDecay);
-  state.stats.mood    = clamp(state.stats.mood    - .005*dt*per.moodDecay);
-  state.stats.hygiene = clamp(state.stats.hygiene - .01*dt);
-  if(state.stats.hunger<20) state.stats.mood = clamp(state.stats.mood - .02*dt);
-
-  // affinity grows slowly with mood
-  if (state.stats.mood > 70) state.stats.affinity = clamp(state.stats.affinity + 0.003*dt);
+  state.stats.hunger=clamp(state.stats.hunger-.02*dt*per.hungerDecay);
+  state.stats.mood=clamp(state.stats.mood-.005*dt*per.moodDecay);
+  state.stats.hygiene=clamp(state.stats.hygiene-.01*dt);
+  if(state.stats.hunger<20) state.stats.mood=clamp(state.stats.mood-.02*dt);
+  if(state.stats.mood>70) state.stats.affinity=clamp(state.stats.affinity+0.003*dt);
 
   refreshBars(); updateHeaderState(); tickPomodoro();
 }
 function walkStep(dt){
-  const p=state.pet, per=persona();
+  const p=state.pet,per=persona();
   const speed=1.6*(0.7+state.stats.mood/150)*per.walkSpeed*dt;
   const sw=SW(p.screen);
   if(p.target!=null){
@@ -619,18 +735,11 @@ function walkStep(dt){
     p.x+=Math.sign(dx)*Math.min(Math.abs(dx),speed);
     if(state.gravity) p.y=SH(p.screen)-PET-FLOOR_MARGIN;
     if(Math.abs(p.target-p.x)<speed){
-      const kind = p.targetKind;
-      p.target=null; p.targetKind=null;
-      if (kind && kind.startsWith('litter|')) {
-        // arrived at litter box → poop civilly (hygiene barely drops)
-        spawnPoopAtLitter();
-        p.behaviour='idle'; p.until=performance.now()+rand(800,1500);
-      } else if (kind && kind.startsWith('nest|')) {
-        p.behaviour='sleep'; p.until=performance.now()+rand(4000,7000);
-        bubble('💤 好舒服...', 2000);
-      } else {
-        p.behaviour='idle'; p.until=performance.now()+rand(1500,3000);
-      }
+      const kind=p.targetKind; p.target=null; p.targetKind=null;
+      if(kind && kind.startsWith('litter|')){spawnPoopAtLitter();p.behaviour='idle';p.until=performance.now()+rand(800,1500);}
+      else if(kind && kind.startsWith('nest|')){p.behaviour='sleep';p.until=performance.now()+rand(4000,7000);bubble('💤 好舒服...',2000);}
+      else if(kind && kind.startsWith('toy|')){const idx=parseInt(kind.split('|')[1]); startPlayToy(idx);}
+      else{p.behaviour='idle';p.until=performance.now()+rand(1500,3000);}
     }
   } else {
     p.x+=p.facing*speed;
@@ -642,114 +751,72 @@ function walkStep(dt){
 }
 function bubble(text,dur=2000){state.pet.bubbleText=text;state.pet.bubbleUntil=performance.now()+dur;}
 
-// ===== Chatty & sing bubbles =====
+// ===== Chatty & poop =====
 const CHATTY=['在吗？','烦了','摸鱼冠军','要吃的','嗨！','午安~'];
 let nextBubbleAt=performance.now()+8000;
 function scheduleNextBubble(){nextBubbleAt=performance.now()+rand(6000,12000);}
-function maybeBubble(now){const bp=persona().bubble; if(bp<=0||now<nextBubbleAt)return; if(Math.random()<bp) bubble(CHATTY[Math.floor(Math.random()*CHATTY.length)],2200); scheduleNextBubble();}
-
-// ===== Poop scheduler (respects litter) =====
+function maybeBubble(now){const bp=persona().bubble;if(bp<=0||now<nextBubbleAt)return;if(Math.random()<bp) bubble(CHATTY[Math.floor(Math.random()*CHATTY.length)],2200);scheduleNextBubble();}
 let nextPoopAt=performance.now()+rand(15000,45000);
 function scheduleNextPoop(){const m=persona().poopFreq;nextPoopAt=performance.now()+rand(15000/Math.max(.5,m),45000/Math.max(.5,m));}
-function maybePoop(now){
-  if(now<nextPoopAt) return;
-  if (state.event === 'sing' || state.event === 'dance') { scheduleNextPoop(); return; } // no pooping while singing/dancing
-  if (state.room.litter && Math.random() < 0.85){
-    // walk to litter box
-    goToFurniture('litter','poop');
-  } else {
-    spawnPoop(false);
-  }
-  scheduleNextPoop();
-}
-function spawnPoop(force=false){
-  const p=state.pet;
-  const isPee=Math.random()<.4; const glyph=isPee?'💦':'💩';
-  const x=p.x+PET/2-WASTE/2;
-  const y=state.gravity?(SH(p.screen)-WASTE-FLOOR_MARGIN):(p.y+PET/2);
-  state.entities[p.screen].push({kind:isPee?'pee':'poop',x,y,glyph});
-  state.stats.hygiene=clamp(state.stats.hygiene-12); state.stats.mood=clamp(state.stats.mood+2);
-  if(force) showToast(isPee?'💦 尿了一泡':'💩 拉了一坨');
-}
-function spawnPoopAtLitter(){
-  const f = furnitureXY('litter'); if (!f) { spawnPoop(false); return; }
-  const isPee = Math.random() < .4; const glyph = isPee ? '💦' : '💩';
-  // waste appears inside the litter box but auto-cleans faster
-  state.entities[f.screen].push({kind:isPee?'pee':'poop', x: f.x+FURN/2-WASTE/2, y: f.y+FURN/2-WASTE/2, glyph, litter:true, until: performance.now()+15000});
-  state.stats.hygiene = clamp(state.stats.hygiene - 3);   // vs -12 on floor
-  state.stats.mood = clamp(state.stats.mood + 2);
-  state.stats.affinity = clamp(state.stats.affinity + 0.3);
-  bubble('🚽 呼~', 1200);
-}
-setInterval(()=>{ // auto-clean litter waste
-  for (let s=0; s<SCREENS.length; s++){
-    state.entities[s] = state.entities[s].filter(e => !(e.litter && performance.now() > e.until));
-  }
-}, 1000);
+function maybePoop(now){if(now<nextPoopAt)return;if(state.event==='sing'||state.event==='dance'||['sleep','sleep_ground','play_toy','sit','lay'].includes(state.pet.behaviour)){scheduleNextPoop();return;}if(state.room.litter&&Math.random()<0.85)goToFurniture('litter','poop');else spawnPoop(false);scheduleNextPoop();}
+function spawnPoop(force=false){const p=state.pet;const isPee=Math.random()<.4;const glyph=isPee?'💦':'💩';const x=p.x+PET/2-WASTE/2;const y=state.gravity?(SH(p.screen)-WASTE-FLOOR_MARGIN):(p.y+PET/2);state.entities[p.screen].push({kind:isPee?'pee':'poop',x,y,glyph});state.stats.hygiene=clamp(state.stats.hygiene-12);state.stats.mood=clamp(state.stats.mood+2);if(force)showToast(isPee?'💦 尿了一泡':'💩 拉了一坨');}
+function spawnPoopAtLitter(){const f=furnitureXY('litter');if(!f){spawnPoop(false);return;}const isPee=Math.random()<.4;const glyph=isPee?'💦':'💩';state.entities[f.screen].push({kind:isPee?'pee':'poop',x:f.x+FURN/2-WASTE/2,y:f.y+FURN/2-WASTE/2,glyph,litter:true,until:performance.now()+15000});state.stats.hygiene=clamp(state.stats.hygiene-3);state.stats.mood=clamp(state.stats.mood+2);state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('🚽 呼~',1200);}
+setInterval(()=>{for(let s=0;s<SCREENS.length;s++){state.entities[s]=state.entities[s].filter(e=>!(e.litter&&performance.now()>e.until));}},1000);
 
-// ===== Feeding (bowl-aware) =====
-function feed(){
-  const glyphs=['🍪','🍔','🍎','🍣','🥕'];
-  const g=glyphs[Math.floor(Math.random()*glyphs.length)];
-  let scr, x, y;
-  const bowl = furnitureXY('bowl');
-  if (bowl){
-    scr = bowl.screen;
-    x = bowl.x + FURN/2 - WASTE/2;
-    y = bowl.y + FURN/2 - WASTE/2;
-  } else {
-    scr = state.pet.screen;
-    x = Math.random()*(SW(scr)-WASTE);
-    y = SH(scr) - WASTE - FLOOR_MARGIN;
-  }
-  state.entities[scr].push({kind:'food',x,y,glyph:g});
-  state.pet.screen = scr; state.pet.target = x; state.pet.behaviour='walk'; state.pet.until=performance.now()+12000;
-  showToast('丢了 '+g+(bowl?' → 食盆':''));
-}
-setInterval(()=>{
-  for(let s=0;s<SCREENS.length;s++){
-    for(let i=state.entities[s].length-1;i>=0;i--){
-      const e=state.entities[s][i];
-      if(e.kind!=='food'||state.pet.screen!==s) continue;
-      if(Math.abs(e.x+WASTE/2-(state.pet.x+PET/2))<PET*0.55){
-        state.entities[s].splice(i,1);
-        const boost=30*(persona().name==='干饭王'?1.1:1);
-        state.stats.hunger=clamp(state.stats.hunger+boost);
-        state.stats.mood=clamp(state.stats.mood+5);
-        state.stats.affinity=clamp(state.stats.affinity+2);
-        state.pet.target=null; state.pet.behaviour='idle';
-        if(persona().name==='干饭王') bubble('干！',1500);
-        showToast('好吃！+5心情 +2好感'); renderShop();
-      }
-    }
-  }
-},250);
+// ===== Feed =====
+function feed(){const glyphs=['🍪','🍔','🍎','🍣','🥕'];const g=glyphs[Math.floor(Math.random()*glyphs.length)];let scr,x,y;const bowl=furnitureXY('bowl');if(bowl){scr=bowl.screen;x=bowl.x+FURN/2-WASTE/2;y=bowl.y+FURN/2-WASTE/2;}else{scr=state.pet.screen;x=Math.random()*(SW(scr)-WASTE);y=SH(scr)-WASTE-FLOOR_MARGIN;}state.entities[scr].push({kind:'food',x,y,glyph:g});state.pet.screen=scr;state.pet.target=x;state.pet.behaviour='walk';state.pet.until=performance.now()+12000;showToast('丢了 '+g+(bowl?' → 食盆':''));}
+setInterval(()=>{for(let s=0;s<SCREENS.length;s++){for(let i=state.entities[s].length-1;i>=0;i--){const e=state.entities[s][i];if(e.kind!=='food'||state.pet.screen!==s)continue;if(Math.abs(e.x+WASTE/2-(state.pet.x+PET/2))<PET*0.55){state.entities[s].splice(i,1);const boost=30*(persona().name==='干饭王'?1.1:1);state.stats.hunger=clamp(state.stats.hunger+boost);state.stats.mood=clamp(state.stats.mood+5);state.stats.affinity=clamp(state.stats.affinity+2);state.pet.target=null;state.pet.behaviour='idle';if(persona().name==='干饭王') bubble('干！',1500);showToast('好吃！+5心情 +2好感');renderShop(currentShopTab);}}}},250);
 
 // ===== Interaction =====
 function canvasPos(e,c){const r=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
 function hitPet(pos,scr){if(state.pet.screen!==scr) return false;const p=state.pet;return pos.x>=p.x&&pos.x<=p.x+PET&&pos.y>=p.y&&pos.y<=p.y+PET;}
 function hitEntity(pos,scr){const arr=state.entities[scr];for(let i=arr.length-1;i>=0;i--){const e=arr[i];if(pos.x>=e.x&&pos.x<=e.x+WASTE&&pos.y>=e.y&&pos.y<=e.y+WASTE)return{entity:e,index:i};}return null;}
+function hitToy(pos,scr){for(let i=state.placedToys.length-1;i>=0;i--){const t=state.placedToys[i];if(t.screen!==scr)continue;if(pos.x>=t.x&&pos.x<=t.x+TOY&&pos.y>=t.y&&pos.y<=t.y+TOY)return i;}return -1;}
+
 SCREENS.forEach((canvas,scr)=>{
   canvas.addEventListener('mousedown',(e)=>{
     const pos=canvasPos(e,canvas);
     if(state.pet.visible&&hitPet(pos,scr)){
       state.pet.behaviour='drag';state.dragOffset={x:pos.x-state.pet.x,y:pos.y-state.pet.y};
       state.lastDragT=performance.now();state.lastDragX=pos.x;state.lastDragY=pos.y;state.dragScreen=scr;
-      state.pet.vx=0;state.pet.vy=0;state.pet.angVel=0; return;
+      state.pet.vx=0;state.pet.vy=0;state.pet.angVel=0;
+      state.pet.playToyIdx=-1;
+      return;
     }
+    // click on placed toy → remove
+    const toyIdx=hitToy(pos,scr);
+    if(toyIdx>=0){
+      if(e.shiftKey || e.ctrlKey || e.metaKey){
+        // shift/ctrl-click: send Kaka to play with it
+        goToToy(toyIdx); showToast('叫 Kaka 过来玩');
+      } else {
+        const t=state.placedToys[toyIdx]; const T=TOYS[t.key];
+        state.placedToys.splice(toyIdx,1);
+        if(state.pet.playToyIdx===toyIdx){state.pet.playToyIdx=-1;state.pet.behaviour='idle';}
+        showToast('收起了 '+T.name);
+      }
+      return;
+    }
+    // click on entity
     const hit=hitEntity(pos,scr);
-    if(hit){
-      const e2=hit.entity;
-      if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}
-      else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);showToast('清理完成 +10 卫生');renderShop();}
+    if(hit){const e2=hit.entity;if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);showToast('清理完成 +10 卫生');renderShop(currentShopTab);}return;}
+    // otherwise: if a laser toy exists on this screen → set laser point
+    const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
+    if(hasLaser){
+      state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+3500 };
+      const idx=state.placedToys.findIndex(t=>t.screen===scr && TOYS[t.key].action==='laser');
+      if(idx>=0){ goToToy(idx); }
     }
   });
   canvas.addEventListener('mousemove',(e)=>{
-    if(state.pet.behaviour==='drag'&&state.dragScreen===scr){
-      const pos=canvasPos(e,canvas); state.pet.x=pos.x-state.dragOffset.x; state.pet.y=pos.y-state.dragOffset.y; state.pet.screen=scr;
-      const now=performance.now(); const dt=Math.max(1,now-state.lastDragT);
-      state.pet.vx=(pos.x-state.lastDragX)/dt*16; state.pet.vy=(pos.y-state.lastDragY)/dt*16;
-      state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;
+    if(state.pet.behaviour==='drag'&&state.dragScreen===scr){const pos=canvasPos(e,canvas);state.pet.x=pos.x-state.dragOffset.x;state.pet.y=pos.y-state.dragOffset.y;state.pet.screen=scr;const now=performance.now();const dt=Math.max(1,now-state.lastDragT);state.pet.vx=(pos.x-state.lastDragX)/dt*16;state.pet.vy=(pos.y-state.lastDragY)/dt*16;state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;}
+    else if (state.pet.behaviour==='play_toy'){
+      // when playing with laser, allow mouse to move the laser point continuously
+      const p=state.placedToys[state.pet.playToyIdx];
+      if(p && TOYS[p.key].action==='laser'){
+        const pos=canvasPos(e,canvas);
+        state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+2500 };
+      }
     }
   });
 });
@@ -757,145 +824,80 @@ window.addEventListener('mouseup',()=>{
   if(state.pet.behaviour==='drag'){
     if(Math.abs(state.pet.vx)<1&&Math.abs(state.pet.vy)<1){
       if(Math.random()<persona().rejectPet){state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('哼！',1200);showToast('傲娇拒绝了摸头');}
-      else{state.stats.mood=clamp(state.stats.mood+3);state.stats.affinity=clamp(state.stats.affinity+1);showToast('摸头成功 +3 心情');renderShop();}
+      else{state.stats.mood=clamp(state.stats.mood+3);state.stats.affinity=clamp(state.stats.affinity+1);showToast('摸头成功 +3 心情');renderShop(currentShopTab);}
       state.pet.behaviour='idle';
-    } else { state.pet.angVel=state.pet.vx*3; state.pet.behaviour=state.gravity?'fall':'float'; }
+    } else {
+      state.pet.angVel=state.pet.vx*3;
+      state.pet.behaviour=state.gravity?'fall':'float';
+      // in weightless mode, auto-stand after a moment
+      if(!state.gravity){
+        setTimeout(()=>{
+          if(state.pet.behaviour==='float' && Math.abs(state.pet.rot)>3){
+            state.pet.behaviour='stand_up'; state.pet.angVel=0;
+          }
+        }, 1200);
+      }
+    }
     state.dragOffset=null;
   }
 });
 
 // ===== Toggles =====
-document.getElementById('tg-work').onchange=(e)=>{
-  state.work.active=e.target.checked;
-  if(state.work.active){state.work.kbScreen=state.pet.screen;state.work.kbX=SW(state.pet.screen)/2-PET/2;state.work.kbY=SH(state.pet.screen)-PET-FLOOR_MARGIN;showToast('💼 代打工模式开启');}
-  else{state.pet.behaviour='idle';showToast('💼 代打工模式结束');}
-};
-document.getElementById('tg-friend').onchange=(e)=>{
-  if(e.target.checked){spawnFriend();showToast('👋 好友互访开启');}else{state.friend=null;showToast('好友互访已关闭');}
-};
-function spawnFriend(){
-  const scr=Math.floor(Math.random()*SCREENS.length); const fromLeft=Math.random()<.5;
-  state.friend={screen:scr,x:fromLeft?-PET:SW(scr)+PET,y:SH(scr)-PET-FLOOR_MARGIN,vx:fromLeft?2.5:-2.5}; bubble('👋',1500);
-}
+document.getElementById('tg-work').onchange=(e)=>{state.work.active=e.target.checked;if(state.work.active){state.work.kbScreen=state.pet.screen;state.work.kbX=SW(state.pet.screen)/2-PET/2;state.work.kbY=SH(state.pet.screen)-PET-FLOOR_MARGIN;showToast('💼 代打工模式开启');}else{state.pet.behaviour='idle';showToast('💼 代打工模式结束');}};
+document.getElementById('tg-friend').onchange=(e)=>{if(e.target.checked){spawnFriend();showToast('👋 好友互访开启');}else{state.friend=null;showToast('好友互访已关闭');}};
+function spawnFriend(){const scr=Math.floor(Math.random()*SCREENS.length);const fromLeft=Math.random()<.5;state.friend={screen:scr,x:fromLeft?-PET:SW(scr)+PET,y:SH(scr)-PET-FLOOR_MARGIN,vx:fromLeft?2.5:-2.5};bubble('👋',1500);}
 setInterval(()=>{if(document.getElementById('tg-friend').checked&&!state.friend&&Math.random()<.15) spawnFriend();},4000);
-
-document.getElementById('tg-sing').onchange=(e)=>{state.forceSing=e.target.checked; if(!e.target.checked) state.eventNextAt=0;};
+document.getElementById('tg-sing').onchange=(e)=>{state.forceSing=e.target.checked;if(!e.target.checked)state.eventNextAt=0;};
 document.getElementById('tg-dance').onchange=(e)=>{state.forceDance=e.target.checked;};
+document.getElementById('tg-rest').onchange=(e)=>{state.loveRest=e.target.checked;};
 document.getElementById('btn-feed').onclick=feed;
 document.getElementById('btn-poop').onclick=()=>spawnPoop(true);
 document.getElementById('btn-remind').onclick=()=>popReminder();
 document.getElementById('btn-pomo').onclick=startPomodoro;
 document.getElementById('btn-reset').onclick=()=>{
   state.entities=[[],[]]; state.stats={hunger:60,mood:65,hygiene:85,affinity:15};
-  state.pet.x=SW(0)*.7; state.pet.y=SH(0)-PET-FLOOR_MARGIN; state.pet.screen=0; state.pet.behaviour='idle'; state.pet.target=null; state.pet.targetKind=null; state.pet.rot=0; state.pet.angVel=0;
-  ['tg-gravity','tg-visible'].forEach(id=>document.getElementById(id).checked=true);
+  state.pet.x=SW(0)*.7;state.pet.y=SH(0)-PET-FLOOR_MARGIN;state.pet.screen=0;state.pet.behaviour='idle';state.pet.target=null;state.pet.targetKind=null;state.pet.rot=0;state.pet.angVel=0;state.pet.playToyIdx=-1;
+  state.placedToys=[]; state.laserPos=null;
+  ['tg-gravity','tg-visible','tg-rest'].forEach(id=>document.getElementById(id).checked=true);
   ['tg-work','tg-friend','tg-sing','tg-dance'].forEach(id=>document.getElementById(id).checked=false);
-  state.gravity=true; state.pet.visible=true; state.work.active=false; state.friend=null; state.forceSing=false; state.forceDance=false; state.event=null;
-  refreshBars(); renderShop(); showToast('已重置');
+  state.gravity=true;state.pet.visible=true;state.work.active=false;state.friend=null;state.forceSing=false;state.forceDance=false;state.event=null;state.loveRest=true;
+  refreshBars();renderShop(currentShopTab);showToast('已重置');
 };
 document.getElementById('tg-gravity').onchange=(e)=>{state.gravity=e.target.checked;state.pet.vy=0;showToast(state.gravity?'重力已开':'重力已关');};
 document.getElementById('tg-visible').onchange=(e)=>{state.pet.visible=e.target.checked;showToast(state.pet.visible?'Kaka 出现':'Kaka 藏好了 🕶');};
 
 // ===== Pomodoro =====
-const notif=document.getElementById('notif'), notifMsg=document.getElementById('notif-msg'), notifStats=document.getElementById('notif-stats');
+const notif=document.getElementById('notif'),notifMsg=document.getElementById('notif-msg'),notifStats=document.getElementById('notif-stats');
 const REMIND=['已经 25 分钟啦，起来喝口水～','眼睛累了吧？看看远方！','摸鱼时间到','转转脖子！','这条 bug 是你的宿命，先歇会'];
-function rollDay(){
-  const today = new Date().toISOString().slice(0,10);
-  if (state.pomo.todayDate !== today){
-    if (state.pomo.todayDate && state.pomo.today === 0) state.pomo.streak = 0;
-    state.pomo.todayDate = today; state.pomo.today = 0; savePomo();
-  }
-}
-function savePomo(){
-  localStorage.setItem('kaka_pomo_total', state.pomo.total);
-  localStorage.setItem('kaka_pomo_today', state.pomo.today);
-  localStorage.setItem('kaka_pomo_date', state.pomo.todayDate);
-  localStorage.setItem('kaka_pomo_streak', state.pomo.streak);
-}
-function pomoLine(){return `今日已完成 ${state.pomo.today} · 累计 ${state.pomo.total} · 连续 ${state.pomo.streak} 天`;}
-function startPomodoro(){
-  rollDay();
-  state.pomo.running = true; state.pomo.startedAt = performance.now();
-  showToast('🍅 番茄钟开始（演示：45s = 25min）');
-  document.getElementById('btn-pomo').textContent='🍅 取消番茄';
-  document.getElementById('btn-pomo').onclick = cancelPomodoro;
-}
-function cancelPomodoro(){
-  state.pomo.running=false; state.pomo.startedAt=0;
-  document.getElementById('btn-pomo').textContent='🍅 开始番茄';
-  document.getElementById('btn-pomo').onclick = startPomodoro;
-  showToast('番茄钟已取消');
-}
-const POMO_DURATION_MS = 45 * 1000;  // demo scale: 45s = 25min
-function tickPomodoro(){
-  if (!state.pomo.running) return;
-  if (performance.now() - state.pomo.startedAt >= POMO_DURATION_MS){
-    rollDay();
-    if (state.pomo.today === 0) state.pomo.streak += 1;
-    state.pomo.today += 1; state.pomo.total += 1;
-    state.pomo.running=false; state.pomo.startedAt=0;
-    savePomo();
-    document.getElementById('btn-pomo').textContent='🍅 开始番茄';
-    document.getElementById('btn-pomo').onclick = startPomodoro;
-    popReminder(true);
-    state.stats.mood = clamp(state.stats.mood + 4);
-    state.stats.affinity = clamp(state.stats.affinity + 0.5);
-    renderShop();
-  }
-}
-function popReminder(fromPomo=false){
-  notifMsg.textContent = fromPomo ? '一颗番茄完成啦！休息 5 分钟 ☕️' : REMIND[Math.floor(Math.random()*REMIND.length)];
-  notifStats.textContent = '🍅 ' + pomoLine();
-  notif.classList.add('show');
-  clearTimeout(popReminder._t);
-  popReminder._t = setTimeout(()=>notif.classList.remove('show'),25000);
-}
+function rollDay(){const today=new Date().toISOString().slice(0,10);if(state.pomo.todayDate!==today){if(state.pomo.todayDate&&state.pomo.today===0)state.pomo.streak=0;state.pomo.todayDate=today;state.pomo.today=0;savePomo();}}
+function savePomo(){localStorage.setItem('kaka_pomo_total',state.pomo.total);localStorage.setItem('kaka_pomo_today',state.pomo.today);localStorage.setItem('kaka_pomo_date',state.pomo.todayDate);localStorage.setItem('kaka_pomo_streak',state.pomo.streak);}
+function pomoLine(){return `今日 ${state.pomo.today} · 累计 ${state.pomo.total} · 连续 ${state.pomo.streak} 天`;}
+function startPomodoro(){rollDay();state.pomo.running=true;state.pomo.startedAt=performance.now();showToast('🍅 番茄钟开始（演示：45s = 25min）');document.getElementById('btn-pomo').textContent='🍅 取消番茄';document.getElementById('btn-pomo').onclick=cancelPomodoro;}
+function cancelPomodoro(){state.pomo.running=false;state.pomo.startedAt=0;document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;showToast('番茄钟已取消');}
+const POMO_DURATION_MS=45*1000;
+function tickPomodoro(){if(!state.pomo.running)return;if(performance.now()-state.pomo.startedAt>=POMO_DURATION_MS){rollDay();if(state.pomo.today===0)state.pomo.streak+=1;state.pomo.today+=1;state.pomo.total+=1;state.pomo.running=false;state.pomo.startedAt=0;savePomo();document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;popReminder(true);state.stats.mood=clamp(state.stats.mood+4);state.stats.affinity=clamp(state.stats.affinity+0.5);renderShop(currentShopTab);}}
+function popReminder(fromPomo=false){notifMsg.textContent=fromPomo?'一颗番茄完成啦！休息 5 分钟 ☕️':REMIND[Math.floor(Math.random()*REMIND.length)];notifStats.textContent='🍅 '+pomoLine();notif.classList.add('show');clearTimeout(popReminder._t);popReminder._t=setTimeout(()=>notif.classList.remove('show'),25000);}
 document.getElementById('n-dismiss').onclick=()=>notif.classList.remove('show');
 document.getElementById('n-snooze').onclick=()=>{notif.classList.remove('show');setTimeout(popReminder,20000);};
-setInterval(()=>popReminder(false), 120000);
+setInterval(()=>popReminder(false),120000);
 
-// ===== Events (sing / dance) =====
-function updateEventState(){
-  const now = new Date();
-  const realFriday = now.getDay() === 5 && now.getHours() >= 15 && now.getHours() < 18;
-  const realPayday = now.getDate() === state.paydayDay;
-  const sing = state.forceSing || realFriday;
-  const dance = state.forceDance || realPayday;
-  const prev = state.event;
-  if (dance) state.event = 'dance';
-  else if (sing) state.event = 'sing';
-  else state.event = null;
-  if (state.event === 'sing' && performance.now() > state.eventNextAt){
-    const L = ['🎵 平平淡淡才是真~','🎵 咖咖咖咖 咔咔咔咔~','🎵 Somebody 好想 fish 一下~','🎵 抬头一看 又是周五~','🎤 Kaka 麦克风 test test','🎵 老板不在 我最帅~'];
-    bubble(L[Math.floor(Math.random()*L.length)], 3200);
-    state.eventNextAt = performance.now() + rand(4500, 8500);
-  } else if (state.event === 'dance' && performance.now() > state.eventNextAt) {
-    const M = ['🕺 发工资啦！','💃 涨到手抽筋','🎉 请我吃饭','🪩 蹦迪走起'];
-    bubble(M[Math.floor(Math.random()*M.length)], 3000);
-    state.eventNextAt = performance.now() + rand(3000, 6000);
-  }
-  if (prev !== state.event && state.event){
-    showToast(state.event === 'sing' ? '🎤 周五 KTV 开唱！' : '💃 发薪日狂欢！');
-  }
+// ===== Events =====
+function updateEventState(){const now=new Date();const rF=now.getDay()===5&&now.getHours()>=15&&now.getHours()<18;const rP=now.getDate()===state.paydayDay;const sing=state.forceSing||rF;const dance=state.forceDance||rP;const prev=state.event;state.event=dance?'dance':(sing?'sing':null);
+  if(state.event==='sing'&&performance.now()>state.eventNextAt){const L=['🎵 平平淡淡才是真~','🎵 咖咖咖咖 咔咔咔咔~','🎵 Somebody 好想 fish 一下~','🎵 抬头一看 又是周五~','🎤 test test','🎵 老板不在 我最帅~'];bubble(L[Math.floor(Math.random()*L.length)],3200);state.eventNextAt=performance.now()+rand(4500,8500);}
+  else if(state.event==='dance'&&performance.now()>state.eventNextAt){const M=['🕺 发工资啦！','💃 涨到手抽筋','🎉 请我吃饭','🪩 蹦迪走起'];bubble(M[Math.floor(Math.random()*M.length)],3000);state.eventNextAt=performance.now()+rand(3000,6000);}
+  if(prev!==state.event&&state.event) showToast(state.event==='sing'?'🎤 周五 KTV 开唱！':'💃 发薪日狂欢！');
 }
 
 // ===== Bars =====
-function refreshBars(){
-  const s=state.stats;
-  const set=(id,v)=>document.getElementById('bar-'+id).style.width=v+'%';
-  set('hunger',s.hunger);set('mood',s.mood);set('hygiene',s.hygiene);set('affinity',s.affinity);
-  const setV=(id,v)=>document.getElementById('val-'+id).textContent=Math.round(v);
-  setV('hunger',s.hunger);setV('mood',s.mood);setV('hygiene',s.hygiene);setV('affinity',s.affinity);
-  document.getElementById('pomo-line').textContent = pomoLine();
-}
+function refreshBars(){const s=state.stats;const set=(id,v)=>document.getElementById('bar-'+id).style.width=v+'%';set('hunger',s.hunger);set('mood',s.mood);set('hygiene',s.hygiene);set('affinity',s.affinity);const setV=(id,v)=>document.getElementById('val-'+id).textContent=Math.round(v);setV('hunger',s.hunger);setV('mood',s.mood);setV('hygiene',s.hygiene);setV('affinity',s.affinity);document.getElementById('pomo-line').textContent=pomoLine();}
 
 // ===== Main loop =====
 let last=performance.now();
 function loop(t){const dt=Math.min(64,t-last);last=t;tick(dt);maybePoop(t);maybeBubble(t);drawScene();requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 
-setPersonality('extrovert'); renderSkinGrid(); refreshBars(); refreshCornerButtons();
-setTimeout(()=>showToast('欢迎 v0.4 · 打开商店解锁皮肤、摆好便盆更文明'),400);
+setPersonality('extrovert'); renderSkinGrid(); renderToyTray(); refreshBars(); refreshCornerButtons();
+setTimeout(()=>showToast('欢迎 v0.5 · 甩两下扔飞它会自己站直 · 累了会自己坐/躺/睡'),400);
 })();
 </script>
 </body>
