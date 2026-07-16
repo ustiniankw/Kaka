@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Kaka · 桌面摸鱼搭子 · Web 试玩版</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Kaka 桌面宠物的浏览器试玩版：随机行走、重力开关、拉屎清理、喂食、老板键。" />
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🐾</text></svg>" />
+<style>
+  :root {
+    --bg-1: #FFE9C7;
+    --bg-2: #FFC7A6;
+    --bg-3: #C7E9FF;
+    --ink: #3A2A18;
+    --accent: #F5A623;
+    --danger: #ff6b6b;
+    --card: rgba(255,255,255,0.72);
+    --shadow: 0 8px 32px rgba(80,50,20,0.16);
+    font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 700px at 15% 0%,  var(--bg-1) 0%, transparent 50%),
+      radial-gradient(1000px 700px at 100% 30%, var(--bg-2) 0%, transparent 55%),
+      radial-gradient(1200px 800px at 30% 100%,var(--bg-3) 0%, transparent 55%),
+      linear-gradient(135deg, #fff7ea 0%, #fbe7d3 100%);
+    overflow-x: hidden;
+  }
+  header {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 40px 24px 20px;
+    text-align: center;
+  }
+  header h1 { font-size: 40px; margin: 0 0 6px; letter-spacing: 1px; }
+  header h1 span { color: var(--accent); }
+  header p { margin: 0; color: #6a4d2b; font-size: 15px; }
+  header a.gh {
+    margin-top: 12px; color: #6a4d2b; text-decoration: none;
+    background: var(--card); padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; box-shadow: var(--shadow);
+    transition: transform .15s ease;
+  }
+  header a.gh:hover { transform: translateY(-2px); }
+
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 20px auto 60px;
+    padding: 0 24px;
+  }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { order: -1; }
+  }
+
+  /* Stage */
+  .stage-wrap {
+    position: relative;
+    background: linear-gradient(180deg, #ffeccb 0%, #ffd0a5 100%);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .stage-wrap::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.08) 0 12px, transparent 12px 24px);
+    pointer-events: none;
+  }
+  .stage-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 6px 10px;
+    border-bottom: 1px dashed rgba(60,40,20,.25);
+    margin-bottom: 8px;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .stage-toolbar .path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #5a3f22;
+    font-size: 12px;
+    background: rgba(255,255,255,.55);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-left: 8px;
+  }
+  canvas#stage {
+    display: block;
+    width: 100%;
+    height: 520px;
+    background:
+      linear-gradient(180deg, #ffe8c7 0%, #ffd096 60%, #f2b070 100%);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .hud {
+    position: absolute;
+    left: 24px; top: 60px;
+    color: rgba(60,40,20,.75);
+    font-size: 12px;
+    pointer-events: none;
+  }
+  .hud b { color: var(--ink); }
+  .toast {
+    position: absolute; top: 26px; right: 32px;
+    background: rgba(255,240,200,.95);
+    color: #4a2f00;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(-6px);
+    transition: opacity .3s, transform .3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* Sidebar */
+  aside {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { margin: 0 0 10px; font-size: 15px; color: var(--ink); letter-spacing: .5px;}
+  .card p { margin: 0 0 6px; font-size: 13px; color: #5a3f22; line-height: 1.55;}
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  button.b {
+    appearance: none; border: 0; outline: 0; cursor: pointer;
+    background: var(--accent);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(245,166,35,.35);
+    transition: transform .1s ease, box-shadow .2s ease, background .2s;
+  }
+  button.b.gray { background: #b89778; box-shadow: 0 3px 10px rgba(140,100,60,.25); }
+  button.b.danger { background: var(--danger); box-shadow: 0 3px 10px rgba(255,107,107,.35);}
+  button.b:hover { transform: translateY(-1px); }
+  button.b:active { transform: translateY(1px); }
+
+  .stat-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px;}
+  .stat-row .label { width: 66px; color: #5a3f22;}
+  .bar {
+    flex: 1; height: 8px; background: rgba(90,60,30,.13); border-radius: 999px; overflow: hidden;
+  }
+  .bar > i {
+    display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #F5A623, #ffcf6a);
+    transition: width .3s ease;
+  }
+  .bar.mood > i    { background: linear-gradient(90deg, #ff9ec4, #ffcf6a); }
+  .bar.hygiene > i { background: linear-gradient(90deg, #7fd0ff, #a6f0d5); }
+  .bar.affinity > i{ background: linear-gradient(90deg, #ff6b6b, #ffb37a); }
+
+  kbd {
+    background: #fff; border: 1px solid #d5b590; border-bottom-width: 2px;
+    border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: ui-monospace, Menlo, monospace;
+    color: #5a3f22;
+  }
+
+  footer {
+    text-align: center; color: #7a5a34; font-size: 12px; padding: 24px 12px 40px;
+  }
+  footer a { color: #7a5a34; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🐾 <span>Kaka</span> · Web 试玩版</h1>
+  <p>浏览器里的桌面摸鱼搭子体验版。真正的桌面窗口体验请见 GitHub 仓库。</p>
+  <a class="gh" href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">
+    ⭐ github.com/ustiniankw/Kaka
+  </a>
+</header>
+
+<main>
+  <section class="stage-wrap">
+    <div class="stage-toolbar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="path">~/Desktop/Kaka.exe</div>
+    </div>
+    <div style="position:relative;">
+      <canvas id="stage" width="800" height="520"></canvas>
+      <div class="hud">
+        <div>💡 提示：点击 Kaka <b>摸头</b> · 拖动 <b>扔飞</b> · 单击地上物 <b>清理/吃掉</b></div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+  </section>
+
+  <aside>
+    <div class="card">
+      <h3>🎮 控制面板</h3>
+      <div class="btn-row">
+        <button class="b" id="btn-feed">🍪 喂食</button>
+        <button class="b gray" id="btn-gravity">🌍 切换重力</button>
+        <button class="b gray" id="btn-boss">🕶 老板键</button>
+        <button class="b gray" id="btn-poop">💩 立刻拉</button>
+        <button class="b danger" id="btn-reset">🔄 重置</button>
+      </div>
+      <p style="margin-top:10px; font-size:12px;">
+        全局老板键在真桌面版是 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>H</kbd>。<br>
+        Web 版按钮点击即可切换隐身。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>📊 状态</h3>
+      <div class="stat-row"><span class="label">🍚 饥饿</span><div class="bar"><i id="bar-hunger"></i></div></div>
+      <div class="stat-row"><span class="label">😊 心情</span><div class="bar mood"><i id="bar-mood"></i></div></div>
+      <div class="stat-row"><span class="label">🧼 卫生</span><div class="bar hygiene"><i id="bar-hygiene"></i></div></div>
+      <div class="stat-row"><span class="label">💛 好感度</span><div class="bar affinity"><i id="bar-affinity"></i></div></div>
+      <p style="margin-top:8px;">数值随互动实时变化。饿了会难过，脏了会招苍蝇（v0.2 加）。</p>
+    </div>
+
+    <div class="card">
+      <h3>✨ Web 试玩说明</h3>
+      <p>这是纯浏览器的<b>行为模拟</b>：核心手感（走路 / 重力 / 拉屎 / 清理 / 喂食 / 拖拽）都在，但没有<b>全局桌面透明窗口</b>能力——那个需要下载 GitHub 上的桌面版 (Python + PySide6) 才能体验。</p>
+      <p style="margin-top:6px;">感兴趣看代码：<a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">GitHub 仓库</a></p>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  Made with ❤️ · <a href="https://github.com/ustiniankw/Kaka">Kaka on GitHub</a>
+</footer>
+
+<script>
+(() => {
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const toast = document.getElementById('toast');
+
+  // Fit canvas to CSS size (retina)
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const W = () => canvas.clientWidth;
+  const H = () => canvas.clientHeight;
+  const PET = 90;
+  const WASTE = 32;
+  const FLOOR_MARGIN = 8;
+
+  // ------------- State -------------
+  const state = {
+    pet: {
+      x: 100, y: 0, vx: 0, vy: 0,
+      facing: 1,     // 1 = right, -1 = left
+      behaviour: 'idle', // idle | walk | drag | fall | float | eat
+      until: 0,
+      floatPhase: Math.random() * Math.PI * 2,
+      target: null,
+      visible: true,
+    },
+    gravity: true,
+    entities: [], // {kind:'poop'|'pee'|'food', x, y, glyph}
+    stats: { hunger: 60, mood: 65, hygiene: 85, affinity: 15 },
+    dragOffset: null,
+    lastDragT: 0, lastDragX: 0, lastDragY: 0,
+  };
+  // put pet on the floor initially
+  state.pet.y = H() - PET - FLOOR_MARGIN;
+  state.pet.x = W() * 0.7;
+
+  // ------------- Helpers -------------
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const clamp = (v, lo=0, hi=100) => Math.max(lo, Math.min(hi, v));
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  // ------------- Sprite drawing -------------
+  function drawPet(x, y, mood, flip) {
+    // 16x16 grid pixel-art
+    const g = 16, size = PET, c = size / g;
+    ctx.save();
+    ctx.translate(x, y);
+    if (flip) { ctx.translate(size, 0); ctx.scale(-1, 1); }
+    ctx.imageSmoothingEnabled = false;
+
+    const R = (px, py, w=1, h=1, col) => {
+      ctx.fillStyle = col;
+      ctx.fillRect(px*c, py*c, w*c, h*c);
+    };
+    const BODY = '#F5C542', DARK = '#C08A18', CHEEK = '#F58A8A',
+          EYE = '#222', WHITE = '#fff';
+
+    // body blob
+    R(4,3,8,1,BODY); R(3,4,10,1,BODY);
+    R(2,5,12,6,BODY);
+    R(3,11,10,1,BODY); R(4,12,8,1,BODY);
+    R(4,13,3,1,BODY); R(9,13,3,1,BODY);
+    // shadow
+    R(3,10,10,1,DARK); R(4,11,8,1,DARK);
+    // eyes
+    if (mood === 'sleepy') {
+      R(5,7,2,1,EYE); R(9,7,2,1,EYE);
+    } else if (mood === 'wink') {
+      R(5,6,2,2,WHITE); R(6,7,1,1,EYE);
+      R(9,7,2,1,EYE);
+    } else {
+      R(5,6,2,2,WHITE); R(9,6,2,2,WHITE);
+      R(6,7,1,1,EYE);   R(10,7,1,1,EYE);
+    }
+    // cheeks
+    R(4,9,1,1,CHEEK); R(11,9,1,1,CHEEK);
+    // mouth
+    if (mood === 'sad') { R(6,9,1,1,EYE); R(9,9,1,1,EYE); R(7,10,2,1,EYE); }
+    else if (mood === 'hungry') { R(7,9,2,2,EYE); }
+    else { R(7,10,2,1,EYE); }
+
+    ctx.restore();
+  }
+
+  function drawEntity(e) {
+    ctx.save();
+    ctx.font = (WASTE * 0.85) + "px 'Segoe UI Emoji','Apple Color Emoji',sans-serif";
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText(e.glyph, e.x + WASTE/2, e.y + WASTE/2);
+    ctx.restore();
+  }
+
+  function drawScene() {
+    ctx.clearRect(0, 0, W(), H());
+
+    // floor line
+    const fy = H() - FLOOR_MARGIN;
+    ctx.strokeStyle = 'rgba(90,60,30,.16)';
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(0, fy); ctx.lineTo(W(), fy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // entities
+    for (const e of state.entities) drawEntity(e);
+
+    // pet
+    if (state.pet.visible) {
+      const m = moodLabel();
+      const flip = state.pet.facing < 0;
+      drawPet(state.pet.x, state.pet.y, m, flip);
+    }
+  }
+
+  function moodLabel() {
+    const s = state.stats;
+    if (s.hunger < 20) return 'hungry';
+    if (s.mood < 25) return 'sad';
+    if (state.pet.behaviour === 'drag') return 'wink';
+    if (s.mood > 80) return 'wink';
+    return 'happy';
+  }
+
+  // ------------- Behaviour ticks -------------
+  function pickNextAction() {
+    if (Math.random() < 0.6) {
+      state.pet.facing = Math.random() < 0.5 ? -1 : 1;
+      state.pet.behaviour = 'walk';
+      state.pet.until = performance.now() + rand(2000, 5500);
+    } else {
+      state.pet.behaviour = 'idle';
+      state.pet.until = performance.now() + rand(1500, 4000);
+    }
+  }
+
+  function tick(dtMs) {
+    const p = state.pet;
+    const floorY = H() - PET - FLOOR_MARGIN;
+    const dt = dtMs / 16.67; // frames of ~60fps
+
+    if (p.behaviour === 'drag') { /* handled by mouse events */ }
+    else if (state.gravity) {
+      // fall to floor
+      if (p.y < floorY) {
+        p.vy = Math.min(22, p.vy + 1.2 * dt);
+        p.y += p.vy * dt;
+        p.vx *= Math.pow(0.9, dt);
+        p.x += p.vx * dt;
+        if (p.y >= floorY) { p.y = floorY; p.vy = 0; if (Math.abs(p.vx) < 0.5) p.vx = 0; }
+        p.behaviour = p.y >= floorY ? 'idle' : 'fall';
+      } else if (p.behaviour === 'walk') {
+        walkStep(dt);
+      } else {
+        if (performance.now() > p.until) pickNextAction();
+      }
+    } else {
+      // float mode
+      if (p.behaviour === 'walk') {
+        walkStep(dt);
+      } else {
+        p.floatPhase += (dtMs / 2600) * Math.PI * 2;
+        const bob = Math.sin(p.floatPhase) * 1.5;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt + bob;
+        p.vx *= Math.pow(0.98, dt);
+        p.vy *= Math.pow(0.98, dt);
+        p.behaviour = 'float';
+        if (performance.now() > p.until) pickNextAction();
+      }
+    }
+
+    // clamp
+    p.x = Math.max(0, Math.min(W() - PET, p.x));
+    p.y = Math.max(0, Math.min(floorY, p.y));
+
+    // stats decay
+    state.stats.hunger  = clamp(state.stats.hunger  - 0.02 * dt);
+    state.stats.mood    = clamp(state.stats.mood    - 0.005 * dt);
+    state.stats.hygiene = clamp(state.stats.hygiene - 0.01 * dt);
+    if (state.stats.hunger < 20) state.stats.mood = clamp(state.stats.mood - 0.02 * dt);
+
+    refreshBars();
+  }
+
+  function walkStep(dt) {
+    const p = state.pet;
+    const speed = 1.6 * (0.7 + state.stats.mood / 150) * dt;
+    if (p.target != null) {
+      const dx = p.target - p.x;
+      p.facing = dx < 0 ? -1 : 1;
+      p.x += Math.sign(dx) * Math.min(Math.abs(dx), speed);
+      if (state.gravity) p.y = H() - PET - FLOOR_MARGIN;
+      if (Math.abs(p.target - p.x) < speed) {
+        p.target = null;
+        p.behaviour = 'idle';
+        p.until = performance.now() + rand(1500, 3000);
+      }
+    } else {
+      p.x += p.facing * speed;
+      if (state.gravity) p.y = H() - PET - FLOOR_MARGIN;
+      if (p.x <= 0) { p.x = 0; p.facing = 1; }
+      if (p.x >= W() - PET) { p.x = W() - PET; p.facing = -1; }
+      if (performance.now() > p.until) pickNextAction();
+    }
+  }
+
+  function refreshBars() {
+    document.getElementById('bar-hunger').style.width   = state.stats.hunger + '%';
+    document.getElementById('bar-mood').style.width     = state.stats.mood + '%';
+    document.getElementById('bar-hygiene').style.width  = state.stats.hygiene + '%';
+    document.getElementById('bar-affinity').style.width = state.stats.affinity + '%';
+  }
+
+  // ------------- Poop scheduler -------------
+  let nextPoopAt = performance.now() + rand(15000, 45000);
+  function maybePoop(now) {
+    if (now >= nextPoopAt) {
+      spawnPoop();
+      nextPoopAt = now + rand(15000, 45000);
+    }
+  }
+
+  function spawnPoop(force=false) {
+    const p = state.pet;
+    const isPee = Math.random() < 0.4;
+    const glyph = isPee ? '💦' : '💩';
+    const x = p.x + PET/2 - WASTE/2;
+    const y = state.gravity
+      ? (H() - WASTE - FLOOR_MARGIN)
+      : (p.y + PET/2);
+    state.entities.push({ kind: isPee ? 'pee' : 'poop', x, y, glyph });
+    state.stats.hygiene = clamp(state.stats.hygiene - 12);
+    state.stats.mood = clamp(state.stats.mood + 2);
+    if (force) showToast(isPee ? "💦 Kaka 尿了一泡" : "💩 Kaka 拉了一坨");
+  }
+
+  // ------------- Feed -------------
+  function feed() {
+    const glyphs = ['🍪','🍔','🍎','🍣','🥕'];
+    const g = glyphs[Math.floor(Math.random() * glyphs.length)];
+    const x = Math.random() * (W() - WASTE);
+    const y = H() - WASTE - FLOOR_MARGIN;
+    state.entities.push({ kind: 'food', x, y, glyph: g });
+    state.pet.target = x;
+    state.pet.behaviour = 'walk';
+    state.pet.until = performance.now() + 8000;
+    showToast('丢了 ' + g + '，Kaka 正在过去吃！');
+  }
+
+  // Check food reach
+  setInterval(() => {
+    for (let i = state.entities.length - 1; i >= 0; i--) {
+      const e = state.entities[i];
+      if (e.kind !== 'food') continue;
+      if (Math.abs(e.x + WASTE/2 - (state.pet.x + PET/2)) < PET*0.55) {
+        state.entities.splice(i, 1);
+        state.stats.hunger = clamp(state.stats.hunger + 30);
+        state.stats.mood = clamp(state.stats.mood + 5);
+        state.stats.affinity = clamp(state.stats.affinity + 2);
+        state.pet.target = null;
+        state.pet.behaviour = 'idle';
+        showToast('好吃！心情+5，好感度+2');
+      }
+    }
+  }, 250);
+
+  // ------------- Interaction -------------
+  function canvasPos(evt) {
+    const r = canvas.getBoundingClientRect();
+    const t = evt.touches ? evt.touches[0] : evt;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+
+  function hitPet(pos) {
+    const p = state.pet;
+    return pos.x >= p.x && pos.x <= p.x + PET && pos.y >= p.y && pos.y <= p.y + PET;
+  }
+
+  function hitEntity(pos) {
+    for (let i = state.entities.length - 1; i >= 0; i--) {
+      const e = state.entities[i];
+      if (pos.x >= e.x && pos.x <= e.x + WASTE && pos.y >= e.y && pos.y <= e.y + WASTE) {
+        return { entity: e, index: i };
+      }
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousedown', (e) => {
+    const pos = canvasPos(e);
+    if (state.pet.visible && hitPet(pos)) {
+      state.pet.behaviour = 'drag';
+      state.dragOffset = { x: pos.x - state.pet.x, y: pos.y - state.pet.y };
+      state.lastDragT = performance.now();
+      state.lastDragX = pos.x; state.lastDragY = pos.y;
+      state.pet.vx = 0; state.pet.vy = 0;
+      return;
+    }
+    const hit = hitEntity(pos);
+    if (hit) {
+      const e = hit.entity;
+      if (e.kind === 'food') {
+        state.entities.splice(hit.index, 1);
+        state.pet.target = e.x;
+        state.pet.behaviour = 'walk';
+      } else {
+        state.entities.splice(hit.index, 1);
+        state.stats.hygiene = clamp(state.stats.hygiene + 10);
+        state.stats.affinity = clamp(state.stats.affinity + 0.5);
+        showToast('清理完成！卫生+10');
+      }
+    }
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (state.pet.behaviour === 'drag') {
+      const pos = canvasPos(e);
+      state.pet.x = pos.x - state.dragOffset.x;
+      state.pet.y = pos.y - state.dragOffset.y;
+      const now = performance.now();
+      const dt = Math.max(1, now - state.lastDragT);
+      state.pet.vx = (pos.x - state.lastDragX) / dt * 16;
+      state.pet.vy = (pos.y - state.lastDragY) / dt * 16;
+      state.lastDragT = now;
+      state.lastDragX = pos.x; state.lastDragY = pos.y;
+    }
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (state.pet.behaviour === 'drag') {
+      // if barely moved → pet
+      if (Math.abs(state.pet.vx) < 1 && Math.abs(state.pet.vy) < 1) {
+        state.stats.mood = clamp(state.stats.mood + 3);
+        state.stats.affinity = clamp(state.stats.affinity + 1);
+        showToast('摸头成功！心情+3');
+        state.pet.behaviour = 'idle';
+      } else {
+        state.pet.behaviour = state.gravity ? 'fall' : 'float';
+      }
+      state.dragOffset = null;
+    }
+  });
+
+  // ------------- Buttons -------------
+  document.getElementById('btn-feed').onclick = feed;
+  document.getElementById('btn-gravity').onclick = () => {
+    state.gravity = !state.gravity;
+    state.pet.vy = 0;
+    showToast(state.gravity ? '🌍 重力已开启' : '🪶 重力已关闭，飘起来！');
+  };
+  document.getElementById('btn-boss').onclick = () => {
+    state.pet.visible = !state.pet.visible;
+    showToast(state.pet.visible ? '👀 Kaka 出现了' : '🕶 老板走了再叫我');
+  };
+  document.getElementById('btn-poop').onclick = () => spawnPoop(true);
+  document.getElementById('btn-reset').onclick = () => {
+    state.entities = [];
+    state.stats = { hunger: 60, mood: 65, hygiene: 85, affinity: 15 };
+    state.pet.x = W() * 0.7;
+    state.pet.y = H() - PET - FLOOR_MARGIN;
+    state.pet.behaviour = 'idle';
+    state.pet.target = null;
+    showToast('已重置到初始状态');
+  };
+
+  // ------------- Main loop -------------
+  let last = performance.now();
+  function loop(t) {
+    const dt = Math.min(64, t - last);
+    last = t;
+    tick(dt);
+    maybePoop(t);
+    drawScene();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  refreshBars();
+  showToast('欢迎来到 Kaka 试玩版 · 试试摸摸我！');
+})();
+</script>
+</body>
+</html>
