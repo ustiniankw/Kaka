@@ -7,25 +7,8 @@
 <meta name="theme-color" content="#F2F2F7" />
 <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🐾</text></svg>" />
 <style>
-:root {
-  --sys-bg:#F2F2F7; --sys-surface:#FFFFFF; --sys-surface-2:#FFFFFF;
-  --sys-fill:rgba(120,120,128,.12); --sys-separator:rgba(60,60,67,.18);
-  --label:#000; --label-secondary:rgba(60,60,67,.60); --label-tertiary:rgba(60,60,67,.30);
-  --tint:#007AFF; --tint-tap:#0064D0;
-  --green:#34C759; --orange:#FF9500; --pink:#FF2D55; --red:#FF3B30;
-  --yellow:#FFCC00; --purple:#AF52DE; --gray:#8E8E93;
-  --radius-card:14px; --radius-btn:12px;
-  --shadow-2:0 8px 30px rgba(0,0,0,.06);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sys-bg:#000; --sys-surface:#1C1C1E; --sys-surface-2:#2C2C2E;
-    --sys-fill:rgba(120,120,128,.24); --sys-separator:rgba(84,84,88,.65);
-    --label:#FFF; --label-secondary:rgba(235,235,245,.60); --label-tertiary:rgba(235,235,245,.30);
-    --tint:#0A84FF; --tint-tap:#409CFF;
-  }
-}
+:root{--sys-bg:#F2F2F7;--sys-surface:#FFFFFF;--sys-fill:rgba(120,120,128,.12);--sys-separator:rgba(60,60,67,.18);--label:#000;--label-secondary:rgba(60,60,67,.60);--label-tertiary:rgba(60,60,67,.30);--tint:#007AFF;--tint-tap:#0064D0;--green:#34C759;--orange:#FF9500;--pink:#FF2D55;--red:#FF3B30;--yellow:#FFCC00;--purple:#AF52DE;--gray:#8E8E93;--radius-card:14px;--radius-btn:12px;--shadow-2:0 8px 30px rgba(0,0,0,.06);--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","PingFang SC","Microsoft YaHei",system-ui,sans-serif;}
+@media (prefers-color-scheme:dark){:root{--sys-bg:#000;--sys-surface:#1C1C1E;--sys-fill:rgba(120,120,128,.24);--sys-separator:rgba(84,84,88,.65);--label:#FFF;--label-secondary:rgba(235,235,245,.60);--tint:#0A84FF;}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--sys-bg);color:var(--label);font-family:var(--font);font-size:15px;-webkit-font-smoothing:antialiased;min-height:100vh}
 .wrap{max-width:1200px;margin:0 auto;padding:20px 20px 60px}
@@ -33,14 +16,14 @@ html,body{margin:0;background:var(--sys-bg);color:var(--label);font-family:var(-
 .navbar .title{font-size:34px;font-weight:700;letter-spacing:-.4px}
 .navbar .subtitle{font-size:13px;color:var(--label-secondary);margin-top:2px}
 .navbar a{color:var(--tint);text-decoration:none;font-weight:500;font-size:15px}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
-
-/* Stage: multiple monitors stacked */
 .stage-card{background:var(--sys-surface);border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow-2);border:1px solid var(--sys-separator)}
-.stage-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--sys-separator);min-height:40px}
-.stage-header .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sys-fill);font-size:12px;color:var(--label-secondary)}
+.stage-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--sys-separator);min-height:40px;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sys-fill);font-size:12px;color:var(--label-secondary)}
 .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.badge.warn .dot{background:var(--orange)}
+.badge.pink .dot{background:var(--pink)}
 .stage-header .name-line{font-size:14px;font-weight:600}
 .stage-header .name-line .quirk{color:var(--label-secondary);font-weight:400;margin-left:6px}
 .monitors{padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--sys-bg)}
@@ -49,17 +32,13 @@ html,body{margin:0;background:var(--sys-bg);color:var(--label);font-family:var(-
 canvas.stage{display:block;width:100%;height:230px;cursor:pointer}
 .toast{position:absolute;top:60px;left:50%;transform:translate(-50%,-8px);background:rgba(28,28,30,.92);color:#fff;font-size:13px;font-weight:500;padding:8px 14px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;backdrop-filter:blur(20px);pointer-events:none;z-index:5}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-
-/* Right pane */
-.section-title{padding:8px 16px 6px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--label-secondary);font-weight:500}
+.section-title{padding:8px 16px 6px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--label-secondary);font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.section-title a{color:var(--tint);text-decoration:none;font-size:12px;text-transform:none;letter-spacing:0}
 .list-group{background:var(--sys-surface);border-radius:var(--radius-card);overflow:hidden;border:1px solid var(--sys-separator);margin-bottom:16px}
 .row{display:flex;align-items:center;padding:12px 16px;border-top:1px solid var(--sys-separator);min-height:44px}
 .row:first-child{border-top:0}
 .row .icon{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:16px;margin-right:12px;flex-shrink:0}
-.icon.blue{background:var(--tint)} .icon.green{background:var(--green)}
-.icon.orange{background:var(--orange)} .icon.pink{background:var(--pink)}
-.icon.purple{background:var(--purple)} .icon.gray{background:var(--gray)}
-.icon.yellow{background:var(--yellow);color:#000} .icon.red{background:var(--red)}
+.icon.blue{background:var(--tint)}.icon.green{background:var(--green)}.icon.orange{background:var(--orange)}.icon.pink{background:var(--pink)}.icon.purple{background:var(--purple)}.icon.gray{background:var(--gray)}.icon.yellow{background:var(--yellow);color:#000}.icon.red{background:var(--red)}
 .row .label{flex:1;font-size:15px}
 .row .value{font-size:14px;color:var(--label-secondary)}
 .switch{position:relative;width:51px;height:31px;flex-shrink:0}
@@ -73,36 +52,60 @@ canvas.stage{display:block;width:100%;height:230px;cursor:pointer}
 .btn.secondary{background:var(--sys-fill);color:var(--tint)}
 .btn.destructive{background:var(--sys-fill);color:var(--red)}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
-.btn-row.single{grid-template-columns:1fr}
-.pers-grid,.skin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
-.pers-tile,.skin-tile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;background:var(--sys-fill);border-radius:12px;cursor:pointer;border:2px solid transparent;user-select:none;transition:border-color .15s,background .15s}
-.pers-tile.active,.skin-tile.active{border-color:var(--tint);background:color-mix(in srgb,var(--tint) 8%,var(--sys-surface))}
-.pers-tile .em,.skin-tile .em{font-size:22px;line-height:1}
-.pers-tile .nm,.skin-tile .nm{font-size:12px;font-weight:500}
-.skin-tile .em{width:26px;height:26px;border-radius:50%;border:2px solid rgba(0,0,0,.06)}
+.pers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.pers-tile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;background:var(--sys-fill);border-radius:12px;cursor:pointer;border:2px solid transparent;user-select:none;transition:.15s}
+.pers-tile.active{border-color:var(--tint);background:color-mix(in srgb,var(--tint) 8%,var(--sys-surface))}
+.pers-tile .em{font-size:22px;line-height:1}.pers-tile .nm{font-size:12px;font-weight:500}
 .pers-flavor{padding:4px 16px 14px;font-size:12px;color:var(--label-secondary);line-height:1.5}
 .bar-row{display:flex;align-items:center;padding:10px 16px;border-top:1px solid var(--sys-separator);gap:12px}
 .bar-row:first-child{border-top:0}
 .bar-row .bar-label{width:60px;font-size:14px}
 .bar-row .bar{flex:1;height:6px;background:var(--sys-fill);border-radius:999px;overflow:hidden}
 .bar-row .bar>i{display:block;height:100%;border-radius:999px;background:var(--tint);transition:width .3s}
-.bar-row .bar.mood>i{background:var(--pink)}
-.bar-row .bar.hygiene>i{background:var(--green)}
-.bar-row .bar.affinity>i{background:var(--orange)}
+.bar-row .bar.mood>i{background:var(--pink)}.bar-row .bar.hygiene>i{background:var(--green)}.bar-row .bar.affinity>i{background:var(--orange)}
 .bar-row .bar-value{width:42px;text-align:right;font-size:13px;color:var(--label-secondary);font-variant-numeric:tabular-nums}
 .hint{padding:10px 16px 14px;font-size:12px;color:var(--label-secondary)}
 .hint kbd{background:var(--sys-fill);border-radius:4px;padding:1px 5px;font-family:ui-monospace,Menlo,monospace;font-size:11px}
 footer{text-align:center;color:var(--label-secondary);font-size:12px;padding-top:24px}
 footer a{color:var(--tint);text-decoration:none}
-/* Notification card (Pomodoro) */
-.notif{position:absolute;top:18px;right:18px;width:280px;background:rgba(255,255,255,.98);color:#111;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow-2);opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s;z-index:6;pointer-events:auto;backdrop-filter:blur(20px)}
+.notif{position:absolute;top:18px;right:18px;width:290px;background:rgba(255,255,255,.98);color:#111;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow-2);opacity:0;transform:translateY(-6px);transition:.25s;z-index:6;backdrop-filter:blur(20px)}
 .notif.show{opacity:1;transform:translateY(0)}
 .notif .t{font-weight:600;font-size:14px;margin-bottom:2px}
-.notif .m{font-size:13px;color:#444;margin-bottom:10px}
+.notif .m{font-size:13px;color:#444;margin-bottom:6px}
+.notif .stats{font-size:12px;color:#666;margin-bottom:10px}
 .notif .row2{display:flex;gap:6px;justify-content:flex-end}
 .notif button{background:#F2F2F7;color:var(--tint);border:0;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;cursor:pointer}
 .notif button.p{background:var(--tint);color:#fff}
-@media (prefers-color-scheme:dark){.notif{background:rgba(28,28,30,.98);color:#fff}.notif .m{color:#bbb}.notif button{background:#3A3A3C;color:#0A84FF}}
+@media (prefers-color-scheme:dark){.notif{background:rgba(28,28,30,.98);color:#fff}.notif .m{color:#bbb}.notif .stats{color:#999}.notif button{background:#3A3A3C;color:#0A84FF}}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.show{display:flex}
+.modal .card{background:var(--sys-surface);border-radius:16px;padding:0;max-width:520px;width:100%;max-height:88vh;overflow:auto;box-shadow:var(--shadow-2)}
+.modal .card h3{margin:0;padding:16px 20px 8px;font-size:18px}
+.modal .card .sub{padding:0 20px 8px;font-size:13px;color:var(--label-secondary)}
+.modal .card .close{padding:14px 20px;text-align:right}
+.shop-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 20px 12px}
+.shop-item{background:var(--sys-fill);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;border:2px solid transparent;transition:.15s}
+.shop-item .swatch{width:32px;height:32px;border-radius:50%;border:2px solid rgba(0,0,0,.06)}
+.shop-item .top{display:flex;align-items:center;gap:8px}
+.shop-item .top .nm{font-weight:600;font-size:14px}
+.shop-item .top .em{margin-left:auto}
+.shop-item .desc{font-size:12px;color:var(--label-secondary);line-height:1.4;min-height:32px}
+.shop-item .req{font-size:11px;color:var(--label-secondary)}
+.shop-item.owned{border-color:var(--green)}
+.shop-item.available{border-color:var(--tint)}
+.shop-item.locked{opacity:.55}
+.shop-item .btn-mini{margin-top:6px;padding:6px 8px;border:0;background:var(--tint);color:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+.shop-item.owned .btn-mini{background:var(--green)}
+.shop-item.locked .btn-mini{background:var(--gray);cursor:not-allowed}
+/* Room placement */
+.room-panel{padding:12px 16px 4px}
+.room-grid{display:grid;grid-template-columns:80px 1fr 1fr 1fr 1fr;gap:6px;font-size:12px;align-items:center}
+.room-grid .h{color:var(--label-secondary);text-transform:uppercase;letter-spacing:.4px;font-size:11px}
+.room-grid select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--sys-separator);background:var(--sys-surface);color:var(--label);font-size:13px}
+.room-grid .cornerbox{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;height:44px}
+.room-grid .cornerbox button{border:1px solid var(--sys-separator);background:var(--sys-fill);border-radius:5px;font-size:11px;cursor:pointer;padding:0}
+.room-grid .cornerbox button.on{background:var(--tint);color:#fff;border-color:var(--tint)}
 </style>
 </head>
 <body>
@@ -110,7 +113,7 @@ footer a{color:var(--tint);text-decoration:none}
 <div class="navbar">
   <div>
     <div class="title">🐾 Kaka</div>
-    <div class="subtitle">桌面摸鱼搭子 · v0.3 · Web 试玩版</div>
+    <div class="subtitle">桌面摸鱼搭子 · v0.4 · Web 试玩版</div>
   </div>
   <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">GitHub ›</a>
 </div>
@@ -123,18 +126,21 @@ footer a{color:var(--tint);text-decoration:none}
         <span id="header-name">Kaka</span>
         <span class="quirk" id="header-quirk">· 社牛</span>
       </div>
-      <div class="badge"><span class="dot"></span><span id="badge-state">Online · walking</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div class="badge"><span class="dot"></span><span id="badge-state">walking</span></div>
+        <div class="badge" id="badge-shop">🛍 商店</div>
+        <div class="badge pink" id="badge-event" style="display:none"></div>
+      </div>
     </div>
     <div class="monitors" id="monitors">
       <div class="monitor"><div class="mtag">Screen 1 · 主屏</div><canvas class="stage" id="s0"></canvas></div>
       <div class="monitor"><div class="mtag">Screen 2 · 副屏</div><canvas class="stage" id="s1"></canvas></div>
     </div>
     <div class="toast" id="toast">欢迎来到 Kaka</div>
-
-    <!-- Pomodoro notification -->
     <div class="notif" id="notif">
       <div class="t">🐾 Kaka 提醒</div>
       <div class="m" id="notif-msg">已经 25 分钟啦，起来喝口水～</div>
+      <div class="stats" id="notif-stats"></div>
       <div class="row2">
         <button id="n-snooze">延后</button>
         <button class="p" id="n-dismiss">知道了</button>
@@ -149,35 +155,72 @@ footer a{color:var(--tint);text-decoration:none}
       <div class="pers-flavor" id="pers-flavor"></div>
     </div>
 
-    <div class="section-title">皮肤</div>
+    <div class="section-title"><span>皮肤</span><a href="#" id="open-shop">打开商店 ›</a></div>
     <div class="list-group">
-      <div class="skin-grid" id="skin-grid"></div>
+      <div class="pers-grid" id="skin-grid"></div>
+    </div>
+
+    <div class="section-title">屋子</div>
+    <div class="list-group">
+      <div class="room-panel">
+        <div class="room-grid">
+          <div class="h">家具</div><div class="h">屏幕</div><div class="h" style="grid-column:span 2">角落 (TL/TR/BL/BR)</div><div class="h">操作</div>
+          <div>🛏 窝</div>
+          <select data-kind="nest" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
+          <div class="cornerbox" data-kind="nest">
+            <button data-c="tl">↖</button><button data-c="tr">↗</button>
+            <button data-c="bl">↙</button><button data-c="br">↘</button>
+          </div>
+          <div></div>
+          <button class="btn secondary" data-remove="nest" style="padding:6px 8px;font-size:12px">清除</button>
+
+          <div>🍚 食盆</div>
+          <select data-kind="bowl" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
+          <div class="cornerbox" data-kind="bowl">
+            <button data-c="tl">↖</button><button data-c="tr">↗</button>
+            <button data-c="bl">↙</button><button data-c="br">↘</button>
+          </div>
+          <div></div>
+          <button class="btn secondary" data-remove="bowl" style="padding:6px 8px;font-size:12px">清除</button>
+
+          <div>🚽 便盆</div>
+          <select data-kind="litter" data-role="screen"><option value="0">Screen 1</option><option value="1">Screen 2</option></select>
+          <div class="cornerbox" data-kind="litter">
+            <button data-c="tl">↖</button><button data-c="tr">↗</button>
+            <button data-c="bl">↙</button><button data-c="br">↘</button>
+          </div>
+          <div></div>
+          <button class="btn secondary" data-remove="litter" style="padding:6px 8px;font-size:12px">清除</button>
+        </div>
+        <div class="hint" style="padding-left:0;padding-right:0">摆好便盆后 Kaka 会走到便盆再拉，卫生下降更少 · 摸头会去窝里眯眼 · 喂食会先掉进食盆</div>
+      </div>
     </div>
 
     <div class="section-title">控制</div>
     <div class="list-group">
-      <div class="row">
-        <div class="icon green">🌍</div><div class="label">重力</div>
-        <label class="switch"><input type="checkbox" id="tg-gravity" checked /><span class="slider"></span></label>
-      </div>
-      <div class="row">
-        <div class="icon gray">👀</div><div class="label">显示 Kaka</div>
-        <label class="switch"><input type="checkbox" id="tg-visible" checked /><span class="slider"></span></label>
-      </div>
-      <div class="row">
-        <div class="icon purple">💼</div><div class="label">代打工模式</div>
-        <label class="switch"><input type="checkbox" id="tg-work" /><span class="slider"></span></label>
-      </div>
-      <div class="row">
-        <div class="icon pink">👋</div><div class="label">好友互访（模拟）</div>
-        <label class="switch"><input type="checkbox" id="tg-friend" /><span class="slider"></span></label>
-      </div>
+      <div class="row"><div class="icon green">🌍</div><div class="label">重力</div>
+        <label class="switch"><input type="checkbox" id="tg-gravity" checked /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon gray">👀</div><div class="label">显示 Kaka</div>
+        <label class="switch"><input type="checkbox" id="tg-visible" checked /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon purple">💼</div><div class="label">代打工模式</div>
+        <label class="switch"><input type="checkbox" id="tg-work" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon pink">👋</div><div class="label">好友互访（模拟）</div>
+        <label class="switch"><input type="checkbox" id="tg-friend" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon orange">🎤</div><div class="label">强制周五唱歌（Demo）</div>
+        <label class="switch"><input type="checkbox" id="tg-sing" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon yellow">💃</div><div class="label">强制发薪日跳舞（Demo）</div>
+        <label class="switch"><input type="checkbox" id="tg-dance" /><span class="slider"></span></label></div>
+      <div class="row"><div class="icon blue">📅</div><div class="label">发薪日日期</div>
+        <select id="payday-select" style="padding:6px 8px;border-radius:8px;border:1px solid var(--sys-separator);background:var(--sys-surface);color:var(--label);font-size:14px"></select></div>
       <div class="btn-row">
         <button class="btn" id="btn-feed">🍪 喂食</button>
         <button class="btn secondary" id="btn-poop">💩 立刻拉</button>
       </div>
       <div class="btn-row">
         <button class="btn secondary" id="btn-remind">⏱ 测试提醒</button>
+        <button class="btn secondary" id="btn-pomo">🍅 开始番茄</button>
+      </div>
+      <div class="btn-row" style="grid-template-columns:1fr">
         <button class="btn destructive" id="btn-reset">重置</button>
       </div>
     </div>
@@ -188,580 +231,671 @@ footer a{color:var(--tint);text-decoration:none}
       <div class="bar-row"><div class="icon pink">😊</div><div class="bar-label">心情</div><div class="bar mood"><i id="bar-mood"></i></div><div class="bar-value" id="val-mood">0</div></div>
       <div class="bar-row"><div class="icon green">🧼</div><div class="bar-label">卫生</div><div class="bar hygiene"><i id="bar-hygiene"></i></div><div class="bar-value" id="val-hygiene">0</div></div>
       <div class="bar-row"><div class="icon orange">💛</div><div class="bar-label">好感度</div><div class="bar affinity"><i id="bar-affinity"></i></div><div class="bar-value" id="val-affinity">0</div></div>
+      <div class="bar-row"><div class="icon red">🍅</div><div class="bar-label">番茄</div>
+        <div style="flex:1;font-size:13px;color:var(--label-secondary)" id="pomo-line">今日已完成 0 · 累计 0 · 连续 0 天</div></div>
     </div>
 
-    <div class="hint">点 Kaka <b>摸头</b> · 拖动 <b>扔飞</b>（有旋转&回弹） · 单击地上物 <b>清理</b><br>桌面版全局老板键：<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd></div>
+    <div class="hint">点 Kaka <b>摸头</b> · 拖动 <b>扔飞</b>（旋转+回弹） · 单击地上物 <b>清理</b><br>桌面版全局老板键：<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd></div>
   </aside>
 </div>
 <footer>Made with ❤️ · <a href="https://github.com/ustiniankw/Kaka">github.com/ustiniankw/Kaka</a></footer>
 </div>
 
+<!-- Shop Modal -->
+<div class="modal" id="shop-modal">
+  <div class="card">
+    <h3>🛍 皮肤商店</h3>
+    <div class="sub" id="shop-sub">好感度越高、性格越对得上，能解锁的皮肤越多</div>
+    <div class="shop-list" id="shop-list"></div>
+    <div class="close"><button class="btn secondary" id="shop-close" style="width:auto;padding:8px 18px">关闭</button></div>
+  </div>
+</div>
+
 <script>
 (() => {
-// -------- Palettes (skin system) --------
+// ===== Skins =====
 const SKINS = {
-  default: { body:'#F5C542', dark:'#C08A18', cheek:'#F58A8A', eye:'#222', white:'#fff', name:'Default' },
-  mochi:   { body:'#F7C0D3', dark:'#C77F97', cheek:'#FFF0B0', eye:'#3A2036', white:'#fff', name:'Mochi' },
-  matcha:  { body:'#A6C97E', dark:'#6D8C4F', cheek:'#F5C4D0', eye:'#2A3A1A', white:'#F5FFEA', name:'Matcha' },
-  berry:   { body:'#8C6BE8', dark:'#5E43B0', cheek:'#FFC1E0', eye:'#1D1132', white:'#fff', name:'Berry' },
-  cocoa:   { body:'#8A5A3B', dark:'#5B3720', cheek:'#F5B6A3', eye:'#20120A', white:'#FFF3E8', name:'Cocoa' },
+  default:{body:'#F5C542',dark:'#C08A18',cheek:'#F58A8A',eye:'#222',white:'#fff',name:'原味',em:'🟡'},
+  mochi:  {body:'#F7C0D3',dark:'#C77F97',cheek:'#FFF0B0',eye:'#3A2036',white:'#fff',name:'麻薯',em:'🌸'},
+  matcha: {body:'#A6C97E',dark:'#6D8C4F',cheek:'#F5C4D0',eye:'#2A3A1A',white:'#F5FFEA',name:'抹茶',em:'🍵'},
+  berry:  {body:'#8C6BE8',dark:'#5E43B0',cheek:'#FFC1E0',eye:'#1D1132',white:'#fff',name:'莓紫',em:'🫐'},
+  cocoa:  {body:'#8A5A3B',dark:'#5B3720',cheek:'#F5B6A3',eye:'#20120A',white:'#FFF3E8',name:'可可',em:'🍫'},
+  sakura: {body:'#FFD7E2',dark:'#D793A6',cheek:'#FFFFFF',eye:'#3A1A28',white:'#FFFDFB',name:'樱雪',em:'🌸'},
+  cyber:  {body:'#7A3CFF',dark:'#3B1670',cheek:'#12F5C6',eye:'#F8F8F8',white:'#00E0FF',name:'赛博',em:'🤖'},
 };
+const SHOP = [
+  {key:'default',aff:0, per:null,        desc:'刚认识时候的样子，永久拥有'},
+  {key:'mochi',  aff:25,per:null,        desc:'圆滚滚粉粉的 Q 弹皮肤'},
+  {key:'matcha', aff:40,per:null,        desc:'带一点苦涩的成熟绿'},
+  {key:'berry',  aff:55,per:'tsundere',  desc:'傲娇专属，微微高冷'},
+  {key:'cocoa',  aff:70,per:'foodie',    desc:'干饭王专属，吃出来的巧克力色'},
+  {key:'sakura', aff:85,per:'introvert', desc:'社恐专属，柔粉带雪白'},
+  {key:'cyber',  aff:90,per:'extrovert', desc:'社牛专属，霓虹紫电'},
+];
 let skinKey = 'default';
 
-// -------- Personalities --------
+// ===== Personalities =====
 const PERSONALITIES = {
   introvert:{emoji:'🫥',name:'社恐',walkSpeed:.75,walkProb:.30,poopFreq:1.0,hungerDecay:.9,moodDecay:1.1,rejectPet:0,bubble:0,flavor:'喜欢待在墙角'},
-  chatty:   {emoji:'🗣️',name:'话痨',walkSpeed:1.1,walkProb:.60,poopFreq:1.0,hungerDecay:1.0,moodDecay:.9,rejectPet:0,bubble:.35,flavor:'总有话想说，会冒泡'},
+  chatty:   {emoji:'🗣️',name:'话痨',walkSpeed:1.1,walkProb:.60,poopFreq:1.0,hungerDecay:1.0,moodDecay:.9,rejectPet:0,bubble:.35,flavor:'总有话想说'},
   lazy:     {emoji:'😴',name:'懒鬼',walkSpeed:.55,walkProb:.20,poopFreq:.7,hungerDecay:.75,moodDecay:.85,rejectPet:0,bubble:0,flavor:'能坐着就不站着'},
-  foodie:   {emoji:'🍗',name:'干饭王',walkSpeed:1.2,walkProb:.55,poopFreq:1.5,hungerDecay:1.4,moodDecay:1.0,rejectPet:0,bubble:0,flavor:'冲食物飞快，也拉得多'},
+  foodie:   {emoji:'🍗',name:'干饭王',walkSpeed:1.2,walkProb:.55,poopFreq:1.5,hungerDecay:1.4,moodDecay:1.0,rejectPet:0,bubble:0,flavor:'冲食物飞快'},
   grumpy:   {emoji:'😤',name:'暴躁',walkSpeed:1.3,walkProb:.60,poopFreq:1.2,hungerDecay:1.1,moodDecay:1.4,rejectPet:0,bubble:0,flavor:'心情易掉'},
   tsundere: {emoji:'😳',name:'傲娇',walkSpeed:1.0,walkProb:.50,poopFreq:1.0,hungerDecay:1.0,moodDecay:1.0,rejectPet:.30,bubble:0,flavor:'摸头 30% 拒绝'},
-  extrovert:{emoji:'🥳',name:'社牛',walkSpeed:1.4,walkProb:.75,poopFreq:1.0,hungerDecay:1.1,moodDecay:.8,rejectPet:0,bubble:.15,flavor:'满屏跑，撞墙挥手'},
+  extrovert:{emoji:'🥳',name:'社牛',walkSpeed:1.4,walkProb:.75,poopFreq:1.0,hungerDecay:1.1,moodDecay:.8,rejectPet:0,bubble:.15,flavor:'满屏跑'},
 };
 
-// -------- Multi-screen setup --------
-const SCREENS = ['s0', 's1'].map(id => document.getElementById(id));
+// ===== Canvas / world =====
+const SCREENS = ['s0','s1'].map(id => document.getElementById(id));
 const CTXES = SCREENS.map(c => c.getContext('2d'));
-function resizeAll() {
-  const dpr = window.devicePixelRatio || 1;
-  SCREENS.forEach((c, i) => {
-    const rect = c.getBoundingClientRect();
-    c.width = rect.width * dpr;
-    c.height = rect.height * dpr;
-    CTXES[i].setTransform(dpr, 0, 0, dpr, 0, 0);
-  });
-}
-window.addEventListener('resize', resizeAll);
-resizeAll();
+function resizeAll(){const dpr=window.devicePixelRatio||1;SCREENS.forEach((c,i)=>{const r=c.getBoundingClientRect();c.width=r.width*dpr;c.height=r.height*dpr;CTXES[i].setTransform(dpr,0,0,dpr,0,0);});}
+window.addEventListener('resize',resizeAll); resizeAll();
 
-const PET = 80, WASTE = 28, FLOOR_MARGIN = 6;
-const SW = (i) => SCREENS[i].clientWidth;
-const SH = (i) => SCREENS[i].clientHeight;
-
-// Combined "world" laid out horizontally
-// Pet position is (screenIdx, x, y).  Screens have gaps between them
-// but the pet walks across them by teleporting screen boundaries.
+const PET=80, WASTE=28, FURN=40, FLOOR_MARGIN=6;
+const SW=i=>SCREENS[i].clientWidth, SH=i=>SCREENS[i].clientHeight;
 
 const state = {
-  personality: 'extrovert',
-  friend: null,   // {screen, x, y, vx}
-  pet: {
-    screen: 0, x: SW(0)*0.7, y: 0, vx:0, vy:0, rot:0, angVel:0,
-    facing:1, behaviour:'idle', until:0, floatPhase:Math.random()*Math.PI*2,
-    target:null, visible:true, bubbleUntil:0, bubbleText:'',
-  },
-  work: { active:false, kbScreen:0, kbX:0, kbY:0, glyphIdx:0, since:0 },
-  gravity: true,
-  entities: [ [], [] ],   // per-screen
-  stats: { hunger:60, mood:65, hygiene:85, affinity:15 },
-  dragOffset: null, lastDragT:0, lastDragX:0, lastDragY:0, dragScreen:0,
+  personality:'extrovert',
+  ownedSkins: new Set(['default']),
+  paydayDay: 15,
+  forceSing:false, forceDance:false,
+  pomo:{ total: parseInt(localStorage.getItem('kaka_pomo_total')||'0'),
+         today: parseInt(localStorage.getItem('kaka_pomo_today')||'0'),
+         todayDate: localStorage.getItem('kaka_pomo_date')||'',
+         streak: parseInt(localStorage.getItem('kaka_pomo_streak')||'0'),
+         running:false, startedAt:0 },
+  room:{ nest:null, bowl:null, litter:null },  // each: {screen, corner}
+  friend:null,
+  pet:{ screen:0, x:SW(0)*.7, y:0, vx:0, vy:0, rot:0, angVel:0, facing:1,
+        behaviour:'idle', until:0, floatPhase:Math.random()*Math.PI*2,
+        target:null, targetKind:null, visible:true,
+        bubbleUntil:0, bubbleText:'' },
+  work:{ active:false, kbScreen:0, kbX:0, kbY:0, glyphIdx:0 },
+  event:null,  // 'sing' | 'dance' | null
+  eventNextAt:0,
+  gravity:true,
+  entities:[[],[]],
+  stats:{ hunger:60, mood:65, hygiene:85, affinity:15 },
+  dragOffset:null, lastDragT:0, lastDragX:0, lastDragY:0, dragScreen:0,
 };
 state.pet.y = SH(0) - PET - FLOOR_MARGIN;
+rollDay();
 
-const rand = (a,b) => a + Math.random()*(b-a);
-const clamp = (v,lo=0,hi=100) => Math.max(lo, Math.min(hi, v));
-const persona = () => PERSONALITIES[state.personality];
-const skin = () => SKINS[skinKey];
+function rand(a,b){return a+Math.random()*(b-a)}
+function clamp(v,lo=0,hi=100){return Math.max(lo,Math.min(hi,v))}
+const persona = ()=>PERSONALITIES[state.personality];
+const skin    = ()=>SKINS[skinKey];
 
-// -------- UI builders --------
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(()=>t.classList.remove('show'), 2000);
-}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2000);}
 
-// Personality picker
+// ===== Personality UI =====
 const pGrid = document.getElementById('pers-grid');
-Object.keys(PERSONALITIES).forEach(k => {
-  const p = PERSONALITIES[k];
-  const el = document.createElement('div');
-  el.className = 'pers-tile'; el.dataset.key = k;
-  el.innerHTML = `<div class="em">${p.emoji}</div><div class="nm">${p.name}</div>`;
-  el.onclick = () => setPersonality(k);
-  pGrid.appendChild(el);
-});
-function setPersonality(k) {
-  state.personality = k;
-  document.getElementById('header-emoji').textContent = persona().emoji;
-  document.getElementById('header-quirk').textContent = '· ' + persona().name;
-  document.getElementById('pers-flavor').textContent = persona().flavor;
-  document.querySelectorAll('.pers-tile').forEach(el => el.classList.toggle('active', el.dataset.key === k));
-  scheduleNextPoop(); scheduleNextBubble();
-  showToast(persona().emoji + ' ' + persona().name);
-}
+Object.keys(PERSONALITIES).forEach(k=>{const p=PERSONALITIES[k];const el=document.createElement('div');el.className='pers-tile';el.dataset.key=k;el.innerHTML=`<div class="em">${p.emoji}</div><div class="nm">${p.name}</div>`;el.onclick=()=>setPersonality(k);pGrid.appendChild(el);});
+function setPersonality(k){state.personality=k;document.getElementById('header-emoji').textContent=persona().emoji;document.getElementById('header-quirk').textContent='· '+persona().name;document.getElementById('pers-flavor').textContent=persona().flavor;document.querySelectorAll('.pers-tile').forEach(el=>el.classList.toggle('active',el.dataset.key===k));renderSkinGrid();renderShop();scheduleNextPoop();scheduleNextBubble();showToast(persona().emoji+' '+persona().name);}
 
-// Skin picker
+// ===== Skin Grid (only owned) =====
 const sGrid = document.getElementById('skin-grid');
-Object.keys(SKINS).forEach(k => {
-  const s = SKINS[k];
+function renderSkinGrid(){
+  sGrid.innerHTML = '';
+  const owned = [...state.ownedSkins];
+  owned.forEach(k=>{
+    const s = SKINS[k]; if (!s) return;
+    const el = document.createElement('div');
+    el.className='pers-tile'+(k===skinKey?' active':'');
+    el.innerHTML = `<div class="em" style="width:26px;height:26px;border-radius:50%;background:${s.body};border:2px solid rgba(0,0,0,.06)"></div><div class="nm">${s.name}</div>`;
+    el.onclick = ()=>setSkin(k);
+    sGrid.appendChild(el);
+  });
+  // + shop shortcut tile
   const el = document.createElement('div');
-  el.className = 'skin-tile'; el.dataset.key = k;
-  el.innerHTML = `<div class="em" style="background:${s.body}"></div><div class="nm">${s.name}</div>`;
-  el.onclick = () => setSkin(k);
+  el.className='pers-tile';
+  el.innerHTML = `<div class="em">🛍</div><div class="nm">商店</div>`;
+  el.onclick = ()=>openShop();
   sGrid.appendChild(el);
-});
-function setSkin(k) {
-  skinKey = k;
-  document.querySelectorAll('.skin-tile').forEach(el => el.classList.toggle('active', el.dataset.key === k));
-  showToast('皮肤：' + SKINS[k].name);
+}
+function setSkin(k){if(!state.ownedSkins.has(k)){openShop();return;}skinKey=k;renderSkinGrid();showToast('皮肤：'+SKINS[k].name);}
+
+// ===== Shop Modal =====
+const modal = document.getElementById('shop-modal');
+document.getElementById('open-shop').onclick=(e)=>{e.preventDefault();openShop();};
+document.getElementById('badge-shop').onclick=openShop;
+document.getElementById('shop-close').onclick=()=>modal.classList.remove('show');
+function openShop(){renderShop();modal.classList.add('show');}
+function renderShop(){
+  document.getElementById('shop-sub').textContent =
+    `当前 · 好感度 ${Math.round(state.stats.affinity)} · 性格 ${persona().name}`;
+  const list = document.getElementById('shop-list'); list.innerHTML='';
+  SHOP.forEach(it=>{
+    const s = SKINS[it.key];
+    const owned = state.ownedSkins.has(it.key);
+    const meets = state.stats.affinity >= it.aff && (!it.per || it.per === state.personality);
+    const st = owned ? 'owned' : (meets ? 'available' : 'locked');
+    const el = document.createElement('div'); el.className='shop-item '+st;
+    const reqBits = [];
+    if (it.aff>0) reqBits.push(`好感度 ≥ ${it.aff}`);
+    if (it.per) reqBits.push(`性格 = ${PERSONALITIES[it.per].name}`);
+    if (reqBits.length===0) reqBits.push('永久拥有');
+    el.innerHTML = `
+      <div class="top">
+        <div class="swatch" style="background:${s.body}"></div>
+        <div class="nm">${s.name} <span style="color:var(--label-secondary);font-weight:400">${s.em}</span></div>
+      </div>
+      <div class="desc">${it.desc}</div>
+      <div class="req">${reqBits.join(' · ')}</div>
+      <button class="btn-mini">${owned?'已拥有 · 试穿':(meets?'解锁':'未解锁')}</button>
+    `;
+    el.querySelector('button').onclick = ()=>{
+      if (owned) { setSkin(it.key); modal.classList.remove('show'); return; }
+      if (!meets) return;
+      state.ownedSkins.add(it.key);
+      setSkin(it.key);
+      renderShop(); renderSkinGrid();
+      showToast('🎉 解锁了 ' + s.name);
+    };
+    list.appendChild(el);
+  });
 }
 
-// -------- Sprite draw --------
-function drawPet(ctx, x, y, mood, flip, rot) {
-  const g = 16, size = PET, c = size / g;
-  ctx.save();
-  ctx.translate(x + size/2, y + size/2);
-  if (rot) ctx.rotate(rot * Math.PI / 180);
-  if (flip) ctx.scale(-1, 1);
-  ctx.translate(-size/2, -size/2);
-  ctx.imageSmoothingEnabled = false;
-  const R = (px,py,w,h,col) => { ctx.fillStyle = col; ctx.fillRect(px*c, py*c, w*c, h*c); };
-  const S = skin();
+// ===== Room UI =====
+function refreshCornerButtons(){
+  document.querySelectorAll('.cornerbox').forEach(box=>{
+    const kind = box.dataset.kind;
+    const cur = state.room[kind];
+    box.querySelectorAll('button').forEach(b=>{
+      b.classList.toggle('on', !!cur && cur.corner === b.dataset.c &&
+        parseInt(box.parentElement.querySelector(`select[data-kind="${kind}"]`).value) === cur.screen);
+    });
+  });
+}
+document.querySelectorAll('.cornerbox').forEach(box=>{
+  const kind = box.dataset.kind;
+  box.querySelectorAll('button').forEach(b=>{
+    b.onclick = ()=>{
+      const scr = parseInt(document.querySelector(`select[data-kind="${kind}"]`).value);
+      state.room[kind] = { screen: scr, corner: b.dataset.c };
+      refreshCornerButtons();
+      showToast('📦 已放置：' + ({nest:'🛏 窝',bowl:'🍚 食盆',litter:'🚽 便盆'}[kind]));
+    };
+  });
+});
+document.querySelectorAll('select[data-kind]').forEach(sel=>{sel.onchange=refreshCornerButtons;});
+document.querySelectorAll('[data-remove]').forEach(b=>{b.onclick=()=>{state.room[b.dataset.remove]=null;refreshCornerButtons();showToast('已清除 '+b.dataset.remove);};});
+function furnitureXY(kind){
+  const f = state.room[kind]; if (!f) return null;
+  const w = SW(f.screen), h = SH(f.screen);
+  const m = 12;
+  const x = f.corner.endsWith('l') ? m : w - FURN - m;
+  const y = f.corner.startsWith('t') ? m : h - FURN - m - 4;
+  return { screen: f.screen, x, y };
+}
+
+// ===== Payday select =====
+const paydaySel = document.getElementById('payday-select');
+for (let d=1; d<=28; d++){const o=document.createElement('option');o.value=d;o.textContent=`每月 ${d} 号`;if(d===15)o.selected=true;paydaySel.appendChild(o);}
+paydaySel.onchange=()=>{state.paydayDay=parseInt(paydaySel.value);showToast('发薪日：每月 '+state.paydayDay+' 号');};
+
+// ===== Sprite draw =====
+function drawPet(ctx,x,y,mood,flip,rot){
+  const g=16,size=PET,c=size/g;
+  ctx.save(); ctx.translate(x+size/2,y+size/2); if(rot)ctx.rotate(rot*Math.PI/180);
+  if(flip)ctx.scale(-1,1); ctx.translate(-size/2,-size/2); ctx.imageSmoothingEnabled=false;
+  const R=(px,py,w,h,col)=>{ctx.fillStyle=col;ctx.fillRect(px*c,py*c,w*c,h*c);};
+  const S=skin();
   R(4,3,8,1,S.body); R(3,4,10,1,S.body); R(2,5,12,6,S.body);
   R(3,11,10,1,S.body); R(4,12,8,1,S.body); R(4,13,3,1,S.body); R(9,13,3,1,S.body);
   R(3,10,10,1,S.dark); R(4,11,8,1,S.dark);
-  if (mood === 'wink')       { R(5,6,2,2,S.white); R(6,7,1,1,S.eye); R(9,7,2,1,S.eye); }
-  else if (mood === 'angry') { R(4,5,2,1,S.eye); R(10,5,2,1,S.eye); R(5,7,2,1,S.eye); R(9,7,2,1,S.eye); }
-  else if (mood === 'work')  { R(5,7,2,1,S.eye); R(9,7,2,1,S.eye); }
-  else                       { R(5,6,2,2,S.white); R(9,6,2,2,S.white); R(6,7,1,1,S.eye); R(10,7,1,1,S.eye); }
+  if(mood==='wink'||mood==='sing'||mood==='dance'){R(5,6,2,2,S.white);R(6,7,1,1,S.eye);R(9,7,2,1,S.eye);}
+  else if(mood==='angry'){R(4,5,2,1,S.eye);R(10,5,2,1,S.eye);R(5,7,2,1,S.eye);R(9,7,2,1,S.eye);}
+  else if(mood==='work'||mood==='sleep'){R(5,7,2,1,S.eye);R(9,7,2,1,S.eye);}
+  else{R(5,6,2,2,S.white);R(9,6,2,2,S.white);R(6,7,1,1,S.eye);R(10,7,1,1,S.eye);}
   R(4,9,1,1,S.cheek); R(11,9,1,1,S.cheek);
-  if (mood === 'sad')         { R(6,9,1,1,S.eye); R(9,9,1,1,S.eye); R(7,10,2,1,S.eye); }
-  else if (mood === 'hungry') { R(7,9,2,2,S.eye); }
-  else                        { R(7,10,2,1,S.eye); }
+  if(mood==='sad'){R(6,9,1,1,S.eye);R(9,9,1,1,S.eye);R(7,10,2,1,S.eye);}
+  else if(mood==='hungry'){R(7,9,2,2,S.eye);}
+  else if(mood==='sing'){R(7,9,2,3,S.eye);}
+  else{R(7,10,2,1,S.eye);}
+  ctx.restore();
+  // extras
+  if(mood==='sing'){ ctx.font='18px "Apple Color Emoji","Segoe UI Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🎤', x + size - 6, y + size - 12);}
+  if(mood==='sleep'){ ctx.font='16px "Apple Color Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('💤', x + size + 2, y - 2);}
+}
+function drawFurniture(ctx, kind, x, y){
+  const em = kind==='nest'?'🛏':kind==='bowl'?'🍚':'🚽';
+  ctx.font = (FURN*0.85)+'px "Apple Color Emoji","Segoe UI Emoji"';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.save(); ctx.globalAlpha=0.9;
+  ctx.fillText(em, x + FURN/2, y + FURN/2);
   ctx.restore();
 }
-function drawEntity(ctx, e) {
-  ctx.font = (WASTE * 0.85) + "px 'Apple Color Emoji','Segoe UI Emoji',sans-serif";
-  ctx.textBaseline='middle'; ctx.textAlign='center';
-  ctx.fillText(e.glyph, e.x + WASTE/2, e.y + WASTE/2);
-}
-function drawBubble(ctx, text, cx, cy) {
-  ctx.save();
-  ctx.font = '13px -apple-system,"PingFang SC",sans-serif';
-  const w = ctx.measureText(text).width + 16, h = 22;
-  const x = cx - w/2, y = cy - h - 8, r = 10;
+function drawEntity(ctx,e){ctx.font=(WASTE*0.85)+'px "Apple Color Emoji","Segoe UI Emoji"';ctx.textBaseline='middle';ctx.textAlign='center';ctx.fillText(e.glyph,e.x+WASTE/2,e.y+WASTE/2);}
+function drawBubble(ctx,text,cx,cy){
+  ctx.save(); ctx.font='13px -apple-system,"PingFang SC"';
+  const w=ctx.measureText(text).width+16,h=22,x=cx-w/2,y=cy-h-8,r=10;
   ctx.fillStyle='rgba(28,28,30,.92)';
-  ctx.beginPath();
-  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+w/2+5,y+h); ctx.lineTo(x+w/2,y+h+6); ctx.lineTo(x+w/2-5,y+h);
-  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.fill();
-  ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(text, cx, y + h/2);
-  ctx.restore();
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+w/2+5,y+h);ctx.lineTo(x+w/2,y+h+6);ctx.lineTo(x+w/2-5,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fill();
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(text,cx,y+h/2); ctx.restore();
 }
-function drawScene() {
-  for (let i = 0; i < SCREENS.length; i++) {
-    const ctx = CTXES[i];
+function drawScene(){
+  for(let i=0;i<SCREENS.length;i++){
+    const ctx=CTXES[i];
     ctx.clearRect(0,0,SW(i),SH(i));
     // floor
-    const fy = SH(i) - FLOOR_MARGIN;
-    ctx.strokeStyle='rgba(60,60,67,.10)'; ctx.setLineDash([4,8]);
-    ctx.beginPath(); ctx.moveTo(0,fy); ctx.lineTo(SW(i),fy); ctx.stroke();
-    ctx.setLineDash([]);
-    // keyboard prop (only when work-mode active)
-    if (state.work.active && state.work.kbScreen === i) {
-      ctx.font = '26px "Apple Color Emoji","Segoe UI Emoji"';
-      ctx.textAlign = 'center'; ctx.textBaseline='middle';
-      ctx.fillText('⌨️', state.work.kbX + PET/2, state.work.kbY + PET/2 + 4);
+    const fy=SH(i)-FLOOR_MARGIN;
+    ctx.strokeStyle='rgba(60,60,67,.10)';ctx.setLineDash([4,8]);
+    ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(SW(i),fy);ctx.stroke();ctx.setLineDash([]);
+    // furniture
+    ['nest','bowl','litter'].forEach(k=>{const p=furnitureXY(k);if(p && p.screen===i) drawFurniture(ctx,k,p.x,p.y);});
+    // keyboard prop
+    if(state.work.active && state.work.kbScreen===i){
+      ctx.font='26px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('⌨️',state.work.kbX+PET/2,state.work.kbY+PET/2+4);
     }
     // entities
-    state.entities[i].forEach(e => drawEntity(ctx, e));
+    state.entities[i].forEach(e=>drawEntity(ctx,e));
     // friend
-    if (state.friend && state.friend.screen === i) {
-      ctx.save(); ctx.globalAlpha = 0.85;
-      drawPet(ctx, state.friend.x, state.friend.y, 'happy', state.friend.vx < 0);
-      ctx.restore();
-      drawBubble(ctx, '👋', state.friend.x + PET/2, state.friend.y);
+    if(state.friend && state.friend.screen===i){ctx.save();ctx.globalAlpha=0.85;drawPet(ctx,state.friend.x,state.friend.y,'happy',state.friend.vx<0,0);ctx.restore();drawBubble(ctx,'👋',state.friend.x+PET/2,state.friend.y);}
+    // event overlays: dance sparks
+    if(state.event==='dance' && state.pet.screen===i){
+      const t=performance.now()/120;
+      for(let k=0;k<4;k++){const ang=t+k*1.57;ctx.font='16px "Apple Color Emoji"';ctx.fillText('✨', state.pet.x+PET/2+Math.cos(ang)*45, state.pet.y+PET/2+Math.sin(ang)*25);}
     }
     // pet
-    if (state.pet.visible && state.pet.screen === i) {
-      drawPet(ctx, state.pet.x, state.pet.y, moodLabel(), state.pet.facing < 0, state.pet.rot);
-      if (performance.now() < state.pet.bubbleUntil) {
-        drawBubble(ctx, state.pet.bubbleText, state.pet.x + PET/2, state.pet.y);
-      }
-      if (state.work.active && state.work.kbScreen === i && state.pet.behaviour === 'work') {
-        const gs = ['⌨️','💻','📊','📝','☕️'];
-        drawBubble(ctx, gs[state.work.glyphIdx % gs.length], state.pet.x + PET/2 + 30, state.pet.y);
+    if(state.pet.visible && state.pet.screen===i){
+      drawPet(ctx,state.pet.x,state.pet.y,moodLabel(),state.pet.facing<0,state.pet.rot);
+      if(performance.now()<state.pet.bubbleUntil) drawBubble(ctx,state.pet.bubbleText,state.pet.x+PET/2,state.pet.y);
+      if(state.work.active && state.work.kbScreen===i && state.pet.behaviour==='work'){
+        const gs=['⌨️','💻','📊','📝','☕️'];
+        drawBubble(ctx,gs[state.work.glyphIdx%gs.length],state.pet.x+PET/2+30,state.pet.y);
       }
     }
   }
 }
-function moodLabel() {
-  const s = state.stats;
-  if (state.pet.behaviour === 'drag') return 'wink';
-  if (state.work.active && state.pet.behaviour === 'work') return 'work';
-  if (s.hunger < 20) return 'hungry';
-  if (s.mood < 15) return persona().name === '暴躁' ? 'angry' : 'sad';
-  if (s.mood < 30) return 'sad';
-  if (s.mood > 80) return 'wink';
+function moodLabel(){
+  const s=state.stats;
+  if(state.pet.behaviour==='drag') return 'wink';
+  if(state.event==='sing') return 'sing';
+  if(state.event==='dance') return 'wink';
+  if(state.pet.behaviour==='sleep') return 'sleep';
+  if(state.work.active && state.pet.behaviour==='work') return 'work';
+  if(s.hunger<20) return 'hungry';
+  if(s.mood<15) return persona().name==='暴躁'?'angry':'sad';
+  if(s.mood<30) return 'sad';
+  if(s.mood>80) return 'wink';
   return 'happy';
 }
-function updateHeaderState() {
-  const b = state.pet.behaviour;
-  const label = { idle:'idle', walk:'walking', fall:'falling', float:'floating', drag:'held', work:'working' }[b] || b;
-  document.getElementById('badge-state').textContent = state.pet.visible ? 'Online · ' + label : 'Hidden';
+function updateHeaderState(){
+  const b=state.pet.behaviour;
+  const label = state.event ? state.event : ({idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',toLitter:'走去便盆',sleep:'眯眼中'}[b] || b);
+  document.getElementById('badge-state').textContent = state.pet.visible ? label : 'Hidden';
+  const ev = document.getElementById('badge-event');
+  if (state.event === 'sing') { ev.style.display=''; ev.innerHTML='<span class="dot"></span>🎤 周五 KTV'; }
+  else if (state.event === 'dance') { ev.style.display=''; ev.innerHTML='<span class="dot"></span>💃 发薪日狂欢'; }
+  else ev.style.display='none';
 }
 
-// -------- Behaviour --------
-function pickNext() {
-  if (Math.random() < persona().walkProb) {
-    state.pet.facing = Math.random() < .5 ? -1 : 1;
-    state.pet.behaviour = 'walk';
-    state.pet.until = performance.now() + rand(2000, 5500);
-  } else {
-    state.pet.behaviour = 'idle';
-    state.pet.until = performance.now() + rand(1500, 4000);
+// ===== Behaviour =====
+function pickNext(){
+  const p=state.pet;
+  // if mood is low and nest is placed → sleep in nest
+  if(state.stats.mood < 30 && state.room.nest && Math.random() < 0.35){
+    goToFurniture('nest','sleep'); return;
   }
+  if(Math.random()<persona().walkProb){
+    p.facing=Math.random()<.5?-1:1; p.behaviour='walk'; p.until=performance.now()+rand(2000,5500);
+  } else { p.behaviour='idle'; p.until=performance.now()+rand(1500,4000); }
 }
-function tick(dtMs) {
-  const p = state.pet, per = persona();
-  const dt = dtMs / 16.67;
+function goToFurniture(kind, thenBehaviour){
+  const f = furnitureXY(kind); if (!f) return false;
+  const p = state.pet;
+  if (p.screen !== f.screen){ p.screen = f.screen; p.x = f.screen > p.screen ? 4 : SW(f.screen) - PET - 4; }
+  p.target = f.x + FURN/2 - PET/2;
+  p.targetKind = kind + '|' + thenBehaviour;
+  p.behaviour = 'walk';
+  p.until = performance.now() + 15000;
+  return true;
+}
+function tick(dtMs){
+  const p=state.pet, per=persona(); const dt=dtMs/16.67;
 
-  // WORK MODE
-  if (state.work.active) {
-    if (p.screen !== state.work.kbScreen) {
-      // teleport-walk to keyboard's screen
-      p.screen = state.work.kbScreen;
-      p.x = 0;
-    }
-    if (Math.abs(p.x - state.work.kbX) > 3) {
-      p.facing = state.work.kbX > p.x ? 1 : -1;
-      p.x += p.facing * 2.4 * dt;
-      p.y = state.gravity ? (SH(p.screen) - PET - FLOOR_MARGIN) : p.y;
-      p.behaviour = 'walk';
+  // Events (sing/dance) — override normal behaviour visually but still walk around
+  updateEventState();
+
+  if(state.work.active){
+    if(p.screen!==state.work.kbScreen){p.screen=state.work.kbScreen;p.x=0;}
+    if(Math.abs(p.x-state.work.kbX)>3){p.facing=state.work.kbX>p.x?1:-1;p.x+=p.facing*2.4*dt;p.y=state.gravity?(SH(p.screen)-PET-FLOOR_MARGIN):p.y;p.behaviour='walk';}
+    else{p.x=state.work.kbX;p.y=state.work.kbY+Math.sin(performance.now()/60)*1.6;p.behaviour='work';state.work.glyphIdx=Math.floor(performance.now()/700);}
+  } else if(p.behaviour==='sleep'){
+    // stay in nest, boost mood slowly
+    state.stats.mood = clamp(state.stats.mood + 0.05*dt);
+    if (performance.now() > p.until) { p.behaviour='idle'; p.until=performance.now()+2000; }
+  } else if(p.behaviour!=='drag'){
+    const sw=SW(p.screen), floorY=SH(p.screen)-PET-FLOOR_MARGIN;
+    if(state.gravity){
+      if(p.y<floorY){p.vy=Math.min(22,p.vy+1.2*dt);p.y+=p.vy*dt;p.vx*=Math.pow(.9,dt);p.x+=p.vx*dt;
+        if(p.y>=floorY){p.y=floorY;p.vy=0;if(Math.abs(p.vx)<0.5){p.vx=0;p.angVel=0;p.rot=0;}}
+        p.behaviour=p.y>=floorY?'idle':'fall';
+      } else if(p.behaviour==='walk'){walkStep(dt);}
+      else{ if(performance.now()>p.until) pickNext(); }
     } else {
-      p.x = state.work.kbX;
-      p.y = state.work.kbY + Math.sin(performance.now()/60) * 1.6;
-      p.behaviour = 'work';
-      state.work.glyphIdx = Math.floor(performance.now() / 700);
+      if(p.behaviour==='walk'){walkStep(dt);}
+      else{p.floatPhase+=(dtMs/2600)*Math.PI*2;const bob=Math.sin(p.floatPhase)*1.5;p.x+=p.vx*dt;p.y+=p.vy*dt+bob;p.vx*=Math.pow(.98,dt);p.vy*=Math.pow(.98,dt);p.behaviour='float';if(performance.now()>p.until)pickNext();}
     }
-  } else if (p.behaviour !== 'drag') {
-    const sw = SW(p.screen);
-    const floorY = SH(p.screen) - PET - FLOOR_MARGIN;
-    if (state.gravity) {
-      if (p.y < floorY) {
-        p.vy = Math.min(22, p.vy + 1.2 * dt);
-        p.y += p.vy * dt; p.vx *= Math.pow(.9, dt); p.x += p.vx * dt;
-        if (p.y >= floorY) { p.y = floorY; p.vy = 0; if (Math.abs(p.vx) < 0.5) { p.vx = 0; p.angVel = 0; p.rot = 0; } }
-        p.behaviour = p.y >= floorY ? 'idle' : 'fall';
-      } else if (p.behaviour === 'walk') { walkStep(dt); }
-      else { if (performance.now() > p.until) pickNext(); }
-    } else {
-      if (p.behaviour === 'walk') { walkStep(dt); }
-      else {
-        p.floatPhase += (dtMs / 2600) * Math.PI * 2;
-        const bob = Math.sin(p.floatPhase) * 1.5;
-        p.x += p.vx * dt; p.y += p.vy * dt + bob;
-        p.vx *= Math.pow(.98, dt); p.vy *= Math.pow(.98, dt);
-        p.behaviour = 'float';
-        if (performance.now() > p.until) pickNext();
-      }
+    // dance jitter
+    if (state.event === 'dance' && p.behaviour === 'idle') {
+      p.y = floorY - Math.abs(Math.sin(performance.now()/180))*10;
+      p.x += Math.sin(performance.now()/240)*0.6*dt;
     }
-    // spin decay
-    p.rot = (p.rot + p.angVel * (dtMs/1000)) % 360;
-    p.angVel *= 0.94;
-    if (Math.abs(p.angVel) < 0.5) p.angVel = 0;
-    // clamp within screen; screen switch handled in walkStep
-    p.x = Math.max(0, Math.min(sw - PET, p.x));
-    p.y = Math.max(0, Math.min(SH(p.screen) - PET, p.y));
+    p.rot = (p.rot + p.angVel*(dtMs/1000)) % 360;
+    p.angVel *= 0.94; if (Math.abs(p.angVel) < 0.5) p.angVel = 0;
+    p.x=Math.max(0,Math.min(sw-PET,p.x)); p.y=Math.max(0,Math.min(SH(p.screen)-PET,p.y));
   }
 
   // Friend animation
-  if (state.friend) {
-    state.friend.x += state.friend.vx * dt;
-    if (state.friend.x < -PET) state.friend = null;
-    else if (state.friend.x > SW(state.friend.screen) + PET) state.friend = null;
-  }
+  if(state.friend){state.friend.x+=state.friend.vx*dt;if(state.friend.x<-PET||state.friend.x>SW(state.friend.screen)+PET)state.friend=null;}
 
   // stats decay
-  state.stats.hunger  = clamp(state.stats.hunger  - .02 * dt * per.hungerDecay);
-  state.stats.mood    = clamp(state.stats.mood    - .005 * dt * per.moodDecay);
-  state.stats.hygiene = clamp(state.stats.hygiene - .01 * dt);
-  if (state.stats.hunger < 20) state.stats.mood = clamp(state.stats.mood - .02 * dt);
+  state.stats.hunger  = clamp(state.stats.hunger  - .02*dt*per.hungerDecay);
+  state.stats.mood    = clamp(state.stats.mood    - .005*dt*per.moodDecay);
+  state.stats.hygiene = clamp(state.stats.hygiene - .01*dt);
+  if(state.stats.hunger<20) state.stats.mood = clamp(state.stats.mood - .02*dt);
 
-  refreshBars(); updateHeaderState();
+  // affinity grows slowly with mood
+  if (state.stats.mood > 70) state.stats.affinity = clamp(state.stats.affinity + 0.003*dt);
+
+  refreshBars(); updateHeaderState(); tickPomodoro();
 }
-function walkStep(dt) {
-  const p = state.pet, per = persona();
-  const speed = 1.6 * (0.7 + state.stats.mood/150) * per.walkSpeed * dt;
-  const sw = SW(p.screen);
-  if (p.target != null) {
-    const dx = p.target - p.x;
-    p.facing = dx < 0 ? -1 : 1;
-    p.x += Math.sign(dx) * Math.min(Math.abs(dx), speed);
-    if (state.gravity) p.y = SH(p.screen) - PET - FLOOR_MARGIN;
-    if (Math.abs(p.target - p.x) < speed) { p.target = null; p.behaviour = 'idle'; p.until = performance.now() + rand(1500,3000); }
-  } else {
-    p.x += p.facing * speed;
-    if (state.gravity) p.y = SH(p.screen) - PET - FLOOR_MARGIN;
-    // multi-screen crossing
-    if (p.x < 0) {
-      if (p.screen > 0) { p.screen -= 1; p.x = SW(p.screen) - PET - 4; }
-      else { p.x = 0; p.facing = 1; }
-    } else if (p.x > sw - PET) {
-      if (p.screen < SCREENS.length - 1) { p.screen += 1; p.x = 4; }
-      else { p.x = sw - PET; p.facing = -1; if (per.name === '社牛') bubble('嗨！', 1500); }
+function walkStep(dt){
+  const p=state.pet, per=persona();
+  const speed=1.6*(0.7+state.stats.mood/150)*per.walkSpeed*dt;
+  const sw=SW(p.screen);
+  if(p.target!=null){
+    const dx=p.target-p.x; p.facing=dx<0?-1:1;
+    p.x+=Math.sign(dx)*Math.min(Math.abs(dx),speed);
+    if(state.gravity) p.y=SH(p.screen)-PET-FLOOR_MARGIN;
+    if(Math.abs(p.target-p.x)<speed){
+      const kind = p.targetKind;
+      p.target=null; p.targetKind=null;
+      if (kind && kind.startsWith('litter|')) {
+        // arrived at litter box → poop civilly (hygiene barely drops)
+        spawnPoopAtLitter();
+        p.behaviour='idle'; p.until=performance.now()+rand(800,1500);
+      } else if (kind && kind.startsWith('nest|')) {
+        p.behaviour='sleep'; p.until=performance.now()+rand(4000,7000);
+        bubble('💤 好舒服...', 2000);
+      } else {
+        p.behaviour='idle'; p.until=performance.now()+rand(1500,3000);
+      }
     }
-    if (performance.now() > p.until) pickNext();
+  } else {
+    p.x+=p.facing*speed;
+    if(state.gravity) p.y=SH(p.screen)-PET-FLOOR_MARGIN;
+    if(p.x<0){if(p.screen>0){p.screen-=1;p.x=SW(p.screen)-PET-4;}else{p.x=0;p.facing=1;}}
+    else if(p.x>sw-PET){if(p.screen<SCREENS.length-1){p.screen+=1;p.x=4;}else{p.x=sw-PET;p.facing=-1;if(per.name==='社牛')bubble('嗨！',1500);}}
+    if(performance.now()>p.until) pickNext();
   }
 }
-function bubble(text, dur=2000) {
-  state.pet.bubbleText = text;
-  state.pet.bubbleUntil = performance.now() + dur;
-}
+function bubble(text,dur=2000){state.pet.bubbleText=text;state.pet.bubbleUntil=performance.now()+dur;}
 
-// -------- Chatty bubbles --------
-const CHATTY = ['在吗？','烦了','摸鱼冠军','要吃的','嗨！','啊 CPU 烫','午安~'];
-let nextBubbleAt = performance.now() + 8000;
-function scheduleNextBubble() { nextBubbleAt = performance.now() + rand(6000, 12000); }
-function maybeBubble(now) {
-  const bp = persona().bubble;
-  if (bp <= 0) return;
-  if (now < nextBubbleAt) return;
-  if (Math.random() < bp) bubble(CHATTY[Math.floor(Math.random()*CHATTY.length)], 2200);
-  scheduleNextBubble();
-}
+// ===== Chatty & sing bubbles =====
+const CHATTY=['在吗？','烦了','摸鱼冠军','要吃的','嗨！','午安~'];
+let nextBubbleAt=performance.now()+8000;
+function scheduleNextBubble(){nextBubbleAt=performance.now()+rand(6000,12000);}
+function maybeBubble(now){const bp=persona().bubble; if(bp<=0||now<nextBubbleAt)return; if(Math.random()<bp) bubble(CHATTY[Math.floor(Math.random()*CHATTY.length)],2200); scheduleNextBubble();}
 
-// -------- Poop scheduler --------
-let nextPoopAt = performance.now() + rand(15000, 45000);
-function scheduleNextPoop() {
-  const m = persona().poopFreq;
-  nextPoopAt = performance.now() + rand(15000/Math.max(.5,m), 45000/Math.max(.5,m));
+// ===== Poop scheduler (respects litter) =====
+let nextPoopAt=performance.now()+rand(15000,45000);
+function scheduleNextPoop(){const m=persona().poopFreq;nextPoopAt=performance.now()+rand(15000/Math.max(.5,m),45000/Math.max(.5,m));}
+function maybePoop(now){
+  if(now<nextPoopAt) return;
+  if (state.event === 'sing' || state.event === 'dance') { scheduleNextPoop(); return; } // no pooping while singing/dancing
+  if (state.room.litter && Math.random() < 0.85){
+    // walk to litter box
+    goToFurniture('litter','poop');
+  } else {
+    spawnPoop(false);
+  }
+  scheduleNextPoop();
 }
-function maybePoop(now) { if (now >= nextPoopAt) { spawnPoop(); scheduleNextPoop(); } }
-function spawnPoop(force=false) {
-  const p = state.pet;
-  const isPee = Math.random() < .4;
-  const glyph = isPee ? '💦' : '💩';
-  const x = p.x + PET/2 - WASTE/2;
-  const y = state.gravity ? (SH(p.screen) - WASTE - FLOOR_MARGIN) : (p.y + PET/2);
-  state.entities[p.screen].push({ kind: isPee?'pee':'poop', x, y, glyph });
-  state.stats.hygiene = clamp(state.stats.hygiene - 12);
+function spawnPoop(force=false){
+  const p=state.pet;
+  const isPee=Math.random()<.4; const glyph=isPee?'💦':'💩';
+  const x=p.x+PET/2-WASTE/2;
+  const y=state.gravity?(SH(p.screen)-WASTE-FLOOR_MARGIN):(p.y+PET/2);
+  state.entities[p.screen].push({kind:isPee?'pee':'poop',x,y,glyph});
+  state.stats.hygiene=clamp(state.stats.hygiene-12); state.stats.mood=clamp(state.stats.mood+2);
+  if(force) showToast(isPee?'💦 尿了一泡':'💩 拉了一坨');
+}
+function spawnPoopAtLitter(){
+  const f = furnitureXY('litter'); if (!f) { spawnPoop(false); return; }
+  const isPee = Math.random() < .4; const glyph = isPee ? '💦' : '💩';
+  // waste appears inside the litter box but auto-cleans faster
+  state.entities[f.screen].push({kind:isPee?'pee':'poop', x: f.x+FURN/2-WASTE/2, y: f.y+FURN/2-WASTE/2, glyph, litter:true, until: performance.now()+15000});
+  state.stats.hygiene = clamp(state.stats.hygiene - 3);   // vs -12 on floor
   state.stats.mood = clamp(state.stats.mood + 2);
-  if (force) showToast(isPee ? '💦 尿了一泡' : '💩 拉了一坨');
+  state.stats.affinity = clamp(state.stats.affinity + 0.3);
+  bubble('🚽 呼~', 1200);
 }
+setInterval(()=>{ // auto-clean litter waste
+  for (let s=0; s<SCREENS.length; s++){
+    state.entities[s] = state.entities[s].filter(e => !(e.litter && performance.now() > e.until));
+  }
+}, 1000);
 
-// -------- Feed --------
-function feed() {
-  const glyphs = ['🍪','🍔','🍎','🍣','🥕'];
-  const g = glyphs[Math.floor(Math.random()*glyphs.length)];
-  const scr = state.pet.screen;
-  const x = Math.random() * (SW(scr) - WASTE);
-  const y = SH(scr) - WASTE - FLOOR_MARGIN;
-  state.entities[scr].push({ kind:'food', x, y, glyph: g });
-  state.pet.target = x;
-  state.pet.behaviour = 'walk';
-  state.pet.until = performance.now() + 12000;
-  showToast('丢了 ' + g);
+// ===== Feeding (bowl-aware) =====
+function feed(){
+  const glyphs=['🍪','🍔','🍎','🍣','🥕'];
+  const g=glyphs[Math.floor(Math.random()*glyphs.length)];
+  let scr, x, y;
+  const bowl = furnitureXY('bowl');
+  if (bowl){
+    scr = bowl.screen;
+    x = bowl.x + FURN/2 - WASTE/2;
+    y = bowl.y + FURN/2 - WASTE/2;
+  } else {
+    scr = state.pet.screen;
+    x = Math.random()*(SW(scr)-WASTE);
+    y = SH(scr) - WASTE - FLOOR_MARGIN;
+  }
+  state.entities[scr].push({kind:'food',x,y,glyph:g});
+  state.pet.screen = scr; state.pet.target = x; state.pet.behaviour='walk'; state.pet.until=performance.now()+12000;
+  showToast('丢了 '+g+(bowl?' → 食盆':''));
 }
-setInterval(() => {
-  for (let s = 0; s < SCREENS.length; s++) {
-    for (let i = state.entities[s].length - 1; i >= 0; i--) {
-      const e = state.entities[s][i];
-      if (e.kind !== 'food') continue;
-      if (state.pet.screen !== s) continue;
-      if (Math.abs(e.x + WASTE/2 - (state.pet.x + PET/2)) < PET*0.55) {
-        state.entities[s].splice(i, 1);
-        const boost = 30 * (persona().name === '干饭王' ? 1.1 : 1);
-        state.stats.hunger = clamp(state.stats.hunger + boost);
-        state.stats.mood = clamp(state.stats.mood + 5);
-        state.stats.affinity = clamp(state.stats.affinity + 2);
-        state.pet.target = null; state.pet.behaviour = 'idle';
-        if (persona().name === '干饭王') bubble('干！', 1500);
-        showToast('好吃！+5心情 +2好感');
+setInterval(()=>{
+  for(let s=0;s<SCREENS.length;s++){
+    for(let i=state.entities[s].length-1;i>=0;i--){
+      const e=state.entities[s][i];
+      if(e.kind!=='food'||state.pet.screen!==s) continue;
+      if(Math.abs(e.x+WASTE/2-(state.pet.x+PET/2))<PET*0.55){
+        state.entities[s].splice(i,1);
+        const boost=30*(persona().name==='干饭王'?1.1:1);
+        state.stats.hunger=clamp(state.stats.hunger+boost);
+        state.stats.mood=clamp(state.stats.mood+5);
+        state.stats.affinity=clamp(state.stats.affinity+2);
+        state.pet.target=null; state.pet.behaviour='idle';
+        if(persona().name==='干饭王') bubble('干！',1500);
+        showToast('好吃！+5心情 +2好感'); renderShop();
       }
     }
   }
-}, 250);
+},250);
 
-// -------- Interaction --------
-function canvasPos(evt, canvas) {
-  const r = canvas.getBoundingClientRect();
-  const t = evt.touches ? evt.touches[0] : evt;
-  return { x: t.clientX - r.left, y: t.clientY - r.top };
-}
-function hitPet(pos, scr) {
-  if (state.pet.screen !== scr) return false;
-  const p = state.pet;
-  return pos.x >= p.x && pos.x <= p.x + PET && pos.y >= p.y && pos.y <= p.y + PET;
-}
-function hitEntity(pos, scr) {
-  const arr = state.entities[scr];
-  for (let i = arr.length - 1; i >= 0; i--) {
-    const e = arr[i];
-    if (pos.x >= e.x && pos.x <= e.x + WASTE && pos.y >= e.y && pos.y <= e.y + WASTE) return { entity: e, index: i };
-  }
-  return null;
-}
-SCREENS.forEach((canvas, scr) => {
-  canvas.addEventListener('mousedown', (e) => {
-    const pos = canvasPos(e, canvas);
-    if (state.pet.visible && hitPet(pos, scr)) {
-      state.pet.behaviour = 'drag';
-      state.dragOffset = { x: pos.x - state.pet.x, y: pos.y - state.pet.y };
-      state.lastDragT = performance.now();
-      state.lastDragX = pos.x; state.lastDragY = pos.y;
-      state.dragScreen = scr;
-      state.pet.vx = 0; state.pet.vy = 0; state.pet.angVel = 0;
-      return;
+// ===== Interaction =====
+function canvasPos(e,c){const r=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
+function hitPet(pos,scr){if(state.pet.screen!==scr) return false;const p=state.pet;return pos.x>=p.x&&pos.x<=p.x+PET&&pos.y>=p.y&&pos.y<=p.y+PET;}
+function hitEntity(pos,scr){const arr=state.entities[scr];for(let i=arr.length-1;i>=0;i--){const e=arr[i];if(pos.x>=e.x&&pos.x<=e.x+WASTE&&pos.y>=e.y&&pos.y<=e.y+WASTE)return{entity:e,index:i};}return null;}
+SCREENS.forEach((canvas,scr)=>{
+  canvas.addEventListener('mousedown',(e)=>{
+    const pos=canvasPos(e,canvas);
+    if(state.pet.visible&&hitPet(pos,scr)){
+      state.pet.behaviour='drag';state.dragOffset={x:pos.x-state.pet.x,y:pos.y-state.pet.y};
+      state.lastDragT=performance.now();state.lastDragX=pos.x;state.lastDragY=pos.y;state.dragScreen=scr;
+      state.pet.vx=0;state.pet.vy=0;state.pet.angVel=0; return;
     }
-    const hit = hitEntity(pos, scr);
-    if (hit) {
-      const e2 = hit.entity;
-      if (e2.kind === 'food') {
-        state.entities[scr].splice(hit.index, 1);
-        state.pet.target = e2.x; state.pet.behaviour = 'walk';
-        state.pet.screen = scr;
-      } else {
-        state.entities[scr].splice(hit.index, 1);
-        state.stats.hygiene = clamp(state.stats.hygiene + 10);
-        state.stats.affinity = clamp(state.stats.affinity + 0.5);
-        showToast('清理完成 +10 卫生');
-      }
+    const hit=hitEntity(pos,scr);
+    if(hit){
+      const e2=hit.entity;
+      if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}
+      else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);showToast('清理完成 +10 卫生');renderShop();}
     }
   });
-  canvas.addEventListener('mousemove', (e) => {
-    if (state.pet.behaviour === 'drag' && state.dragScreen === scr) {
-      const pos = canvasPos(e, canvas);
-      state.pet.x = pos.x - state.dragOffset.x;
-      state.pet.y = pos.y - state.dragOffset.y;
-      state.pet.screen = scr;
-      const now = performance.now();
-      const dt = Math.max(1, now - state.lastDragT);
-      state.pet.vx = (pos.x - state.lastDragX) / dt * 16;
-      state.pet.vy = (pos.y - state.lastDragY) / dt * 16;
-      state.lastDragT = now;
-      state.lastDragX = pos.x; state.lastDragY = pos.y;
+  canvas.addEventListener('mousemove',(e)=>{
+    if(state.pet.behaviour==='drag'&&state.dragScreen===scr){
+      const pos=canvasPos(e,canvas); state.pet.x=pos.x-state.dragOffset.x; state.pet.y=pos.y-state.dragOffset.y; state.pet.screen=scr;
+      const now=performance.now(); const dt=Math.max(1,now-state.lastDragT);
+      state.pet.vx=(pos.x-state.lastDragX)/dt*16; state.pet.vy=(pos.y-state.lastDragY)/dt*16;
+      state.lastDragT=now;state.lastDragX=pos.x;state.lastDragY=pos.y;
     }
   });
 });
-window.addEventListener('mouseup', () => {
-  if (state.pet.behaviour === 'drag') {
-    if (Math.abs(state.pet.vx) < 1 && Math.abs(state.pet.vy) < 1) {
-      if (Math.random() < persona().rejectPet) {
-        state.stats.affinity = clamp(state.stats.affinity + 0.3);
-        bubble('哼！', 1200);
-        showToast('傲娇拒绝了摸头（+0.3 好感）');
-      } else {
-        state.stats.mood = clamp(state.stats.mood + 3);
-        state.stats.affinity = clamp(state.stats.affinity + 1);
-        showToast('摸头成功 +3 心情');
-      }
-      state.pet.behaviour = 'idle';
-    } else {
-      state.pet.angVel = state.pet.vx * 3;   // spin!
-      state.pet.behaviour = state.gravity ? 'fall' : 'float';
-    }
-    state.dragOffset = null;
+window.addEventListener('mouseup',()=>{
+  if(state.pet.behaviour==='drag'){
+    if(Math.abs(state.pet.vx)<1&&Math.abs(state.pet.vy)<1){
+      if(Math.random()<persona().rejectPet){state.stats.affinity=clamp(state.stats.affinity+0.3);bubble('哼！',1200);showToast('傲娇拒绝了摸头');}
+      else{state.stats.mood=clamp(state.stats.mood+3);state.stats.affinity=clamp(state.stats.affinity+1);showToast('摸头成功 +3 心情');renderShop();}
+      state.pet.behaviour='idle';
+    } else { state.pet.angVel=state.pet.vx*3; state.pet.behaviour=state.gravity?'fall':'float'; }
+    state.dragOffset=null;
   }
 });
 
-// -------- Work mode toggle --------
-document.getElementById('tg-work').onchange = (e) => {
-  state.work.active = e.target.checked;
-  if (state.work.active) {
-    state.work.kbScreen = state.pet.screen;
-    state.work.kbX = SW(state.pet.screen) / 2 - PET / 2;
-    state.work.kbY = SH(state.pet.screen) - PET - FLOOR_MARGIN;
-    state.work.since = performance.now();
-    showToast('💼 代打工模式开启');
-  } else {
-    state.pet.behaviour = 'idle';
-    showToast('💼 代打工模式结束');
-  }
+// ===== Toggles =====
+document.getElementById('tg-work').onchange=(e)=>{
+  state.work.active=e.target.checked;
+  if(state.work.active){state.work.kbScreen=state.pet.screen;state.work.kbX=SW(state.pet.screen)/2-PET/2;state.work.kbY=SH(state.pet.screen)-PET-FLOOR_MARGIN;showToast('💼 代打工模式开启');}
+  else{state.pet.behaviour='idle';showToast('💼 代打工模式结束');}
 };
-
-// -------- Friend visit toggle --------
-document.getElementById('tg-friend').onchange = (e) => {
-  if (e.target.checked) {
-    spawnFriend();
-    showToast('👋 好友互访模式已开启，Kaka 好友会不定时来访');
-  } else {
-    state.friend = null;
-    showToast('好友互访已关闭');
-  }
+document.getElementById('tg-friend').onchange=(e)=>{
+  if(e.target.checked){spawnFriend();showToast('👋 好友互访开启');}else{state.friend=null;showToast('好友互访已关闭');}
 };
-function spawnFriend() {
-  const scr = Math.floor(Math.random() * SCREENS.length);
-  const fromLeft = Math.random() < 0.5;
-  state.friend = {
-    screen: scr,
-    x: fromLeft ? -PET : SW(scr) + PET,
-    y: SH(scr) - PET - FLOOR_MARGIN,
-    vx: fromLeft ? 2.5 : -2.5,
-  };
-  bubble('👋', 1500);
+function spawnFriend(){
+  const scr=Math.floor(Math.random()*SCREENS.length); const fromLeft=Math.random()<.5;
+  state.friend={screen:scr,x:fromLeft?-PET:SW(scr)+PET,y:SH(scr)-PET-FLOOR_MARGIN,vx:fromLeft?2.5:-2.5}; bubble('👋',1500);
 }
-setInterval(() => {
-  if (document.getElementById('tg-friend').checked && !state.friend) {
-    if (Math.random() < 0.15) spawnFriend();
+setInterval(()=>{if(document.getElementById('tg-friend').checked&&!state.friend&&Math.random()<.15) spawnFriend();},4000);
+
+document.getElementById('tg-sing').onchange=(e)=>{state.forceSing=e.target.checked; if(!e.target.checked) state.eventNextAt=0;};
+document.getElementById('tg-dance').onchange=(e)=>{state.forceDance=e.target.checked;};
+document.getElementById('btn-feed').onclick=feed;
+document.getElementById('btn-poop').onclick=()=>spawnPoop(true);
+document.getElementById('btn-remind').onclick=()=>popReminder();
+document.getElementById('btn-pomo').onclick=startPomodoro;
+document.getElementById('btn-reset').onclick=()=>{
+  state.entities=[[],[]]; state.stats={hunger:60,mood:65,hygiene:85,affinity:15};
+  state.pet.x=SW(0)*.7; state.pet.y=SH(0)-PET-FLOOR_MARGIN; state.pet.screen=0; state.pet.behaviour='idle'; state.pet.target=null; state.pet.targetKind=null; state.pet.rot=0; state.pet.angVel=0;
+  ['tg-gravity','tg-visible'].forEach(id=>document.getElementById(id).checked=true);
+  ['tg-work','tg-friend','tg-sing','tg-dance'].forEach(id=>document.getElementById(id).checked=false);
+  state.gravity=true; state.pet.visible=true; state.work.active=false; state.friend=null; state.forceSing=false; state.forceDance=false; state.event=null;
+  refreshBars(); renderShop(); showToast('已重置');
+};
+document.getElementById('tg-gravity').onchange=(e)=>{state.gravity=e.target.checked;state.pet.vy=0;showToast(state.gravity?'重力已开':'重力已关');};
+document.getElementById('tg-visible').onchange=(e)=>{state.pet.visible=e.target.checked;showToast(state.pet.visible?'Kaka 出现':'Kaka 藏好了 🕶');};
+
+// ===== Pomodoro =====
+const notif=document.getElementById('notif'), notifMsg=document.getElementById('notif-msg'), notifStats=document.getElementById('notif-stats');
+const REMIND=['已经 25 分钟啦，起来喝口水～','眼睛累了吧？看看远方！','摸鱼时间到','转转脖子！','这条 bug 是你的宿命，先歇会'];
+function rollDay(){
+  const today = new Date().toISOString().slice(0,10);
+  if (state.pomo.todayDate !== today){
+    if (state.pomo.todayDate && state.pomo.today === 0) state.pomo.streak = 0;
+    state.pomo.todayDate = today; state.pomo.today = 0; savePomo();
   }
-}, 4000);
-
-// -------- Buttons / toggles --------
-document.getElementById('btn-feed').onclick = feed;
-document.getElementById('btn-poop').onclick = () => spawnPoop(true);
-document.getElementById('btn-remind').onclick = () => popReminder();
-document.getElementById('btn-reset').onclick = () => {
-  state.entities = [[], []];
-  state.stats = { hunger:60, mood:65, hygiene:85, affinity:15 };
-  state.pet.x = SW(0) * 0.7; state.pet.y = SH(0) - PET - FLOOR_MARGIN;
-  state.pet.screen = 0; state.pet.behaviour = 'idle'; state.pet.target = null;
-  state.pet.rot = 0; state.pet.angVel = 0;
-  document.getElementById('tg-gravity').checked = true;
-  document.getElementById('tg-visible').checked = true;
-  document.getElementById('tg-work').checked = false;
-  document.getElementById('tg-friend').checked = false;
-  state.gravity = true; state.pet.visible = true; state.work.active = false; state.friend = null;
-  showToast('已重置');
-};
-document.getElementById('tg-gravity').onchange = (e) => {
-  state.gravity = e.target.checked; state.pet.vy = 0;
-  showToast(state.gravity ? '重力已开' : '重力已关');
-};
-document.getElementById('tg-visible').onchange = (e) => {
-  state.pet.visible = e.target.checked;
-  showToast(state.pet.visible ? 'Kaka 出现' : 'Kaka 藏好了 🕶');
-};
-
-// -------- Pomodoro notification --------
-const REMIND_TEXTS = ['已经 25 分钟啦，起来喝口水～','眼睛累了吧？看看远方！','摸鱼时间到','转转脖子！','这条 bug 是你的宿命，先歇会'];
-const notif = document.getElementById('notif');
-const notifMsg = document.getElementById('notif-msg');
-function popReminder() {
-  notifMsg.textContent = REMIND_TEXTS[Math.floor(Math.random()*REMIND_TEXTS.length)];
+}
+function savePomo(){
+  localStorage.setItem('kaka_pomo_total', state.pomo.total);
+  localStorage.setItem('kaka_pomo_today', state.pomo.today);
+  localStorage.setItem('kaka_pomo_date', state.pomo.todayDate);
+  localStorage.setItem('kaka_pomo_streak', state.pomo.streak);
+}
+function pomoLine(){return `今日已完成 ${state.pomo.today} · 累计 ${state.pomo.total} · 连续 ${state.pomo.streak} 天`;}
+function startPomodoro(){
+  rollDay();
+  state.pomo.running = true; state.pomo.startedAt = performance.now();
+  showToast('🍅 番茄钟开始（演示：45s = 25min）');
+  document.getElementById('btn-pomo').textContent='🍅 取消番茄';
+  document.getElementById('btn-pomo').onclick = cancelPomodoro;
+}
+function cancelPomodoro(){
+  state.pomo.running=false; state.pomo.startedAt=0;
+  document.getElementById('btn-pomo').textContent='🍅 开始番茄';
+  document.getElementById('btn-pomo').onclick = startPomodoro;
+  showToast('番茄钟已取消');
+}
+const POMO_DURATION_MS = 45 * 1000;  // demo scale: 45s = 25min
+function tickPomodoro(){
+  if (!state.pomo.running) return;
+  if (performance.now() - state.pomo.startedAt >= POMO_DURATION_MS){
+    rollDay();
+    if (state.pomo.today === 0) state.pomo.streak += 1;
+    state.pomo.today += 1; state.pomo.total += 1;
+    state.pomo.running=false; state.pomo.startedAt=0;
+    savePomo();
+    document.getElementById('btn-pomo').textContent='🍅 开始番茄';
+    document.getElementById('btn-pomo').onclick = startPomodoro;
+    popReminder(true);
+    state.stats.mood = clamp(state.stats.mood + 4);
+    state.stats.affinity = clamp(state.stats.affinity + 0.5);
+    renderShop();
+  }
+}
+function popReminder(fromPomo=false){
+  notifMsg.textContent = fromPomo ? '一颗番茄完成啦！休息 5 分钟 ☕️' : REMIND[Math.floor(Math.random()*REMIND.length)];
+  notifStats.textContent = '🍅 ' + pomoLine();
   notif.classList.add('show');
   clearTimeout(popReminder._t);
-  popReminder._t = setTimeout(() => notif.classList.remove('show'), 25000);
+  popReminder._t = setTimeout(()=>notif.classList.remove('show'),25000);
 }
-document.getElementById('n-dismiss').onclick = () => notif.classList.remove('show');
-document.getElementById('n-snooze').onclick = () => { notif.classList.remove('show'); setTimeout(popReminder, 20000); };
-setInterval(popReminder, 90000);  // demo: 90s cadence
+document.getElementById('n-dismiss').onclick=()=>notif.classList.remove('show');
+document.getElementById('n-snooze').onclick=()=>{notif.classList.remove('show');setTimeout(popReminder,20000);};
+setInterval(()=>popReminder(false), 120000);
 
-// -------- Bars --------
-function refreshBars() {
-  const s = state.stats;
-  const set = (id,v) => document.getElementById('bar-'+id).style.width = v + '%';
-  set('hunger',s.hunger); set('mood',s.mood); set('hygiene',s.hygiene); set('affinity',s.affinity);
-  const setV = (id,v) => document.getElementById('val-'+id).textContent = Math.round(v);
-  setV('hunger',s.hunger); setV('mood',s.mood); setV('hygiene',s.hygiene); setV('affinity',s.affinity);
+// ===== Events (sing / dance) =====
+function updateEventState(){
+  const now = new Date();
+  const realFriday = now.getDay() === 5 && now.getHours() >= 15 && now.getHours() < 18;
+  const realPayday = now.getDate() === state.paydayDay;
+  const sing = state.forceSing || realFriday;
+  const dance = state.forceDance || realPayday;
+  const prev = state.event;
+  if (dance) state.event = 'dance';
+  else if (sing) state.event = 'sing';
+  else state.event = null;
+  if (state.event === 'sing' && performance.now() > state.eventNextAt){
+    const L = ['🎵 平平淡淡才是真~','🎵 咖咖咖咖 咔咔咔咔~','🎵 Somebody 好想 fish 一下~','🎵 抬头一看 又是周五~','🎤 Kaka 麦克风 test test','🎵 老板不在 我最帅~'];
+    bubble(L[Math.floor(Math.random()*L.length)], 3200);
+    state.eventNextAt = performance.now() + rand(4500, 8500);
+  } else if (state.event === 'dance' && performance.now() > state.eventNextAt) {
+    const M = ['🕺 发工资啦！','💃 涨到手抽筋','🎉 请我吃饭','🪩 蹦迪走起'];
+    bubble(M[Math.floor(Math.random()*M.length)], 3000);
+    state.eventNextAt = performance.now() + rand(3000, 6000);
+  }
+  if (prev !== state.event && state.event){
+    showToast(state.event === 'sing' ? '🎤 周五 KTV 开唱！' : '💃 发薪日狂欢！');
+  }
 }
 
-// -------- Main loop --------
-let last = performance.now();
-function loop(t) {
-  const dt = Math.min(64, t - last); last = t;
-  tick(dt); maybePoop(t); maybeBubble(t); drawScene();
-  requestAnimationFrame(loop);
+// ===== Bars =====
+function refreshBars(){
+  const s=state.stats;
+  const set=(id,v)=>document.getElementById('bar-'+id).style.width=v+'%';
+  set('hunger',s.hunger);set('mood',s.mood);set('hygiene',s.hygiene);set('affinity',s.affinity);
+  const setV=(id,v)=>document.getElementById('val-'+id).textContent=Math.round(v);
+  setV('hunger',s.hunger);setV('mood',s.mood);setV('hygiene',s.hygiene);setV('affinity',s.affinity);
+  document.getElementById('pomo-line').textContent = pomoLine();
 }
+
+// ===== Main loop =====
+let last=performance.now();
+function loop(t){const dt=Math.min(64,t-last);last=t;tick(dt);maybePoop(t);maybeBubble(t);drawScene();requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 
-setPersonality('extrovert'); setSkin('default'); refreshBars();
-setTimeout(() => showToast('欢迎 · 试试拖动 Kaka 甩两下（会旋转）'), 400);
+setPersonality('extrovert'); renderSkinGrid(); refreshBars(); refreshCornerButtons();
+setTimeout(()=>showToast('欢迎 v0.4 · 打开商店解锁皮肤、摆好便盆更文明'),400);
 })();
 </script>
 </body>
