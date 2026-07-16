@@ -1,0 +1,11 @@
+{
+  "name": "Matcha",
+  "description": "Green matcha pet",
+  "colors": {
+    "body": "#A6C97E",
+    "dark": "#6D8C4F",
+    "cheek": "#F5C4D0",
+    "eye": "#2A3A1A",
+    "white": "#F5FFEA"
+  }
+}

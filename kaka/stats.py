@@ -27,6 +27,7 @@ class Stats:
     affinity: float = 0.0
     last_tick: float = field(default_factory=time.time)
     personality_key: str = ""  # empty = uninitialized → randomize on first load
+    skin_key: str = "default"
 
     def __post_init__(self) -> None:
         if not self.personality_key or self.personality_key not in PERSONALITIES:

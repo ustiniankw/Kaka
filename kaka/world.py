@@ -8,9 +8,8 @@ import time
 from typing import List
 
 from PySide6.QtCore import QObject, QPoint, QTimer, Signal
-from PySide6.QtGui import QGuiApplication
 
-from . import config
+from . import config, screens
 from .pet import Pet
 from .stats import Stats
 from .waste import FloorEntity, Poop, Pee, Food
@@ -37,19 +36,17 @@ class World(QObject):
     # ---------------------------------------------------------------- API
     def spawn_food(self, glyph: str = None) -> None:
         glyph = glyph or random.choice(config.FOOD_KINDS)
-        screen = QGuiApplication.primaryScreen().availableGeometry()
-        # place near the pet but not on top
+        u = screens.union_rect()
         pet_center = self.pet.geometry().center()
         x = pet_center.x() + random.randint(-200, 200)
-        y = screen.bottom() - config.WASTE_SIZE - 4  # sit on the floor
-        x = max(screen.left(), min(screen.right() - config.WASTE_SIZE, x))
+        y = screens.floor_y_for(x, config.WASTE_SIZE, config.WASTE_SIZE) + config.PET_SIZE - config.WASTE_SIZE - 4
+        y = min(y, u.bottom() - config.WASTE_SIZE - 4)
+        x = max(u.left(), min(u.right() - config.WASTE_SIZE, x))
         pos = QPoint(x, y)
         food = Food(pos, glyph, self._on_food_click)
         food.show()
         self.entities.append(food)
-        # tell pet to walk over and eat
         self.pet.walk_toward(QPoint(x, self.pet.y()))
-        food._target_of_pet = True  # simple flag
 
     def teardown(self) -> None:
         for e in self.entities:
@@ -59,15 +56,12 @@ class World(QObject):
 
     # ---------------------------------------------------------------- Handlers
     def _on_poop_timer(self) -> None:
-        # drop a poop / pee at the pet's current feet
         is_pee = random.random() < config.PEE_CHANCE
         pet_pos = self.pet.pos()
-        screen = QGuiApplication.primaryScreen().availableGeometry()
         x = pet_pos.x() + self.pet.width() // 2 - config.WASTE_SIZE // 2
         if self.pet.gravity():
-            y = screen.bottom() - config.WASTE_SIZE - 4
+            y = screens.floor_y_for(x, config.WASTE_SIZE, config.WASTE_SIZE) + config.PET_SIZE - config.WASTE_SIZE - 4
         else:
-            # if weightless, poop drops from wherever it is (fun!)
             y = pet_pos.y() + self.pet.height() // 2
 
         pos = QPoint(x, y)
