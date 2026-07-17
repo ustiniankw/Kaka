@@ -46,6 +46,24 @@
 
 - 👉 下载：<https://github.com/ustiniankw/Kaka/releases/latest>
 
+#### macOS 打开提示“已损坏”怎么办
+
+当前桌面版没有使用 Apple Developer 证书签名/公证，浏览器下载后 macOS Gatekeeper 可能会把它误判为“已损坏”。如果弹出 **“Kaka 已损坏，无法打开”**，请先把 Kaka 拖到「应用程序」，然后在终端运行：
+
+```bash
+xattr -cr /Applications/Kaka.app
+open /Applications/Kaka.app
+```
+
+如果你还没有安装、只是下载了 DMG，也可以先清掉下载文件的隔离标记再打开：
+
+```bash
+xattr -cr ~/Downloads/Kaka-1.0.0-arm64.dmg
+open ~/Downloads/Kaka-1.0.0-arm64.dmg
+```
+
+> 这是未签名/未公证应用的临时绕过方式；长期方案是接入 Apple Developer 证书签名和 notarization。
+
 **平台支持**：
 
 | 平台 | 发行物 | 说明 |
@@ -62,8 +80,10 @@
 在**任意网页右下角**挂一只小 Kaka，跨页面同步状态，看到哪一页玩到哪一页。
 **只需装一次**，未来所有新功能都会自动同步（原理见「[自动更新](#-自动更新原理)」）。
 
-- 👉 [下载最新 Release ZIP](https://github.com/ustiniankw/Kaka/releases/latest)
+- 👉 [直接下载 Chrome 扩展 ZIP](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)
 - 详细安装步骤见 [Chrome 扩展安装](#-chrome-扩展安装)
+
+> 注意：Chrome 扩展需要下载 `kaka-extension-v1.1.0.zip`；`Kaka-1.0.0-arm64-mac.zip` 是 macOS 桌面版，不能作为浏览器扩展加载。
 
 ### 🎮 Web 版（推荐先玩）
 
@@ -100,10 +120,10 @@ python -m http.server 8080
 
 **30 秒安装流程**：
 
-1. 前往 [Releases](https://github.com/ustiniankw/Kaka/releases/latest) 下载 `kaka-extension-vX.Y.Z.zip`
+1. 下载 [kaka-extension-v1.1.0.zip](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)（不要下载桌面版的 `Kaka-*-mac.zip`）
 2. 解压到任意目录
 3. Chrome / Edge 访问 `chrome://extensions/`，开启 **开发者模式**
-4. 点 **「加载已解压的扩展程序」**，选中解压出来的 `extension/` 目录（如果解压后已经就是根，就选那个目录）
+4. 点 **「加载已解压的扩展程序」**，选中解压出来的目录（如果里面能看到 `manifest.json` 就选对了）
 5. 打开任意网页，右下角会出现 Kaka —— 完成 ✅
 
 想直接从源码装、跟随 main 分支开发也可以：把仓库 clone 下来直接选 `extension/` 目录即可。

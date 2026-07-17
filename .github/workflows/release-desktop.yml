@@ -32,6 +32,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npx electron-builder --publish never
+      - name: Ad-hoc sign macOS binary
+        if: matrix.os == 'macos-latest'
+        working-directory: desktop
+        run: |
+          find dist -maxdepth 4 -type d -name '*.app' | while read app; do
+            codesign --force --deep --sign - "$app" || true
+          done
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -51,7 +58,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Read version
         id: ver
-        run: echo "version=$(node -p 'require(\"./desktop/package.json\").version')" >> $GITHUB_OUTPUT
+        run: |
+          version=$(node -p "require('./desktop/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:

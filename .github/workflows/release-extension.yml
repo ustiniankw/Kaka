@@ -13,7 +13,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Read version
         id: ver
-        run: echo "version=$(node -p 'require(\"./extension/manifest.json\").version')" >> $GITHUB_OUTPUT
+        run: |
+          version=$(node -p "require('./extension/manifest.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Zip extension
         run: |
           cd extension && zip -r ../kaka-extension-v${{ steps.ver.outputs.version }}.zip . -x '*.md' 'gen-icons.js'
