@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Kaka — 桌面宠物",
+  "version": "1.0.0",
+  "description": "在浏览器里养一只 Kaka 桌面宠物 🐱 陪你摸鱼、工作、划水",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon48.png"
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "css": ["content.css"],
+    "run_at": "document_idle"
+  }],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

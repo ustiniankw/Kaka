@@ -23,6 +23,12 @@ html,body{margin:0;background:var(--sys-bg);color:var(--label);font-family:var(-
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--sys-fill);font-size:12px;color:var(--label-secondary);cursor:pointer}
 .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 .badge.pink .dot{background:var(--pink)}
+body.dnd-on .stage-card{opacity:.65;transition:opacity .2s;}
+body.dnd-on .stage-card .badge{opacity:.35}
+body.dnd-on #btn-dnd{opacity:1;background:var(--tint);color:#fff}
+body.dnd-on #btn-dnd .dot{background:#fff}
+body.dnd-on .toast{display:none}
+body.dnd-on .notif{display:none}
 .stage-header .name-line{font-size:14px;font-weight:600}
 .stage-header .name-line .quirk{color:var(--label-secondary);font-weight:400;margin-left:6px}
 .monitors{padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--sys-bg)}
@@ -113,12 +119,13 @@ footer a{color:var(--tint);text-decoration:none}
 .tray-empty{padding:12px 16px 16px;font-size:12px;color:var(--label-secondary)}
 /* Furniture palette */
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
-.palette-tile{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sys-fill);border-radius:12px;cursor:grab;user-select:none;border:2px solid transparent;transition:.15s}
+.palette-tile{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sys-fill);border-radius:12px;cursor:grab;user-select:none;border:2px solid transparent;transition:.15s;position:relative}
 .palette-tile:active{cursor:grabbing;border-color:var(--tint)}
 .palette-tile .em{font-size:28px;line-height:1}
 .palette-tile .nm{font-weight:600;font-size:14px}
 .palette-tile .cap{font-size:11px;color:var(--label-secondary);margin-top:2px}
 .palette-tile .col{display:flex;flex-direction:column;justify-content:center}
+.palette-tile .badge-count{position:absolute;top:4px;right:8px;min-width:18px;height:18px;border-radius:999px;background:#FF3B30;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 .palette-hint{padding:2px 16px 12px;font-size:12px;color:var(--label-secondary);line-height:1.5}
 .monitor canvas.stage.dragging-target{background:color-mix(in srgb,var(--tint) 6%,transparent);outline:2px dashed rgba(0,122,255,.35);outline-offset:-6px}
 /* Floating drag ghost */
@@ -163,6 +170,7 @@ footer a{color:var(--tint);text-decoration:none}
         <div class="badge" id="badge-treats">🍬 <b>0</b></div>
         <div class="badge" id="btn-signin" title="每日签到">🎁</div>
         <div class="badge" id="badge-shop">🛍 商店</div>
+        <div class="badge" id="btn-dnd" title="勿扰 / 老板键">🔕 勿扰</div>
         <div class="badge pink" id="badge-event" style="display:none"></div>
       </div>
     </div>
@@ -210,6 +218,7 @@ footer a{color:var(--tint);text-decoration:none}
         <div class="palette-tile" data-kind="litter" draggable="false">
           <div class="em">🚽</div>
           <div class="col"><div class="nm">便盆</div><div class="cap">拖到屏幕放置</div></div>
+          <div class="badge-count" id="badge-litter-dirty" style="display:none"></div>
         </div>
       </div>
       <div class="palette-hint">💡 从上方**拖起家具**丢到任意屏幕即可；已放置的会直接搬过去。</div>
@@ -397,6 +406,12 @@ const state = {
   stats:{hunger:60,mood:65,hygiene:85,affinity:15},
   dragOffset:null,lastDragT:0,lastDragX:0,lastDragY:0,dragScreen:0,
   laserPos:null,   // {screen, x, y, until} for laser toy
+  dnd: localStorage.getItem('kaka_dnd')==='1',
+  litterDirty: (parseInt(localStorage.getItem('kaka_litter_dirty')||'0')||0),
+  litterLastSniff: 0,
+  lastInteraction: performance.now(),
+  screensaver:false,
+  screensaverAlpha:0,
 };
 state.pet.y=SH(0)-PET-FLOOR_MARGIN;
 rollDay();
@@ -407,7 +422,7 @@ const persona=()=>PERSONALITIES[state.personality];
 const skin=()=>SKINS[skinKey];
 let skinKey='default';
 
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2000);}
+function showToast(m){if(state.dnd)return;const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove('show'),2000);}
 
 // ===== Economy & weekly stats =====
 function todayKey(){return new Date().toISOString().slice(0,10);}
@@ -704,6 +719,7 @@ window.addEventListener('touchend', (ev)=>{
 const btnResetFurn=document.getElementById('btn-reset-furn');
 if(btnResetFurn) btnResetFurn.onclick=()=>{
   state.furniture=defaultFurniture(); saveFurniture();
+  setLitterDirty(0);
   showToast('🏠 家具已复位（窝 + 便盆）');
 };
 
@@ -718,6 +734,24 @@ function hitFurniture(pos, scr){
     if(pos.x>=f.x && pos.x<=f.x+FURN && pos.y>=f.y && pos.y<=f.y+FURN) return k;
   }
   return null;
+}
+
+function setLitterDirty(val){
+  const v = Math.max(0, Math.min(5, val|0));
+  state.litterDirty = v;
+  try{ localStorage.setItem('kaka_litter_dirty', String(v)); }catch(e){}
+  updateLitterBadge();
+}
+function bumpLitterDirty(){ setLitterDirty((state.litterDirty||0)+1); }
+function updateLitterBadge(){
+  const el=document.getElementById('badge-litter-dirty');
+  if(!el) return;
+  if(state.litterDirty>0){
+    el.textContent = state.litterDirty>5 ? '5+' : String(state.litterDirty);
+    el.style.display='flex';
+  } else {
+    el.style.display='none';
+  }
 }
 
 // ===== Payday select =====
@@ -774,11 +808,31 @@ function drawPet(ctx,x,y,mood,flip,rot){
 }
 function drawFurniture(ctx,kind,x,y,screen){
   const em=kind==='nest'?'🛏':'🚽';
-  // No more dashed hover frame — placement is done via the sidebar palette drag.
+  // Base glyph
   ctx.font=(FURN*0.85)+'px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.save();ctx.globalAlpha=.9;ctx.fillText(em,x+FURN/2,y+FURN/2);ctx.restore();
-}
-function drawToyOnCanvas(ctx,t,i){
+  // Litter dirty overlay + stink lines
+  if(kind==='litter' && state.litterDirty>0){
+    const intensity = Math.min(1, state.litterDirty/5);
+    ctx.save();
+    ctx.fillStyle='rgba(111,78,55,'+(0.18+0.18*intensity)+')';
+    ctx.fillRect(x+4,y+FURN*0.45,FURN-8,FURN*0.35);
+    ctx.restore();
+    if(state.litterDirty>=3){
+      const t=performance.now()/900;
+      ctx.save();
+      ctx.font='14px "SF Pro Display","PingFang SC",sans-serif';
+      ctx.fillStyle='rgba(139,115,85,.9)';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      for(let i=0;i<3;i++){
+        const phase=t+i*0.6;
+        const bob=Math.sin(phase)*4;
+        ctx.fillText('~',x+FURN*(0.3+0.2*i),y-4-bob);
+      }
+      ctx.restore();
+    }
+  }
+}function drawToyOnCanvas(ctx,t,i){
   const T=TOYS[t.key]; if(!T) return;
   ctx.font=(TOY*0.9)+'px "Apple Color Emoji"'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.save();
@@ -828,9 +882,9 @@ function drawScene(){
     }
     if(state.work.active&&state.work.kbScreen===i){ctx.font='26px "Apple Color Emoji"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('⌨️',state.work.kbX+PET/2,state.work.kbY+PET/2+4);}
     state.entities[i].forEach(e=>drawEntity(ctx,e));
-    if(state.friend&&state.friend.screen===i){ctx.save();ctx.globalAlpha=.85;drawPet(ctx,state.friend.x,state.friend.y,'happy',state.friend.vx<0,0);ctx.restore();drawBubble(ctx,'👋',state.friend.x+PET/2,state.friend.y);}
-    if(state.event==='dance'&&state.pet.screen===i){const t=performance.now()/120;for(let k=0;k<4;k++){const ang=t+k*1.57;ctx.font='16px "Apple Color Emoji"';ctx.fillText('✨',state.pet.x+PET/2+Math.cos(ang)*45,state.pet.y+PET/2+Math.sin(ang)*25);}}
-    if(state.pet.visible&&state.pet.screen===i){
+    if(state.friend&&state.friend.screen===i && !state.dnd){ctx.save();ctx.globalAlpha=.85;drawPet(ctx,state.friend.x,state.friend.y,'happy',state.friend.vx<0,0);ctx.restore();drawBubble(ctx,'👋',state.friend.x+PET/2,state.friend.y);}
+    if(state.event==='dance'&&state.pet.screen===i && !state.dnd){const t=performance.now()/120;for(let k=0;k<4;k++){const ang=t+k*1.57;ctx.font='16px "Apple Color Emoji"';ctx.fillText('✨',state.pet.x+PET/2+Math.cos(ang)*45,state.pet.y+PET/2+Math.sin(ang)*25);}}
+    if(state.pet.visible && !state.dnd && state.pet.screen===i){
       // If swinging, draw a "rope" attaching pet to swing
       if(state.pet.behaviour==='play_toy' && state.pet.playToyIdx>=0){
         const t=state.placedToys[state.pet.playToyIdx];
@@ -844,6 +898,13 @@ function drawScene(){
       drawPet(ctx,state.pet.x,state.pet.y,moodLabel(),state.pet.facing<0,state.pet.rot);
       if(performance.now()<state.pet.bubbleUntil) drawBubble(ctx,state.pet.bubbleText,state.pet.x+PET/2,state.pet.y);
       if(state.work.active&&state.work.kbScreen===i&&state.pet.behaviour==='work'){const gs=['⌨️','💻','📊','📝','☕️'];drawBubble(ctx,gs[state.work.glyphIdx%gs.length],state.pet.x+PET/2+30,state.pet.y);}
+    }
+    // Screensaver dim overlay (smooth alpha)
+    if(!state.dnd && state.screensaverAlpha>0.001){
+      ctx.save();
+      ctx.fillStyle='rgba(0,0,40,'+state.screensaverAlpha+')';
+      ctx.fillRect(0,0,SW(i),SH(i));
+      ctx.restore();
     }
   }
 }
@@ -877,7 +938,13 @@ function moodLabel(){
 function updateHeaderState(){
   const b=state.pet.behaviour;
   const label={idle:'idle',walk:'walking',fall:'falling',float:'floating',drag:'held',work:'working',stand_up:'站直中',sit:'坐着',lay:'躺着',sleep:'睡觉',sleep_ground:'地板小睡',play_toy:'玩玩具',to_furniture:'去指定位置',nuzzle:'蹭蹭'}[b]||b;
-  document.getElementById('badge-state').textContent=state.pet.visible?(state.event||label):'Hidden';
+  const badge=document.getElementById('badge-state');
+  if(!badge) return;
+  if(state.dnd){
+    badge.textContent='DND';
+  }else{
+    badge.textContent=state.pet.visible?(state.event||label):'Hidden';
+  }
   const ev=document.getElementById('badge-event');
   if(state.event==='sing'){ev.style.display='';ev.innerHTML='<span class="dot"></span>🎤 周五 KTV';}
   else if(state.event==='dance'){ev.style.display='';ev.innerHTML='<span class="dot"></span>💃 发薪日狂欢';}
@@ -1090,6 +1157,14 @@ function tick(dtMs){
   if(state.stats.hunger<20) state.stats.mood=clamp(state.stats.mood-.02*dt);
   if(state.stats.mood>70) state.stats.affinity=clamp(state.stats.affinity+0.003*dt);
 
+  // Screensaver dim alpha easing
+  const targetDim = (!state.dnd && state.screensaver) ? 0.18 : 0;
+  const diff = targetDim - state.screensaverAlpha;
+  if(Math.abs(diff)>0.001){
+    const k = Math.min(1, dtMs/400);
+    state.screensaverAlpha += diff * k;
+  }
+
   refreshBars(); updateHeaderState(); tickPomodoro();
 }
 function walkStep(dt){
@@ -1117,12 +1192,29 @@ function walkStep(dt){
   } else {
     p.x+=p.facing*speed;
     if(state.gravity) p.y=SH(p.screen)-PET-FLOOR_MARGIN;
+    // React to dirty litter when walking past it.
+    if(state.litterDirty>=3 && !state.dnd){
+      const f=furnitureXY('litter');
+      if(f && f.screen===p.screen){
+        const petCx=p.x+PET/2;
+        const litterCx=f.x+FURN/2;
+        const dist=Math.abs(petCx-litterCx);
+        if(dist<PET && (!state.litterLastSniff || performance.now()-state.litterLastSniff>8000)){
+          state.litterLastSniff=performance.now();
+          if(Math.random()<0.3){
+            bubble('好臭好臭 🤢',1600);
+            p.x+= (p.facing||1)*-20;
+          }
+        }
+      }
+    }
     if(p.x<0){if(p.screen>0){p.screen-=1;p.x=SW(p.screen)-PET-4;}else{p.x=0;p.facing=1;}}
     else if(p.x>sw-PET){if(p.screen<SCREENS.length-1){p.screen+=1;p.x=4;}else{p.x=sw-PET;p.facing=-1;if(per.name==='社牛')bubble('嗨！',1500);}}
     if(performance.now()>p.until) pickNext();
   }
 }
 function bubble(text,dur=2000){
+  if(state.dnd) return;
   // dedupe: if same text is already showing, just extend its life a bit instead of restarting.
   const now = performance.now();
   if(state.pet.bubbleText === text && state.pet.bubbleUntil > now){
@@ -1173,6 +1265,7 @@ function spawnPoopAtLitter(forcedPee){
   state.stats.hygiene=clamp(state.stats.hygiene-3);
   state.stats.mood=clamp(state.stats.mood+2);
   state.stats.affinity=clamp(state.stats.affinity+0.3);
+  bumpLitterDirty();
   bubble('🚽 呼~',1200);
 }
 setInterval(()=>{for(let s=0;s<SCREENS.length;s++){state.entities[s]=state.entities[s].filter(e=>!(e.litter&&performance.now()>e.until));}},1000);
@@ -1292,39 +1385,53 @@ SCREENS.forEach((canvas,scr)=>{
       state.pet.vx=0;state.pet.vy=0;state.pet.angVel=0;
       state.pet.playToyIdx=-1;
     }
-    // Furniture hit? (still detect for nuzzle exclusion, no drag anymore — palette handles placement)
-    else if(hitFurniture(pos, scr)){
-      hitSomething = true;
-    }
-    // click on placed toy → remove or send Kaka
+    // Furniture hit? (no drag; palette handles placement)
     else {
-      const toyIdx=hitToy(pos,scr);
-      if(toyIdx>=0){
+      const furn = hitFurniture(pos, scr);
+      if(furn){
         hitSomething = true;
-        if(e.shiftKey || e.ctrlKey || e.metaKey){
-          goToToy(toyIdx); showToast('叫 Kaka 过来玩');
-        } else {
-          const t=state.placedToys[toyIdx]; const T=TOYS[t.key];
-          state.placedToys.splice(toyIdx,1);
-          if(state.pet.playToyIdx===toyIdx){state.pet.playToyIdx=-1;state.pet.behaviour='idle';}
-          showToast('收起了 '+T.name);
+        if(furn==='litter' && state.litterDirty>0){
+          // One-click clean litter box.
+          setLitterDirty(0);
+          // Remove any lingering litter-tagged entities on this screen.
+          state.entities[scr] = state.entities[scr].filter(e=>!e.litter);
+          bumpWeekly('poop');
+          earn(2,'清理便盆');
+          showToast('便盆清理干净了 ✨');
+          if(Math.random()<0.25) bubble('哼，终于清了'); else bubble('谢谢铲屎官 💕',1800);
+          renderShop(currentShopTab);
         }
-      } else {
-        // click on entity (food / waste)
-        const hit=hitEntity(pos,scr);
-        if(hit){
+      }
+      // click on placed toy → remove or send Kaka
+      else {
+        const toyIdx=hitToy(pos,scr);
+        if(toyIdx>=0){
           hitSomething = true;
-          const e2=hit.entity;
-          if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}
-          else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('poop');earn(1,'清理');showToast('清理完成 +10 卫生');renderShop(currentShopTab);}
+          if(e.shiftKey || e.ctrlKey || e.metaKey){
+            goToToy(toyIdx); showToast('叫 Kaka 过来玩');
+          } else {
+            const t=state.placedToys[toyIdx]; const T=TOYS[t.key];
+            state.placedToys.splice(toyIdx,1);
+            if(state.pet.playToyIdx===toyIdx){state.pet.playToyIdx=-1;state.pet.behaviour='idle';}
+            showToast('收起了 '+T.name);
+          }
         } else {
-          // if laser toy exists on this screen → set laser point (still counts as "hit" for nuzzle exclusion)
-          const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
-          if(hasLaser){
+          // click on entity (food / waste)
+          const hit=hitEntity(pos,scr);
+          if(hit){
             hitSomething = true;
-            state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+3500 };
-            const idx=state.placedToys.findIndex(t=>t.screen===scr && TOYS[t.key].action==='laser');
-            if(idx>=0){ goToToy(idx); }
+            const e2=hit.entity;
+            if(e2.kind==='food'){state.entities[scr].splice(hit.index,1);state.pet.target=e2.x;state.pet.behaviour='walk';state.pet.screen=scr;}
+            else{state.entities[scr].splice(hit.index,1);state.stats.hygiene=clamp(state.stats.hygiene+10);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('poop');earn(1,'清理');showToast('清理完成 +10 卫生');renderShop(currentShopTab);}
+          } else {
+            // if laser toy exists on this screen → set laser point (still counts as "hit" for nuzzle exclusion)
+            const hasLaser = state.placedToys.some(t=>t.screen===scr && TOYS[t.key].action==='laser');
+            if(hasLaser){
+              hitSomething = true;
+              state.laserPos = { screen:scr, x:pos.x, y:pos.y, until:performance.now()+3500 };
+              const idx=state.placedToys.findIndex(t=>t.screen===scr && TOYS[t.key].action==='laser');
+              if(idx>=0){ goToToy(idx); }
+            }
           }
         }
       }
@@ -1371,6 +1478,38 @@ window.addEventListener('mouseup',()=>{
 });
 
 // ===== Toggles =====
+function applyDndModeUI(){
+  const body=document.body;
+  const btn=document.getElementById('btn-dnd');
+  const toastEl=document.getElementById('toast');
+  const notifEl=document.getElementById('notif');
+  if(state.dnd){
+    body.classList.add('dnd-on');
+    if(btn) btn.textContent='🔕 勿扰中';
+    state.pet.bubbleUntil=0;
+    if(toastEl) toastEl.classList.remove('show');
+    if(notifEl) notifEl.classList.remove('show');
+  } else {
+    body.classList.remove('dnd-on');
+    if(btn) btn.textContent='🔕 勿扰';
+  }
+}
+function setDnd(on){
+  state.dnd=!!on;
+  try{ localStorage.setItem('kaka_dnd', state.dnd?'1':'0'); }catch(e){}
+  applyDndModeUI();
+}
+function toggleDnd(){
+  const next=!state.dnd;
+  setDnd(next);
+  if(!next){
+    // Leaving DND: ensure pet is visible and say hi.
+    const vis=document.getElementById('tg-visible');
+    if(vis && !vis.checked){vis.checked=true;state.pet.visible=true;}
+    bubble('回来啦~',1800);
+  }
+}
+
 document.getElementById('tg-work').onchange=(e)=>{state.work.active=e.target.checked;if(state.work.active){state.work.kbScreen=state.pet.screen;state.work.kbX=SW(state.pet.screen)/2-PET/2;state.work.kbY=SH(state.pet.screen)-PET-FLOOR_MARGIN;showToast('💼 代打工模式开启');}else{state.pet.behaviour='idle';showToast('💼 代打工模式结束');}};
 document.getElementById('tg-friend').onchange=(e)=>{if(e.target.checked){spawnFriend();showToast('👋 好友互访开启');}else{state.friend=null;showToast('好友互访已关闭');}};
 function spawnFriend(){const scr=Math.floor(Math.random()*SCREENS.length);const fromLeft=Math.random()<.5;state.friend={screen:scr,x:fromLeft?-PET:SW(scr)+PET,y:SH(scr)-PET-FLOOR_MARGIN,vx:fromLeft?2.5:-2.5};bubble('👋',1500);}
@@ -1393,6 +1532,9 @@ document.getElementById('btn-reset').onclick=()=>{
 };
 document.getElementById('tg-gravity').onchange=(e)=>{state.gravity=e.target.checked;state.pet.vy=0;showToast(state.gravity?'重力已开':'重力已关');};
 document.getElementById('tg-visible').onchange=(e)=>{state.pet.visible=e.target.checked;showToast(state.pet.visible?'Kaka 出现':'Kaka 藏好了 🕶');};
+const btnDnd=document.getElementById('btn-dnd');
+if(btnDnd) btnDnd.onclick=()=>toggleDnd();
+window.addEventListener('keydown',(e)=>{if(e.ctrlKey&&e.shiftKey&&(e.key==='h'||e.key==='H')){e.preventDefault();toggleDnd();}});
 
 // ===== Pomodoro =====
 const notif=document.getElementById('notif'),notifMsg=document.getElementById('notif-msg'),notifStats=document.getElementById('notif-stats');
@@ -1404,17 +1546,54 @@ function startPomodoro(){rollDay();state.pomo.running=true;state.pomo.startedAt=
 function cancelPomodoro(){state.pomo.running=false;state.pomo.startedAt=0;document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;showToast('番茄钟已取消');}
 const POMO_DURATION_MS=45*1000;
 function tickPomodoro(){if(!state.pomo.running)return;if(performance.now()-state.pomo.startedAt>=POMO_DURATION_MS){rollDay();if(state.pomo.today===0)state.pomo.streak+=1;state.pomo.today+=1;state.pomo.total+=1;state.pomo.running=false;state.pomo.startedAt=0;savePomo();document.getElementById('btn-pomo').textContent='🍅 开始番茄';document.getElementById('btn-pomo').onclick=startPomodoro;popReminder(true);state.stats.mood=clamp(state.stats.mood+4);state.stats.affinity=clamp(state.stats.affinity+0.5);bumpWeekly('pomodoro');earn(5,'一颗🍅');renderShop(currentShopTab);}}
-function popReminder(fromPomo=false){notifMsg.textContent=fromPomo?'一颗番茄完成啦！休息 5 分钟 ☕️':REMIND[Math.floor(Math.random()*REMIND.length)];notifStats.textContent='🍅 '+pomoLine();notif.classList.add('show');clearTimeout(popReminder._t);popReminder._t=setTimeout(()=>notif.classList.remove('show'),25000);}
+function popReminder(fromPomo=false){if(state.dnd)return;notifMsg.textContent=fromPomo?'一颗番茄完成啦！休息 5 分钟 ☕️':REMIND[Math.floor(Math.random()*REMIND.length)];notifStats.textContent='🍅 '+pomoLine();notif.classList.add('show');clearTimeout(popReminder._t);popReminder._t=setTimeout(()=>notif.classList.remove('show'),25000);}
 document.getElementById('n-dismiss').onclick=()=>notif.classList.remove('show');
 document.getElementById('n-snooze').onclick=()=>{notif.classList.remove('show');setTimeout(popReminder,20000);};
 setInterval(()=>popReminder(false),120000);
 
 // ===== Events =====
 function updateEventState(){const now=new Date();const rF=now.getDay()===5&&now.getHours()>=15&&now.getHours()<18;const rP=now.getDate()===state.paydayDay;const sing=state.forceSing||rF;const dance=state.forceDance||rP;const prev=state.event;state.event=dance?'dance':(sing?'sing':null);
-  if(state.event==='sing'&&performance.now()>state.eventNextAt){const L=['🎵 平平淡淡才是真~','🎵 咖咖咖咖 咔咔咔咔~','🎵 Somebody 好想 fish 一下~','🎵 抬头一看 又是周五~','🎤 test test','🎵 老板不在 我最帅~'];bubble(L[Math.floor(Math.random()*L.length)],3200);state.eventNextAt=performance.now()+rand(4500,8500);}
-  else if(state.event==='dance'&&performance.now()>state.eventNextAt){const M=['🕺 发工资啦！','💃 涨到手抽筋','🎉 请我吃饭','🪩 蹦迪走起'];bubble(M[Math.floor(Math.random()*M.length)],3000);state.eventNextAt=performance.now()+rand(3000,6000);}
+  if(state.event==='sing'&&performance.now()>state.eventNextAt){const L=['🎵 平平淡淡才是真~','🎵 咖咖咖咖 咔咔咔咔~','🎵 Somebody 好想 fish 一下~','🎵 抬头一看 又是周五~','🎤 test test','🎵 老板不在 我最帅~'];bubble(L[Math.floor(Math.random()*L.length)],3200);state.eventNextAt=performance.now()+rand(4500,8500);} 
+  else if(state.event==='dance'&&performance.now()>state.eventNextAt){const M=['🕺 发工资啦！','💃 涨到手抽筋','🎉 请我吃饭','🪩 蹦迪走起'];bubble(M[Math.floor(Math.random()*M.length)],3000);state.eventNextAt=performance.now()+rand(3000,6000);} 
   if(prev!==state.event&&state.event) showToast(state.event==='sing'?'🎤 周五 KTV 开唱！':'💃 发薪日狂欢！');
 }
+
+// ===== Idle / screensaver =====
+const SCREENSAVER_IDLE_MS = 15*60*1000;
+function resetIdle(){
+  const now = performance.now();
+  state.lastInteraction = now;
+  if(state.screensaver){
+    state.screensaver=false;
+    const p=state.pet;
+    if(p.behaviour==='sleep' || p.behaviour==='sleep_ground'){
+      p.behaviour='stand_up';
+      p.until=performance.now()+800;
+    }
+    bubble('啊？你回来了！😃',1800);
+    earn(1,'睡眠奖励');
+  }
+}
+['mousedown','mousemove','keydown','scroll','touchstart'].forEach(ev=>{
+  document.addEventListener(ev, resetIdle, {passive:true});
+});
+function startScreensaver(){
+  if(state.screensaver || state.dnd) return;
+  state.screensaver=true;
+  bubble('没人理我了…回窝睡觉了 💤', 2000);
+  if(state.furniture && state.furniture.nest){
+    goToFurniture('nest','sleep');
+  } else {
+    state.pet.behaviour='sleep';
+    state.pet.until=performance.now()+rand(4000,8000);
+  }
+}
+setInterval(()=>{
+  const now=performance.now();
+  if(!state.screensaver && !state.dnd && now - state.lastInteraction > SCREENSAVER_IDLE_MS){
+    startScreensaver();
+  }
+},10000);
 
 // ===== Bars =====
 function refreshBars(){const s=state.stats;const set=(id,v)=>document.getElementById('bar-'+id).style.width=v+'%';set('hunger',s.hunger);set('mood',s.mood);set('hygiene',s.hygiene);set('affinity',s.affinity);const setV=(id,v)=>document.getElementById('val-'+id).textContent=Math.round(v);setV('hunger',s.hunger);setV('mood',s.mood);setV('hygiene',s.hygiene);setV('affinity',s.affinity);document.getElementById('pomo-line').textContent=pomoLine();}
@@ -1574,6 +1753,8 @@ requestAnimationFrame(loop);
 
 setPersonality('extrovert'); renderSkinGrid(); renderToyTray(); refreshBars();
 updateTreatsBadge();
+updateLitterBadge();
+applyDndModeUI();
 maybePopSignin();
 maybeShowWeeklyReport();
 setTimeout(()=>showToast('欢迎 v0.5 · 甩两下扔飞它会自己站直 · 累了会自己坐/躺/睡'),400);
