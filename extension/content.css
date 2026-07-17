@@ -1,0 +1,87 @@
+/* Kaka extension content styles */
+#kaka-ext-container {
+  position: fixed;
+  bottom: 0;
+  right: 10%;
+  width: 200px;
+  height: 180px;
+  z-index: 2147483647;
+  pointer-events: none; /* inner elements re-enable */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+#kaka-ext-container canvas {
+  width: 180px;
+  height: 160px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#kaka-ext-container.kaka-ext-dnd {
+  opacity: 0.25;
+}
+
+#kaka-ext-container .kaka-ext-hint {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(0,0,0,.45);
+  text-shadow: 0 1px 2px rgba(255,255,255,.9);
+  pointer-events: none;
+}
+
+.kaka-ext-menu {
+  position: fixed;
+  min-width: 140px;
+  background: rgba(28,28,30,.98);
+  color: #fff;
+  border-radius: 10px;
+  padding: 6px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  font-family: -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",system-ui,sans-serif;
+  font-size: 13px;
+  z-index: 2147483647;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+.kaka-ext-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.kaka-ext-menu button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.kaka-ext-menu button:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.kaka-ext-menu button span.label {
+  flex: 1;
+}
+
+.kaka-ext-menu hr {
+  border: 0;
+  margin: 4px 0;
+  border-top: 1px solid rgba(99,99,102,.4);
+}
+
+#kaka-ext-container canvas::-webkit-scrollbar {
+  display: none;
+}

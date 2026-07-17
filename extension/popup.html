@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Kaka — 桌面宠物</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--bg:#F2F2F7;--card:#FFFFFF;--sep:rgba(60,60,67,.18);--tint:#007AFF;--label:#000;--secondary:rgba(60,60,67,.6);--radius:14px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",system-ui,sans-serif;}
+    body{margin:0;background:var(--bg);min-width:280px;max-width:360px;min-height:320px;color:var(--label);}
+    .wrap{padding:12px 12px 16px;}
+    .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--sep);padding:12px 14px;box-shadow:0 6px 18px rgba(0,0,0,.04);}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .header .title{font-weight:700;font-size:18px;}
+    .header .sub{font-size:12px;color:var(--secondary);}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:13px;}
+    .stat{padding:8px 9px;border-radius:10px;background:rgba(120,120,128,.12);}
+    .label{font-size:11px;color:var(--secondary);margin-bottom:3px;}
+    .value{font-variant-numeric:tabular-nums;font-weight:600;}
+    .bar{margin-top:4px;height:4px;border-radius:999px;background:rgba(120,120,128,.25);overflow:hidden;}
+    .bar i{display:block;height:100%;border-radius:999px;background:var(--tint);}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+    button{border:0;border-radius:11px;padding:10px 0;font-size:14px;font-weight:600;cursor:pointer;background:var(--tint);color:#fff;}
+    button.secondary{background:rgba(120,120,128,.12);color:var(--tint);}
+    button:active{transform:translateY(1px);}
+    .section-title{margin:12px 0 6px;font-size:12px;color:var(--secondary);}
+    a{color:var(--tint);text-decoration:none;font-size:13px;}
+    footer{margin-top:10px;font-size:11px;color:var(--secondary);text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div>
+          <div class="title">🐾 Kaka</div>
+          <div class="sub" id="subtitle">加载中…</div>
+        </div>
+        <button class="secondary" id="btn-dnd-popup" style="padding:4px 10px;font-size:12px;width:auto">🔕 勿扰</button>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">饥饿 Hunger</div>
+          <div class="value" id="val-hunger">--</div>
+          <div class="bar"><i id="bar-hunger"></i></div>
+        </div>
+        <div class="stat">
+          <div class="label">心情 Mood</div>
+          <div class="value" id="val-mood">--</div>
+          <div class="bar"><i id="bar-mood"></i></div>
+        </div>
+        <div class="stat">
+          <div class="label">好感度 Affinity</div>
+          <div class="value" id="val-aff">--</div>
+          <div class="bar"><i id="bar-aff"></i></div>
+        </div>
+        <div class="stat">
+          <div class="label">状态 Status</div>
+          <div class="value" id="val-status">--</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="btn-feed-popup">🍪 喂食</button>
+        <button class="secondary" id="btn-pat-popup">🤚 摸摸</button>
+        <button class="secondary" id="btn-signin-popup" style="grid-column:span 2">🎁 今日签到</button>
+      </div>
+      <div class="section-title">完整体验</div>
+      <a href="https://ustiniankw.github.io/Kaka/" target="_blank" id="link-full">打开 GitHub Pages 完整 Web 版 ›</a>
+    </div>
+    <footer>提示：在任意页面右键 Kaka 打开菜单 · 扩展数据保存在 chrome.storage.local</footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
