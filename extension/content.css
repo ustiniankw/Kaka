@@ -1,4 +1,4 @@
-/* Kaka 扩展 · 薄壳容器样式（其余 UI 全部在远端 iframe 内） */
+/* Kaka 扩展 · 薄壳容器样式（其余 UI 全部在 iframe 内） */
 #kaka-ext-container {
   position: fixed;
   bottom: 0;
@@ -17,4 +17,26 @@
   background: transparent;
   pointer-events: auto;
   color-scheme: normal;
+}
+
+#kaka-ext-container #kaka-ext-status {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  max-width: 260px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(28, 28, 30, 0.92);
+  color: #fff;
+  font: 12px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", system-ui, sans-serif;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: normal;
+}
+
+#kaka-ext-container #kaka-ext-status.show {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -2,6 +2,12 @@
 
 从 **v1.1.0** 开始，Kaka Chrome 扩展改造成了 **薄壳（thin shell）** 架构：
 
+## v1.2.0 这次修了什么
+
+- `host_permissions` 扩大到 `<all_urls>`，确保 MV3 扩展能在普通网页上稳定注入内容脚本。
+- 新增扩展内置 `embed.html` 作为本地备用页；远端 `https://ustiniankw.github.io/Kaka/embed.html` 3 秒内不可用时会自动回退。
+- 回退发生时会在页面右下角显示一条轻提示：`Kaka 加载失败：已切到本地备用模式（GH Pages 未就绪）`。
+
 - 扩展本身几乎不包含 UI / 物理 / 交互逻辑，只做三件事：
   1. 在页面右下角挂一个固定定位的 `<iframe>`
   2. 把 `chrome.storage.local` 桥接给 iframe（`postMessage` 通信）
@@ -15,8 +21,8 @@
   你都会在下一次刷新页面时自动拿到最新版，无需重装扩展、无需手动更新。
 - **数据仍在本地**：饥饿 / 心情 / 好感度 / DND 状态等都存在 `chrome.storage.local`，
   远端 iframe 通过 `postMessage` 拿数据，不会上传到任何服务器。
-- **网络问题降级**：如果 GitHub Pages 暂时不可达，iframe 加载失败，
-  只有右下角的小 Kaka 不显示，其他数据不受影响，恢复网络后会自动继续。
+- **网络问题降级**：如果 GitHub Pages 暂时不可达，内容脚本会在 3 秒内自动切到扩展内置的备用 `embed.html`，
+  Kaka 仍然会继续显示，其他数据也不受影响。
 
 ## 什么情况下需要重装 / 更新扩展本身？
 
@@ -45,9 +51,10 @@ https://ustiniankw.github.io/Kaka/embed.html?ts=2026-07-17
 
 ## 相关文件
 
-- `extension/manifest.json` — MV3 清单（v1.1.0）
-- `extension/content.js` — 薄壳，< 80 行
-- `extension/content.css` — 只保留容器定位与投影
+- `extension/manifest.json` — MV3 清单（v1.2.0）
+- `extension/content.js` — 薄壳内容脚本（远端优先 + 本地回退）
+- `extension/content.css` — 容器定位、投影与回退提示样式
+- `extension/embed.html` — 扩展内置备用页（web_accessible_resources）
 - `extension/popup.html` / `popup.js` — 3 个入口 + 状态 readonly 展示
 - `docs/embed.html` — 真正的 Kaka 界面（远端加载）
 - `.github/workflows/pages.yml` — Pages 自动部署
