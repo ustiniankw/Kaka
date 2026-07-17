@@ -25,12 +25,13 @@ jobs:
           cache-dependency-path: desktop/package-lock.json
       - name: Install
         working-directory: desktop
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Build
         working-directory: desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx electron-builder --publish onTag
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --publish never
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

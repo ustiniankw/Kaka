@@ -13,8 +13,8 @@
     "build:linux": "electron-builder --linux --publish never"
   },
   "devDependencies": {
-    "electron": "^30.0.0",
-    "electron-builder": "^24.13.3"
+    "electron": "30.5.1",
+    "electron-builder": "24.13.3"
   },
   "build": {
     "appId": "com.ustiniankw.kaka",
@@ -24,7 +24,10 @@
     "mac": {
       "category": "public.app-category.entertainment",
       "target": ["dmg", "zip"],
-      "icon": "build/icon.icns"
+      "icon": "build/icon.icns",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
     },
     "win": {
       "target": ["nsis", "portable"],
