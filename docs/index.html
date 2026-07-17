@@ -4,195 +4,202 @@
   <meta charset="utf-8" />
   <title>Kaka 🐱 · 你的浏览器桌面宠物</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="description" content="Kaka 是一只会在屏幕上乱走、乱拉、卖萌的桌面宠物，现在你可以直接在浏览器和 Chrome 扩展里养它。" />
+  <meta name="description" content="Kaka 是一只会在浏览器 / 桌面上乱走、乱拉、卖萌的宠物 —— 3 秒试玩，30 秒装扩展。" />
   <style>
-    :root{
-      --bg:#F2F2F7;
-      --bg-alt:#FFFFFF;
-      --text:#000000;
-      --sub:rgba(60,60,67,.6);
-      --card:rgba(255,255,255,.96);
-      --border:rgba(60,60,67,.16);
-      --accent:#007AFF;
-      --accent-dark:#0A84FF;
-      --radius-card:18px;
-      --shadow-lg:0 18px 45px rgba(0,0,0,.16);
-      --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    :root {
+      --bg-1: #FDF7FF;
+      --bg-2: #E6F1FF;
+      --text: #0B1220;
+      --sub: rgba(11, 18, 32, .6);
+      --card: rgba(255, 255, 255, .82);
+      --border: rgba(11, 18, 32, .1);
+      --accent: #007AFF;
+      --accent-2: #FF6B6B;
+      --accent-3: #FFB347;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     }
-    @media (prefers-color-scheme:dark){
-      :root{
-        --bg:#000000;
-        --bg-alt:#1C1C1E;
-        --text:#FFFFFF;
-        --sub:rgba(235,235,245,.6);
-        --card:rgba(28,28,30,.98);
-        --border:rgba(84,84,88,.6);
-        --accent:#0A84FF;
-        --accent-dark:#409CFF;
-        --shadow-lg:0 18px 55px rgba(0,0,0,.6);
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-1: #0B1220;
+        --bg-2: #1A1030;
+        --text: #FFFFFF;
+        --sub: rgba(235, 235, 245, .65);
+        --card: rgba(28, 28, 30, .78);
+        --border: rgba(255, 255, 255, .12);
+        --accent: #0A84FF;
       }
     }
-    *{box-sizing:border-box;}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;}
-    body{min-height:100vh;}
-    .wrap{max-width:1040px;margin:0 auto;padding:24px 20px 40px;}
-    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px;}
-    header .brand{display:flex;align-items:center;gap:10px;}
-    header .brand-logo{width:32px;height:32px;border-radius:10px;background:radial-gradient(circle at 30% 30%,#FFE066,#FFB347);display:flex;align-items:center;justify-content:center;font-size:20px;}
-    header .brand-title{font-weight:700;font-size:20px;}
-    header nav a{margin-left:14px;font-size:13px;color:var(--sub);text-decoration:none;}
-    header nav a:hover{color:var(--accent);}
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; min-height: 100vh; color: var(--text); font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: -20% -20% auto auto; width: 60vmax; height: 60vmax;
+      background: radial-gradient(closest-side, rgba(255, 179, 71, .35), transparent 70%);
+      z-index: 0; pointer-events: none; filter: blur(20px);
+    }
+    body::after {
+      content: ''; position: fixed; inset: auto auto -20% -20%; width: 60vmax; height: 60vmax;
+      background: radial-gradient(closest-side, rgba(10, 132, 255, .3), transparent 70%);
+      z-index: 0; pointer-events: none; filter: blur(20px);
+    }
+    .page {
+      position: relative; z-index: 1; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 20px 120px; text-align: center;
+    }
+    header.brand {
+      display: inline-flex; align-items: center; gap: 12px; margin-bottom: 26px;
+    }
+    header.brand .logo {
+      width: 56px; height: 56px; border-radius: 18px;
+      background: radial-gradient(circle at 30% 30%, #FFE066, #FFB347);
+      display: flex; align-items: center; justify-content: center; font-size: 32px;
+      box-shadow: 0 12px 28px rgba(255, 179, 71, .35);
+    }
+    h1 {
+      font-size: clamp(38px, 6vw, 64px); font-weight: 800; letter-spacing: -.02em;
+      margin: 6px 0 10px; line-height: 1.05;
+    }
+    h1 .cat { display: inline-block; animation: bob 2.4s ease-in-out infinite; }
+    @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg);} 50%{transform:translateY(-6px) rotate(3deg);} }
+    p.tag { margin: 0 0 40px; font-size: clamp(15px, 2vw, 18px); color: var(--sub); }
+    p.tag b { color: var(--text); }
 
-    .grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:26px;align-items:stretch;}
-    @media (max-width:900px){.grid{grid-template-columns:1fr;}}
+    .cta {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      max-width: 780px; width: 100%;
+    }
+    .cta a {
+      flex: 1 1 220px; min-width: 220px; max-width: 260px;
+      display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 22px 24px; border-radius: 22px;
+      font-size: 18px; font-weight: 700; text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      backdrop-filter: blur(8px);
+    }
+    .cta a .icon { font-size: 34px; line-height: 1; }
+    .cta a .sub { font-size: 12px; font-weight: 500; opacity: .75; letter-spacing: .02em; }
+    .cta a:hover { transform: translateY(-3px); filter: brightness(1.05); }
+    .cta a:active { transform: translateY(0); }
 
-    .hero-copy h1{font-size:36px;letter-spacing:-.4px;margin:0 0 8px;font-weight:800;}
-    .hero-copy h1 span{font-size:.9em;}
-    .hero-copy p.sub{margin:0 0 20px;font-size:15px;color:var(--sub);line-height:1.6;}
+    .cta a.primary { background: var(--accent); color: #fff; box-shadow: 0 14px 32px rgba(0, 122, 255, .32); }
+    .cta a.pink { background: var(--accent-2); color: #fff; box-shadow: 0 14px 32px rgba(255, 107, 107, .3); }
+    .cta a.dark { background: #111827; color: #fff; box-shadow: 0 14px 32px rgba(0, 0, 0, .3); }
+    @media (prefers-color-scheme: dark) {
+      .cta a.dark { background: #F5F5F7; color: #0B1220; }
+    }
 
-    .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:999px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:background .16s,transform .08s,color .16s;text-decoration:none;}
-    .btn-primary{background:var(--accent);color:#fff;}
-    .btn-primary:active{background:var(--accent-dark);transform:translateY(1px);}
-    .btn-ghost{background:rgba(120,120,128,.14);color:var(--accent);}
-    .btn-ghost:active{background:rgba(120,120,128,.24);transform:translateY(1px);}
+    @media (max-width: 640px) {
+      .cta { flex-direction: column; align-items: stretch; }
+      .cta a { max-width: none; }
+    }
 
-    .hero-meta{font-size:12px;color:var(--sub);line-height:1.6;}
+    /* 3-step install */
+    .steps {
+      display: flex; gap: 14px; align-items: stretch; justify-content: center;
+      flex-wrap: wrap; max-width: 780px; width: 100%;
+      margin: 46px auto 8px;
+    }
+    .step {
+      flex: 1 1 200px; min-width: 180px; max-width: 240px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px; text-align: left;
+      backdrop-filter: blur(12px);
+    }
+    .step .num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); color: #fff; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step .txt { font-size: 13px; line-height: 1.4; }
+    .step .txt b { font-size: 14px; display: block; }
+    .step .txt code {
+      font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+      background: rgba(120, 120, 128, .16); padding: 1px 5px; border-radius: 4px;
+    }
 
-    .hero-card{position:relative;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-lg);border:1px solid var(--border);padding:14px 14px 16px;overflow:hidden;}
-    .hero-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:var(--sub);}
-    .hero-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:rgba(120,120,128,.14);font-size:11px;}
-    .hero-chip .dot{width:6px;height:6px;border-radius:50%;background:#34C759;}
-    .hero-stage{position:relative;border-radius:14px;background:var(--bg-alt);border:1px solid var(--border);padding:10px;}
-    .hero-stage canvas{width:100%;height:180px;border-radius:10px;display:block;background:linear-gradient(to bottom,#F9FAFF, #E7ECFF);}
-    @media (prefers-color-scheme:dark){.hero-stage canvas{background:linear-gradient(to bottom,#111827,#020617);}}
+    .readme-link {
+      margin-top: 24px; font-size: 14px; color: var(--sub);
+    }
+    .readme-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .readme-link a:hover { text-decoration: underline; }
 
-    .hero-iframe{position:absolute;inset:0;border-radius:10px;border:none;width:100%;height:100%;}
-    .hero-note{margin-top:8px;font-size:12px;color:var(--sub);}
+    /* Walking cat at bottom */
+    .cat-track {
+      position: fixed; left: 0; right: 0; bottom: 0; height: 60px;
+      pointer-events: none; overflow: hidden; z-index: 2;
+    }
+    .cat-track::before {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 24px; height: 1px;
+      background: repeating-linear-gradient(to right, var(--border) 0 6px, transparent 6px 12px);
+    }
+    .walker {
+      position: absolute; bottom: 8px; left: -60px; font-size: 32px;
+      animation: walk 22s linear infinite;
+    }
+    .walker::before { content: '🐱'; display: inline-block; animation: bounce 0.6s ease-in-out infinite; }
+    @keyframes walk { 0%{left:-60px;} 100%{left:100%;} }
+    @keyframes bounce { 0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-4px) rotate(4deg);} }
 
-    .features{margin-top:36px;}
-    .features-title{font-size:20px;font-weight:700;margin-bottom:10px;}
-    .feature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
-    @media (max-width:900px){.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-    @media (max-width:520px){.feature-grid{grid-template-columns:repeat(1,minmax(0,1fr));}}
-    .feature{background:var(--card);border-radius:16px;padding:10px 11px;border:1px solid var(--border);font-size:14px;display:flex;flex-direction:column;gap:4px;}
-    .feature .icon{font-size:18px;}
-    .feature .name{font-weight:600;}
-    .feature .desc{font-size:12px;color:var(--sub);}
-
-    .section{margin-top:34px;}
-    .section h2{font-size:18px;margin:0 0 10px;}
-    .install-steps{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:14px 16px;font-size:14px;line-height:1.7;}
-    .install-steps ol{margin:0 0 4px 18px;padding:0;}
-    .install-steps code{font-family:ui-monospace,Menlo,monospace;background:rgba(120,120,128,.16);border-radius:4px;padding:1px 4px;font-size:12px;}
-
-    .code-block{background:var(--bg-alt);border-radius:10px;padding:10px 12px;font-family:ui-monospace,Menlo,monospace;font-size:12px;overflow:auto;border:1px solid var(--border);}
-
-    footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--sub);display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;}
-    footer a{color:var(--accent);text-decoration:none;}
-    footer a:hover{text-decoration:underline;}
-    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:rgba(120,120,128,.16);font-size:11px;}
+    footer {
+      position: fixed; bottom: 6px; left: 0; right: 0; text-align: center;
+      font-size: 11px; color: var(--sub); z-index: 3; pointer-events: none;
+    }
+    footer a { color: inherit; pointer-events: auto; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="brand-logo">🐾</div>
-        <div>
-          <div class="brand-title">Kaka 桌面宠物</div>
-          <div style="font-size:12px;color:var(--sub);">Python × Web × Chrome 扩展</div>
-        </div>
-      </div>
-      <nav>
-        <a href="#features">功能</a>
-        <a href="#install">安装扩展</a>
-        <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">GitHub ›</a>
-      </nav>
+  <main class="page">
+    <header class="brand">
+      <div class="logo">🐾</div>
     </header>
 
-    <main class="grid">
-      <section class="hero-copy">
-        <h1>Kaka 🐱<span> · 你的浏览器桌面宠物</span></h1>
-        <p class="sub">一只会在屏幕边缘乱走、乱拉、睡觉、发呆，还会记你摸鱼次数的小怪。<br/>原本是 Python 透明桌面宠物，现在有了 Web 试玩版 + Chrome 扩展。</p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="https://d1346a0046a9.aime-app.bytedance.net" target="_blank" rel="noreferrer">🎮 在线试玩 Web 版</a>
-          <a class="btn btn-ghost" href="#install">📦 安装 Chrome 扩展</a>
-        </div>
-        <div class="hero-meta">
-          <div>· 支持多屏随机行走 / 重力模式 / 拖拽抛飞 / 性格系统 / 玩具系统 / 零食币经济</div>
-          <div>· 内置每日签到、摸鱼周报、便盆清理奖励、勿扰模式、屏保睡觉等小玩法</div>
-        </div>
-      </section>
+    <h1>Kaka <span class="cat">🐱</span></h1>
+    <p class="tag">你的<b>浏览器桌面宠物</b> —— 摸鱼、划水、卖萌、掉零食币。</p>
 
-      <section class="hero-card" aria-label="Kaka 预览">
-        <div class="hero-card-header">
-          <div class="hero-chip"><span class="dot"></span><span>Web Demo 预览</span></div>
-          <div style="font-size:12px;color:var(--sub);">实时运行 · 与下方试玩按钮同源</div>
-        </div>
-        <div class="hero-stage">
-          <canvas aria-hidden="true"></canvas>
-          <iframe class="hero-iframe" src="https://d1346a0046a9.aime-app.bytedance.net" loading="lazy" title="Kaka Web Demo"></iframe>
-        </div>
-        <div class="hero-note">如果预览未加载，可点击左侧「在线试玩 Web 版」在新标签页打开。</div>
-      </section>
-    </main>
+    <nav class="cta" aria-label="主要入口">
+      <a class="primary" href="https://d1346a0046a9.aime-app.bytedance.net" target="_blank" rel="noreferrer">
+        <span class="icon">🎮</span>
+        <span>在线试玩</span>
+        <span class="sub">无需安装 · 一秒进入</span>
+      </a>
+      <a class="pink" href="https://github.com/ustiniankw/Kaka/releases/latest" target="_blank" rel="noreferrer">
+        <span class="icon">📦</span>
+        <span>一键安装扩展</span>
+        <span class="sub">下载最新 ZIP · 支持自动更新</span>
+      </a>
+      <a class="dark" href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">
+        <span class="icon">⭐</span>
+        <span>GitHub</span>
+        <span class="sub">Star / Fork / 提 Issue</span>
+      </a>
+    </nav>
 
-    <section class="features" id="features">
-      <div class="features-title">核心玩法一览</div>
-      <div class="feature-grid">
-        <div class="feature"><div class="icon">🚶</div><div class="name">随机行走</div><div class="desc">在桌面 / 浏览器窗口底部来回晃悠，支持重力 / 悬浮两种模式。</div></div>
-        <div class="feature"><div class="icon">💩</div><div class="name">拉屎清理</div><div class="desc">会在便盆或地板上随机 💩 / 💦，便盆太久不清会变脏、臭气冲天。</div></div>
-        <div class="feature"><div class="icon">🎮</div><div class="name">玩具系统</div><div class="desc">毛线球、纸箱、激光笔、猫爬架… 拖到桌面让 Kaka 自己去玩。</div></div>
-        <div class="feature"><div class="icon">🍬</div><div class="name">零食币经济</div><div class="desc">摸头、清理、番茄钟、签到都会掉落 🍬，可在商店解锁皮肤和玩具。</div></div>
-        <div class="feature"><div class="icon">🧠</div><div class="name">性格系统</div><div class="desc">社恐 / 话痨 / 干饭王 / 懒鬼 / 傲娇 / 社牛… 不同性格行为完全不同。</div></div>
-        <div class="feature"><div class="icon">📊</div><div class="name">摸鱼周报</div><div class="desc">每周一自动生成摸鱼 &amp; 番茄报告，只基于本机数据，不上传任何隐私。</div></div>
-        <div class="feature"><div class="icon">🎁</div><div class="name">每日签到</div><div class="desc">七天一轮的连续签到体系，满勤还有额外 +50 🍬 奖励。</div></div>
-        <div class="feature"><div class="icon">🔕</div><div class="name">勿扰模式</div><div class="desc">一键隐藏 / 减弱打扰，关闭所有气泡和 toast，适合开会或专注工作。</div></div>
-        <div class="feature"><div class="icon">🛏</div><div class="name">屏保睡觉</div><div class="desc">15 分钟无人互动自动回窝睡觉，屏幕轻微变暗，下一次操作会醒来。</div></div>
-        <div class="feature"><div class="icon">🧽</div><div class="name">便盆清理奖励</div><div class="desc">便盆用久会变脏，Kaka 路过会嫌弃；点便盆一键打扫还能拿到额外 🍬。</div></div>
-        <div class="feature"><div class="icon">🧑‍💻</div><div class="name">代打工模式</div><div class="desc">让 Kaka 假装帮你敲键盘、赶进度，心理上会感觉自己没在摸鱼（大概）。</div></div>
-        <div class="feature"><div class="icon">🌐</div><div class="name">多形态支持</div><div class="desc">桌面版（Python）+ Web 试玩 + Chrome 扩展一套逻辑，多端共享玩法。</div></div>
+    <section class="steps" aria-label="30 秒安装扩展">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="txt"><b>📥 下载 ZIP</b>点击「一键安装扩展」下载 latest release。</div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="txt"><b>⚙️ 打开扩展页</b>浏览器访问 <code>chrome://extensions</code> 开启开发者模式。</div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="txt"><b>🎉 加载已解压</b>选择解压后的 <code>extension/</code> 目录 —— Kaka 出现！</div>
       </div>
     </section>
 
-    <section class="section" id="install">
-      <h2>📦 安装 Chrome 扩展</h2>
-      <div class="install-steps">
-        <p style="margin-top:0;">当前为开发者版本，需通过“加载已解压的扩展程序”的方式安装：</p>
-        <ol>
-          <li>在 GitHub 上打开仓库：<code>github.com/ustiniankw/Kaka</code></li>
-          <li>点击 <code>Code</code> › <code>Download ZIP</code> 下载源码并解压</li>
-          <li>打开浏览器，访问 <code>chrome://extensions/</code></li>
-          <li>右上角开启 <b>开发者模式</b></li>
-          <li>点击 <b>“加载已解压的扩展程序”</b></li>
-          <li>选择解压后的仓库中的 <code>extension/</code> 目录</li>
-        </ol>
-        <p style="margin-bottom:0;">成功后：右上角会出现 <b>Kaka — 桌面宠物</b> 图标，任意页面右下角会注入一个小 Kaka。</p>
-      </div>
-    </section>
+    <p class="readme-link">
+      细节 / 玩法 / 桌面 Python 版请看 <a href="https://github.com/ustiniankw/Kaka#readme" target="_blank" rel="noreferrer">README ↗</a>
+    </p>
+  </main>
 
-    <section class="section">
-      <h2>🧱 项目结构一览</h2>
-      <div class="code-block"><pre><code>Kaka/
-├── demo/          # Web 试玩版（本页 hero 中嵌入的就是它）
-│   └── index.html
-├── extension/     # Chrome 扩展（content script + popup）
-├── docs/          # 本 GitHub Pages landing 页
-├── kaka/          # Python 桌面版核心逻辑
-└── run.py         # 桌面版启动入口
-</code></pre></div>
-    </section>
-
-    <footer>
-      <div>
-        <span class="badge">MIT License</span>
-        <span class="badge">Made with ❤️ by <a href="https://github.com/ustiniankw" target="_blank" rel="noreferrer">ustiniankw</a></span>
-      </div>
-      <div>
-        <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">GitHub 仓库</a>
-      </div>
-    </footer>
-  </div>
+  <div class="cat-track" aria-hidden="true"><div class="walker"></div></div>
+  <footer>MIT © ustiniankw · <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">github.com/ustiniankw/Kaka</a></footer>
 </body>
 </html>

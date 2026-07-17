@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Kaka — 桌面宠物",
-  "version": "1.0.0",
-  "description": "在浏览器里养一只 Kaka 桌面宠物 🐱 陪你摸鱼、工作、划水",
+  "version": "1.1.0",
+  "description": "在浏览器里养一只 Kaka 桌面宠物 🐱 —— 薄壳自动更新版：UI 由 GitHub Pages 远程加载，未来功能升级无需重装扩展。",
   "permissions": ["storage"],
+  "host_permissions": ["https://ustiniankw.github.io/*"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon48.png"

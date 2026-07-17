@@ -2,132 +2,105 @@
 
 # 🐾 Kaka — 你的桌面 / 浏览器摸鱼搭子
 
-*一只会在你屏幕上乱走、乱拉、睡觉、卖萌，让繁琐工作有点意思的小怪。*
+*一只会在屏幕上乱走、乱拉、卖萌、掉零食币的小怪。*
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
-![PySide6](https://img.shields.io/badge/Desktop-PySide6-brightgreen)
-![Web](https://img.shields.io/badge/Web-HTML%20%7C%20Canvas-orange)
-![Chrome](https://img.shields.io/badge/Chrome-Extension-yellowgreen)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/Landing-GitHub%20Pages-24292e?logo=github)](https://ustiniankw.github.io/Kaka/)
+[![Extension](https://img.shields.io/badge/Chrome%20Extension-v1.1.0-brightgreen?logo=googlechrome)](https://github.com/ustiniankw/Kaka/releases/latest)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)](https://www.python.org/)
+
+**[🎮 在线试玩](https://d1346a0046a9.aime-app.bytedance.net)** ·
+**[📦 一键安装扩展](https://github.com/ustiniankw/Kaka/releases/latest)** ·
+**[⭐ GitHub](https://github.com/ustiniankw/Kaka)** ·
+**[🌐 Landing](https://ustiniankw.github.io/Kaka/)**
 
 </div>
 
 ---
 
-## 🎮 立即试玩 / 快速体验
+## ✨ 玩法一览
 
-- **在线 Web 试玩版（推荐）**：大部分行为和数值系统都可以体验
-  - 👉 **[在线 Web 版 Demo](https://d1346a0046a9.aime-app.bytedance.net)**
-- **Chrome 扩展开发版**：在任意网页右下角挂一只小 Kaka
-  - 👉 安装方式见下文「[Chrome 扩展安装](#chrome-扩展安装)」
-- **桌面版（Python）**：透明无边框窗口悬浮在桌面上
-  - 👉 本地运行方式见「[桌面版快速开始](#桌面版快速开始)」
-
-> Web 版是行为模拟器（含走动 / 重力 / 拉屎 / 清理 / 喂食 / 拖拽 / 便盆 / 家具 / 老板键 / 状态条 / 签到 / 周报 / 勿扰 / 屏保）。
-> 真正的「透明桌面窗口 + 全局热键」体验仍由 Python 桌面版提供。
-
----
-
-## 🧩 一句话简介
-
-**Kaka**（卡卡 / 咔咔 / 你懂的 💩）是一款用 **Python + PySide6** 写的桌面宠物，同时带有 **Web 试玩版** 与 **Chrome 扩展**：
-
-- 会在你的桌面 / 浏览器底部到处乱逛
-- 会随机 **掉下来**（有重力 / 无重力 两种模式随时切）
-- 时不时会 💩 或 💦，落在地板或便盆里，需要你点掉清理
-- 你可以喂它东西吃、给它玩具玩、解锁新皮肤
-- 支持多种性格（社恐 / 话痨 / 干饭王 / 懒鬼 / 傲娇 / 社牛）影响行为
-- 支持每日签到、摸鱼周报、零食币经济、多屏漫游、代打工模式
-- 老板来了还可以一键开启 **勿扰 / 老板键**，静音所有气泡和 toast
+- 🚶 **随机行走** —— 在桌面 / 浏览器底部乱逛、跨屏漫游
+- 🪂 **物理开关** —— 无重力自由飘 & 有重力自由落体两种模式
+- 🤾 **拖拽抛飞** —— 抓起 Kaka 用力甩，落地会自己爬起来
+- 💩 **拉屎清理** —— 会 💩/💦，脏了会嫌弃自己，也会奖励清理你
+- 🚽 **便盆污垢等级** —— 便盆用久变脏，一键冲水掉 🍬
+- 🎮 **玩具系统** —— 毛线球 / 纸箱 / 激光笔 / 猫爬架，拖到桌面自己会玩
+- 🍬 **零食币经济** —— 摸头 / 清理 / 番茄钟 / 签到都掉币，可解锁皮肤和玩具
+- 🧠 **性格系统** —— 社恐 / 话痨 / 干饭王 / 懒鬼 / 傲娇 / 社牛 / 暴躁，行为完全不同
+- 🎁 **每日签到** —— 七天一轮，满勤额外 +50 🍬
+- 📊 **摸鱼周报** —— 每周一自动汇总番茄 / 摸头 / 清理次数（纯本地）
+- 🔕 **勿扰 / 老板键** —— `Ctrl+Shift+H` 一键静音所有气泡 & 隐身
+- 💤 **屏保睡觉** —— 15 分钟无互动自动回窝，下次操作会醒
+- 🧑‍💻 **代打工模式** —— 让 Kaka 假装帮你敲键盘赶进度（心理安慰）
 
 ---
 
-## ✨ 已实现功能总览（桌面版 + Web 版）
+## 🌐 三种形态
 
-### 行为 & 物理
+### 🎮 Web 版（推荐先玩）
+最快的体验方式，**打开链接就能玩**，几乎覆盖了扩展的全部行为 + 桌面版的大部分玩法：
 
-| 分类 | 功能 |
-|------|------|
-| 🚶 移动 | 桌面 / 浏览器底部随机行走 · 空闲发呆 · 跨屏游走 |
-| 🪂 物理 | **无重力**（自由飘）与 **有重力**（下落到屏幕底）两种模式一键切换 |
-| 🤾‍♂️ 抛掷 | 鼠标拖起后用力甩动可抛飞，带旋转 & 回弹；落地后会自己站起来 |
-| 😴 休息 | 会根据心情和性格自动坐下 / 躺平 / 睡觉（窝里睡 / 地板睡） |
-| 🧑‍💻 代打工 | 代打工模式下会跑到键盘上装模作样敲代码 |
+> 👉 **<https://d1346a0046a9.aime-app.bytedance.net>**
 
-### 排泄 & 清理
+### 🧩 Chrome 扩展（v1.1.0+ 薄壳自动更新）
+在**任意网页右下角**挂一只小 Kaka，跨页面同步状态，看到哪一页玩到哪一页。
+**只需装一次**，未来所有新功能都会自动同步（原理见「[自动更新](#-自动更新原理)」）。
 
-| 分类 | 功能 |
-|------|------|
-| 💩 排泄 | 定时随机拉屎 / 尿尿，支持落地 / 落在便盆里两种表现 |
-| 🚽 便盆 | 可在房间里自由放置；会自动识别为上厕所目标位置 |
-| 🧽 清理 | 单击任意 💩 / 💦 可清理，提升卫生度与好感度 |
-| 🧴 便盆污垢 | 每次在便盆里解决一次，便盆污垢等级 +1；达到一定次数会变脏、带臭气特效 |
-| 🤢 嫌弃 | 当便盆过脏时，Kaka 路过有几率冒泡「好臭好臭 🤢」，并小幅后退 |
-| ✨ 一键冲厕所 | 点击便盆本体可一次性清理所有污垢、重置臭味并获得零食币奖励 |
+- 👉 [下载最新 Release ZIP](https://github.com/ustiniankw/Kaka/releases/latest)
+- 详细安装步骤见 [Chrome 扩展安装](#-chrome-扩展安装)
 
-### 经济 & 商店
+### 🖥 桌面版（Python · PySide6）
+真正意义上的**透明桌面宠物窗口** —— 悬浮在你桌面上、跨屏漫游、支持全局老板键。
 
-| 分类 | 功能 |
-|------|------|
-| 🍬 零食币 | 统一货币，通过摸头、清理、喂食、玩玩具、番茄钟、签到等行为获得 |
-| 🛍 商店 | 使用零食币解锁全新皮肤、玩具，部分对指定性格有折扣 |
-| 🎨 皮肤 | 多种体色 / 气质皮肤，可在右侧面板自由切换 |
-| 🧸 玩具 | 纸箱、毛线球、激光笔、猫爬架、禅石等多种玩具，拖到屏幕上 Kaka 会主动去玩 |
-
-### 数值 & 性格系统
-
-| 分类 | 功能 |
-|------|------|
-| 🧠 性格 | 7 种性格（社恐 / 话痨 / 懒鬼 / 干饭王 / 暴躁 / 傲娇 / 社牛），影响走路频率、拉屎频率、气泡频率等 |
-| 📊 状态条 | 饥饿 (Hunger) / 心情 (Mood) / 卫生 (Hygiene) / 好感度 (Affinity) 四大属性，支持自然恢复和衰减 |
-| 🧮 周报 | 每周统计番茄数、摸头次数、清理次数、玩具游玩次数等，生成摸鱼小报 |
-| 🎁 每日签到 | 支持连续签到，七天一轮，满勤额外送大额零食币 |
-
-### 时间感知 & 勿扰 / 屏保
-
-| 分类 | 功能 |
-|------|------|
-| ⏱ 番茄钟 | 桌面版有完整番茄工作流；Web 版提供加速演示，番茄完成后会弹出 Kaka 提醒 |
-| 📅 发薪日 & 周五事件 | 周五下午自动进入 KTV 模式、发薪日会触发跳舞事件（可强制开启 / 关闭） |
-| 🔕 勿扰模式 | 快捷键 `Ctrl+Shift+H`（Web 版）或开关按钮，一键进入勿扰：隐藏宠物、关闭所有气泡 & toast，仅保留数值逻辑运行 |
-| 💤 屏保睡觉 | 15 分钟无任何用户交互时，Kaka 会自动回窝睡觉，画面轻微变暗；下一次交互会醒来并给一点睡眠奖励 |
-
-### 浏览器 & 扩展
-
-| 分类 | 功能 |
-|------|------|
-| 🌐 Web 试玩 | `demo/index.html` 提供完整交互的浏览器版本，支持多屏、家具、玩具、签到、周报等新玩法 |
-| 🧩 Chrome 扩展 | 内容脚本在页面底部注入一只小 Kaka，使用 `chrome.storage.local` 持久化状态 |
-| 📊 扩展弹出页 | 点击工具栏图标可以查看当前饥饿/心情/好感度，并执行喂食、摸摸、签到等快捷操作 |
-| 🔗 Landing Page | `docs/` 目录为 GitHub Pages 使用的静态 landing 页，集中展示玩法与安装说明 |
+- 详细运行步骤见 [桌面版快速开始](#-桌面版快速开始)
 
 ---
 
-## 🖼 截图（占位）
+## 📦 详细安装
 
-> TODO：补充桌面版 / Web 版 / Chrome 扩展的实际截图。
->
-> - 桌面版：透明窗口 + 多屏行走示例
-> - Web 版：双屏舞台 + 右侧控制面板（皮肤 / 玩具 / 家具 / 状态条）
-> - 扩展：任意网页右下角的小 Kaka + popup 状态面板
+### Web 版
+不需要装任何东西，直接访问：<https://d1346a0046a9.aime-app.bytedance.net>。
 
----
-
-## 🚀 桌面版快速开始
+如需本地跑：
 
 ```bash
-# 1. 克隆仓库
 git clone https://github.com/ustiniankw/Kaka.git
 cd Kaka
+python -m http.server 8080
+# 浏览器打开 http://localhost:8080/demo/
+```
 
-# 2. 安装依赖（建议用 venv / conda）
+### 🧩 Chrome 扩展安装
+
+从 v1.1.0 开始扩展改造成了**薄壳 + GitHub Pages 远端 UI**，安装完就再也不用手动升级了。
+
+**30 秒安装流程**：
+
+1. 前往 [Releases](https://github.com/ustiniankw/Kaka/releases/latest) 下载 `kaka-extension-vX.Y.Z.zip`
+2. 解压到任意目录
+3. Chrome / Edge 访问 `chrome://extensions/`，开启 **开发者模式**
+4. 点 **「加载已解压的扩展程序」**，选中解压出来的 `extension/` 目录（如果解压后已经就是根，就选那个目录）
+5. 打开任意网页，右下角会出现 Kaka —— 完成 ✅
+
+**动画版**（landing 页面上有交互动画）：
+
+```
+📥 下载 ZIP  →  ⚙️ chrome://extensions  →  🎉 加载已解压 → Kaka 出现
+```
+
+想直接从源码装、跟随 main 分支开发也可以：把仓库 clone 下来直接选 `extension/` 目录即可。
+
+### 🖥 桌面版快速开始
+
+```bash
+git clone https://github.com/ustiniankw/Kaka.git
+cd Kaka
 pip install -r requirements.txt
-
-# 3. 运行桌面版
 python run.py
 ```
 
-首次启动后屏幕右下角会出现一只 **像素小怪**。它长这样（procedural 像素画，无需外部素材）：
+首次启动屏幕右下角会出现一只 procedural 生成的像素小怪：
 
 ```
    ██████
@@ -138,74 +111,99 @@ python run.py
     ██ ██
 ```
 
----
-
-## 🧩 Web 试玩版 & 本地预览
-
-Web 试玩版本质上是一个纯 HTML + Canvas 的小页面，逻辑全部在 `demo/index.html` 内联 JS 中：
-
-```bash
-cd Kaka
-# 用任意静态服务器打开 demo/，例如：
-python -m http.server 8080
-# 然后访问 http://localhost:8080/demo/
-```
-
-> 也可以直接访问托管好的在线版本：
-> 
-> 👉 **https://d1346a0046a9.aime-app.bytedance.net**
+全局老板键：`Ctrl+Shift+B` · 勿扰快捷键：`Ctrl+Shift+H`。
 
 ---
 
-## 🧩 Chrome 扩展安装
+## 🔄 自动更新原理
 
-> 当前扩展位于 `extension/` 目录，为开发者模式加载的 MV3 扩展。
+**Kaka 扩展 v1.1.0 起是一个薄壳（thin shell）**：
 
-1. 在 GitHub 上打开仓库：`github.com/ustiniankw/Kaka`
-2. 点击 **Code › Download ZIP** 下载源码并解压
-3. 打开 Chrome / Edge，访问 `chrome://extensions/`
-4. 打开右上角 **开发者模式**
-5. 点击 **“加载已解压的扩展程序”**
-6. 选择解压后的项目中的 **`extension/`** 文件夹
+- `extension/content.js` 只做 3 件事：注入 iframe、桥接 `chrome.storage`、代理外链
+- 真正的 Kaka 逻辑全部在 [`docs/embed.html`](docs/embed.html) 里，由 **GitHub Pages** 托管
+- 用户装完扩展后，每次刷新页面都会从 GH Pages 拉一份最新的 UI
 
-完成后：
+也就是说：
 
-- 工具栏出现 **Kaka — 桌面宠物** 图标，点击可打开 popup 查看状态
-- 任意网页右下角会注入一只小 Kaka（若未出现，刷新页面试试）
+> **一次安装，永久跟随 main 分支。**
+> 我们改进宠物行为、新增皮肤 / 玩具 / 事件、修 bug 后合并到 `main`，
+> 你在下一次刷新页面时就自动拿到新版本，**无需重装扩展**。
 
-扩展主要文件：
+**只有以下情况需要你重装 / 更新扩展**：
 
-- `extension/manifest.json` — MV3 清单
-- `extension/content.js` — 内容脚本，在页面里注入小 Kaka
-- `extension/content.css` — 内容脚本样式，全部使用 `kaka-ext-*` 前缀，减少对页面的影响
-- `extension/popup.html` + `popup.js` — 工具栏弹出页，展示状态并提供快捷操作
-- `extension/gen-icons.js` — 生成占位 PNG 图标的小脚本（默认生成 1×1 透明图标）
+- 我们改了扩展权限或桥接协议（会发布新的 `extension-vX.Y.Z` release）
+- Chrome 强制升级 manifest 版本
+
+配套的 GitHub Actions（`.github/workflows/`）会：
+
+- `pages.yml` —— 每次 `docs/` 或 `demo/` 有变动，自动重新部署 GitHub Pages
+- `release-extension.yml` —— 每次 `extension/` 有变动，自动打包 ZIP 并发布新 release
 
 ---
 
-## 🧱 项目结构 / 架构
+## 🧱 项目结构
 
 ```text
 Kaka/
-├── demo/            # Web 试玩版（Canvas + 内联 JS）
+├── docs/                     # GitHub Pages 内容
+│   ├── index.html            # Landing 页（3 大按钮）
+│   ├── embed.html            # 扩展 iframe 加载的宠物 UI
+│   └── CNAME
+├── demo/                     # Web 完整试玩版
 │   └── index.html
-├── extension/       # Chrome 扩展（content script + popup）
-├── docs/            # GitHub Pages landing 页面（本 README 中链接的介绍站）
-│   └── index.html
-├── kaka/            # Python 桌面版核心逻辑
-│   ├── main.py      # 应用生命周期
-│   ├── pet.py       # 宠物本体：窗口 + 行为
-│   ├── world.py     # 世界管理器（重力、事件、屎尿）
-│   ├── waste.py     # 💩 / 💦 / 🍪 等桌面物件
-│   ├── stats.py     # 属性 & 存档
-│   ├── sprites.py   # 无外部素材，procedural 像素画
-│   ├── hotkeys.py   # 全局老板键
-│   ├── reminders.py # 番茄钟提醒
-│   ├── shop.py      # 玩具 / 皮肤商店逻辑
-│   └── ...          # 其它辅助模块
-├── assets/          # 预留资源目录（皮肤 / 音效等）
-├── run.py           # 桌面版启动入口
-└── README.md        # 本文件
+├── extension/                # Chrome 扩展（v1.1.0 薄壳）
+│   ├── manifest.json
+│   ├── content.js            # 薄壳内容脚本（< 80 行）
+│   ├── content.css
+│   ├── popup.html / popup.js
+│   └── UPDATE_NOTE.md        # 自动更新说明
+├── kaka/                     # Python 桌面版核心
+│   ├── main.py
+│   ├── pet.py
+│   ├── world.py
+│   ├── waste.py
+│   ├── stats.py
+│   ├── sprites.py            # procedural 像素画，无外部资源
+│   ├── hotkeys.py
+│   ├── reminders.py
+│   ├── shop.py
+│   └── ...
+├── .github/workflows/
+│   ├── pages.yml             # 自动部署 GH Pages
+│   └── release-extension.yml # 自动打包并 release 扩展 ZIP
+├── assets/
+├── run.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🛠 技术栈
+
+- **桌面版**：Python · [PySide6](https://doc.qt.io/qtforpython-6/) · 透明窗口 + 全局置顶
+- **全局热键**：`pynput`
+- **本地存档**：`~/.kaka/state.json`（桌面版）· `chrome.storage.local`（扩展）· `localStorage`（Web）
+- **Web / embed**：原生 HTML + Canvas + 内联 JS，零依赖
+- **Chrome 扩展**：MV3 薄壳，UI 由 GitHub Pages 远端加载
+- **CI/CD**：GitHub Actions（Pages 部署 + Release 自动打包）
+
+---
+
+## 🐣 开发 & 贡献
+
+任何想法都欢迎 —— 好玩的、无聊的、犯病的：
+
+- 💠 新动作 / 新表情 → `kaka/sprites.py` or `demo/index.html`
+- 🧱 新玩具 / 家具 → `kaka/shop.py` or `demo/index.html`
+- 🎨 新皮肤 pack → 计划中的 json + png 自助加宠物系统
+- 📈 新周报指标 → `kaka/stats.py`
+
+开发流程：
+
+```bash
+# 直接改 docs/embed.html → push 到 main → 所有装了扩展的用户自动拿到更新
+# 需要修改扩展本身 → 改 extension/*.js → push → Actions 自动打新 release
 ```
 
 ---
@@ -214,47 +212,19 @@ Kaka/
 
 - ✅ Web 行为模拟器（多屏 / 家具 / 玩具 / 数值系统）
 - ✅ 每日签到、零食币经济、摸鱼周报
-- ✅ 便盆污垢等级 + 嫌弃气泡 + 点击便盆一键清理
-- ✅ 勿扰 / 老板键（抑制所有气泡 & toast、隐藏宠物）
-- ✅ 屏保模式：长时间无操作自动回窝睡觉
-- ✅ Chrome 扩展开发版（content script + popup）
+- ✅ 便盆污垢等级 + 嫌弃气泡 + 一键冲水
+- ✅ 勿扰 / 老板键（气泡 & toast 静音、宠物隐身）
+- ✅ 屏保：长时间无操作回窝睡觉
+- ✅ **Chrome 扩展薄壳 + GH Pages 自动更新（v1.1.0）**
+- ✅ **GitHub Actions CI/CD（Pages + Release 自动打包）**
 - ⏳ 更多玩具动作和特殊事件（CPU 高负载喘气 / 跨设备互访）
-- ⏳ 更丰富的皮肤 pack 系统（json + png 自助加宠物）
-- ⏳ 真·多端状态同步（桌面版 ↔ 浏览器 ↔ 扩展）
-
-欢迎在 Issue / PR 里补充你想要的玩法：
-
-- 想加个宠物形象？可以扔 PR 到 `kaka/sprites.py`
-- 想加个反差萌事件？可以从 `kaka/world.py` 或 Web 版脚本入手
-- 觉得默认参数太吵？可以改 `kaka/config.py` 或 `demo/index.html` 中对应常量
-
----
-
-## 🛠 技术栈
-
-- **桌面版**：Python · [PySide6](https://doc.qt.io/qtforpython-6/) · 透明无边框窗口 + 全局置顶
-- **全局热键**：`pynput`（桌面老板键）
-- **状态存档**：本地 JSON（`~/.kaka/state.json`）
-- **Web 版**：原生 HTML + Canvas + 内联 JS（无外部依赖）
-- **Chrome 扩展**：Manifest V3 · `chrome.storage.local` 做简单持久化
-
----
-
-## 🐣 贡献
-
-欢迎提 Issue 或 PR！好玩、无聊、犯病的想法都欢迎：
-
-- 💠 新动作 / 表情
-- 🧱 新玩具 / 家具
-- 🎨 新皮肤 / 主题
-- 📈 新的统计 / 周报指标
+- ⏳ 皮肤 pack 系统（json + png 自助加宠物）
+- ⏳ 真·多端状态同步（桌面 ↔ Web ↔ 扩展）
 
 ---
 
 ## 📜 License
 
 MIT © 2026 [ustiniankw](https://github.com/ustiniankw)
-
----
 
 <div align="center"><i>Kaka 陪你上班，一起摸鱼。</i></div>
