@@ -3,58 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <title>Kaka Embed</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Kaka 浏览器扩展远端加载的桌面宠物 UI（薄壳架构 · pet-first）" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="Kaka 浏览器扩展远端加载的桌面宠物 UI（薄壳架构 · pet-first · v1.3 全屏漫游）" />
   <style>
-    :root{--glass:rgba(255,255,255,.82);--sep:rgba(60,60,67,.16);--label:#111;--label-2:rgba(60,60,67,.6);--tint:#0A84FF;}
-    @media (prefers-color-scheme:dark){:root{--glass:rgba(28,28,30,.85);--sep:rgba(84,84,88,.5);--label:#fff;--label-2:rgba(235,235,245,.6);}}
-    html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; user-select: none;
+    :root{--glass:rgba(255,255,255,.86);--sep:rgba(60,60,67,.16);--label:#111;--label-2:rgba(60,60,67,.6);--tint:#0A84FF;--red:#FF3B30;
+      --pink:#FF2D55;--orange:#FF9500;--shadow:0 20px 50px rgba(0,0,0,.25);}
+    @media (prefers-color-scheme:dark){:root{--glass:rgba(28,28,30,.88);--sep:rgba(84,84,88,.5);--label:#fff;--label-2:rgba(235,235,245,.6);}}
+    html, body { margin:0; padding:0; background:transparent; overflow:hidden; user-select:none; width:100vw; height:100vh;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", system-ui, sans-serif; }
-    #stage { position: relative; width: 240px; height: 180px; }
-    #kaka { width: 240px; height: 180px; display: block; cursor: pointer; }
+    #stage { position: fixed; inset: 0; }
+    #kaka { display:block; width:100%; height:100%; touch-action:none; }
     body.dnd #kaka { opacity: .18; filter: grayscale(0.6); }
 
-    /* radial menu (simplified: 4 items) */
-    .radial{position:absolute;z-index:12;width:0;height:0;pointer-events:none}
-    .rad-btn{position:absolute;left:0;top:0;width:38px;height:38px;border:0;border-radius:50%;
-      background:var(--glass);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
-      border:1px solid var(--sep);box-shadow:0 6px 18px rgba(0,0,0,.28);color:var(--label);
-      font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    /* radial menu */
+    .radial{position:fixed;z-index:14;width:0;height:0;pointer-events:none}
+    .rad-btn{position:fixed;left:0;top:0;width:44px;height:44px;border:0;border-radius:50%;
+      background:var(--glass);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid var(--sep);box-shadow:0 8px 24px rgba(0,0,0,.3);color:var(--label);
+      font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;
       opacity:0;transform:translate(-50%,-50%) scale(.2);pointer-events:none;
-      transition:opacity .16s ease-out, transform .26s cubic-bezier(.2,.9,.3,1.35), background .12s, color .12s}
+      transition:opacity .16s ease-out, transform .28s cubic-bezier(.2,.9,.3,1.35), background .12s, color .12s}
     .radial.show .rad-btn{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
     .rad-btn:hover{background:var(--tint);color:#fff;transform:translate(-50%,-50%) scale(1.16)}
-    .rad-tip{position:absolute;top:42px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:600;white-space:nowrap;
-      background:rgba(28,28,30,.9);color:#fff;padding:1px 6px;border-radius:5px;opacity:0;transition:.12s;pointer-events:none}
+    .rad-tip{position:absolute;top:48px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:600;white-space:nowrap;
+      background:rgba(28,28,30,.9);color:#fff;padding:2px 7px;border-radius:6px;opacity:0;transition:.12s;pointer-events:none}
     .rad-btn:hover .rad-tip{opacity:1}
 
     /* hover status card */
-    .hovercard{position:absolute;z-index:11;background:var(--glass);backdrop-filter:blur(16px) saturate(180%);
-      -webkit-backdrop-filter:blur(16px) saturate(180%);border:1px solid var(--sep);border-radius:10px;padding:5px 9px;
-      box-shadow:0 8px 20px rgba(0,0,0,.22);font-size:11px;color:var(--label);white-space:nowrap;
+    .hovercard{position:fixed;z-index:13;background:var(--glass);backdrop-filter:blur(18px) saturate(180%);
+      -webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid var(--sep);border-radius:12px;padding:6px 10px;
+      box-shadow:0 12px 30px rgba(0,0,0,.22);font-size:12px;color:var(--label);white-space:nowrap;
       opacity:0;transform:translate(-50%,-4px);pointer-events:none;transition:.16s}
     .hovercard.show{opacity:1;transform:translate(-50%,-10px)}
-    .hovercard .i{display:inline-flex;gap:2px;margin:0 4px}
+    .hovercard .i{display:inline-flex;gap:3px;margin:0 4px}
     .hovercard b{font-variant-numeric:tabular-nums}
   </style>
 </head>
 <body>
   <div id="stage">
-    <canvas id="kaka" width="240" height="180"></canvas>
-    <div id="hovercard" class="hovercard"></div>
-    <div id="radial" class="radial">
-      <button class="rad-btn" data-a="feed">🍔<span class="rad-tip">喂食</span></button>
-      <button class="rad-btn" data-a="pat">🤚<span class="rad-tip">摸头</span></button>
-      <button class="rad-btn" data-a="dnd">🔕<span class="rad-tip">勿扰</span></button>
-      <button class="rad-btn" data-a="open">🖥<span class="rad-tip">完整版</span></button>
-    </div>
+    <canvas id="kaka"></canvas>
   </div>
+  <div id="hovercard" class="hovercard"></div>
+  <div id="radial" class="radial">
+    <button class="rad-btn" data-a="feed">🍔<span class="rad-tip">喂食</span></button>
+    <button class="rad-btn" data-a="pat">🤚<span class="rad-tip">摸头</span></button>
+    <button class="rad-btn" data-a="dnd">🔕<span class="rad-tip">勿扰</span></button>
+    <button class="rad-btn" data-a="open">🖥<span class="rad-tip">完整版</span></button>
+  </div>
+
   <script>
   (function () {
     'use strict';
 
-    var CANVAS_W = 240, CANVAS_H = 180, PET_SIZE = 72, FLOOR_MARGIN = 12;
     var STORAGE_KEY = 'kaka_state_v1';
+    var PET_SIZE = 80, FLOOR_MARGIN = 6;
 
     var canvas = document.getElementById('kaka');
     var ctx = canvas.getContext('2d');
@@ -65,16 +67,34 @@
     var inIframe = false;
     try { inIframe = window.top !== window.self; } catch (e) { inIframe = true; }
 
+    var W = 0, H = 0, dpr = 1;
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      W = Math.max(1, window.innerWidth | 0);
+      H = Math.max(1, window.innerHeight | 0);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // 若 Kaka 被拉到视口外，纠正回来
+      if (pet.x > W - PET_SIZE - 6) pet.x = Math.max(6, W - PET_SIZE - 6);
+      if (pet.y > H - PET_SIZE - FLOOR_MARGIN) pet.y = H - PET_SIZE - FLOOR_MARGIN;
+    }
+
+    function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+    var state = { hunger: 70, mood: 75, affinity: 10, dnd: false, lastUpdated: Date.now(), personality: 'extrovert' };
+    var pet = { x: 60, y: 0, vx: 0.9, vy: 0, facing: 1, rot: 0, angVel: 0,
+      bubbleText: '', bubbleUntil: 0, pattedAt: 0,
+      dragging: false, dragOffX: 0, dragOffY: 0, dragHistory: [] };
+
+    function floorY() { return H - PET_SIZE - FLOOR_MARGIN; }
+    function petRect() { return { x: pet.x, y: pet.y, w: PET_SIZE, h: PET_SIZE }; }
+    function pointInRect(px, py, r) { return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h; }
+
     function notifyReady() {
       if (!inIframe) return;
       try { parent.postMessage({ type: 'kaka:ready' }, '*'); } catch (e) {}
     }
-
-    var state = { hunger: 70, mood: 75, affinity: 10, dnd: false, lastUpdated: Date.now(), personality: 'extrovert' };
-    var pet = { x: 40, y: CANVAS_H - PET_SIZE - FLOOR_MARGIN, vx: 0.6, facing: 1, bubbleText: '', bubbleUntil: 0, pattedAt: 0 };
-    var radialOpen = false, hoverArmed = false, hoverTimer = null, hoverHideTimer = null;
-
-    function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
     // -------- State bridging --------
     var saveTimer = null;
@@ -107,81 +127,164 @@
       var size = PET_SIZE, g = 16, c = size / g;
       var S = { body: '#F5C542', dark: '#C08A18', cheek: '#F58A8A', eye: '#222', white: '#fff' };
       function R(px, py, w, h, col) { ctx.fillStyle = col; ctx.fillRect(px * c, py * c, w * c, h * c); }
-      ctx.save(); ctx.translate(pet.x + size / 2, pet.y + size / 2); if (pet.facing < 0) ctx.scale(-1, 1); ctx.translate(-size / 2, -size / 2); ctx.imageSmoothingEnabled = false;
+      ctx.save();
+      ctx.translate(pet.x + size / 2, pet.y + size / 2);
+      ctx.rotate(pet.rot);
+      if (pet.facing < 0) ctx.scale(-1, 1);
+      ctx.translate(-size / 2, -size / 2);
+      ctx.imageSmoothingEnabled = false;
       R(4, 3, 8, 1, S.body); R(3, 4, 10, 1, S.body); R(2, 5, 12, 6, S.body); R(3, 11, 10, 1, S.body); R(4, 12, 8, 1, S.body); R(4, 13, 3, 1, S.body); R(9, 13, 3, 1, S.body);
       R(3, 10, 10, 1, S.dark); R(4, 11, 8, 1, S.dark);
       R(5, 6, 2, 2, S.white); R(9, 6, 2, 2, S.white); R(6, 7, 1, 1, S.eye); R(10, 7, 1, 1, S.eye); R(4, 9, 1, 1, S.cheek); R(11, 9, 1, 1, S.cheek);
       if (state.hunger < 35) R(7, 9, 2, 2, S.eye); else R(7, 10, 2, 1, S.eye);
       ctx.restore();
     }
+    var lastBubbleRect = null;
     function drawBubble() {
-      if (!pet.bubbleText || performance.now() > pet.bubbleUntil) return;
+      lastBubbleRect = null;
+      if (!pet.bubbleText || performance.now() > pet.bubbleUntil || state.dnd) return;
       var text = pet.bubbleText, cx = pet.x + PET_SIZE / 2, cy = pet.y - 8;
-      ctx.save(); ctx.font = '11px -apple-system, "PingFang SC"';
-      var w = ctx.measureText(text).width + 14, h = 20, x = cx - w / 2, y = cy - h, r = 8;
+      ctx.save(); ctx.font = '12px -apple-system, "PingFang SC", system-ui';
+      var w = ctx.measureText(text).width + 16, h = 22, x = cx - w / 2, y = cy - h, r = 9;
+      lastBubbleRect = { x: x, y: y, w: w, h: h + 8 };
       ctx.fillStyle = 'rgba(28,28,30,.92)'; ctx.beginPath();
       ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(cx + 4, y + h); ctx.lineTo(cx, y + h + 5); ctx.lineTo(cx - 4, y + h);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(cx + 5, y + h); ctx.lineTo(cx, y + h + 6); ctx.lineTo(cx - 5, y + h);
       ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, cx, y + h / 2); ctx.restore();
     }
-    function drawFloor() { var y = CANVAS_H - FLOOR_MARGIN; ctx.strokeStyle = 'rgba(120,120,128,.18)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke(); ctx.setLineDash([]); }
-    function draw() { ctx.clearRect(0, 0, CANVAS_W, CANVAS_H); drawFloor(); if (state.dnd) { ctx.save(); ctx.globalAlpha = 0.15; drawPet(); ctx.restore(); } else { drawPet(); drawBubble(); } }
+    function drawFloor() {
+      var y = H - FLOOR_MARGIN;
+      ctx.strokeStyle = 'rgba(120,120,128,.14)'; ctx.setLineDash([6, 8]);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); ctx.setLineDash([]);
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      drawFloor();
+      if (state.dnd) { ctx.save(); ctx.globalAlpha = 0.15; drawPet(); ctx.restore(); }
+      else { drawPet(); drawBubble(); }
+    }
 
-    // -------- Physics --------
-    function update(dtMs) {
-      var dt = dtMs / 16.67, floor = CANVAS_H - PET_SIZE - FLOOR_MARGIN; pet.y = floor;
-      if (!state.dnd) {
-        pet.x += pet.vx * dt;
-        if (pet.x < 4) { pet.x = 4; pet.vx = Math.abs(pet.vx); pet.facing = 1; }
-        else if (pet.x > CANVAS_W - PET_SIZE - 4) { pet.x = CANVAS_W - PET_SIZE - 4; pet.vx = -Math.abs(pet.vx); pet.facing = -1; }
-      }
+    // -------- Physics (gravity + drag+throw + walk) --------
+    function step(dtMs) {
+      var dt = dtMs / 16.67, floor = floorY();
       var minutes = dtMs / 60000;
       state.hunger = clamp(state.hunger - minutes * 3.5, 0, 100);
-      state.mood = clamp(state.mood - minutes * 1.5, 0, 100);
+      state.mood = clamp(state.mood - minutes * 1.4, 0, 100);
       if (state.hunger > 70) state.mood = clamp(state.mood + minutes * 1.6, 0, 100);
       scheduleSave();
+
+      if (pet.dragging) { pet.vx = 0; pet.vy = 0; pet.rot *= 0.8; pet.angVel *= 0.7; return; }
+
+      var g = 0.55;
+      pet.vy += g * dt;
+      var onGround = Math.abs(pet.y - floor) < 0.5 && Math.abs(pet.vy) < 0.8;
+
+      if (onGround && !state.dnd) {
+        var walkSpeed = 0.9;
+        pet.vx = clamp(pet.vx, -4, 4);
+        if (Math.abs(pet.vx) < walkSpeed) pet.vx += (pet.facing > 0 ? 0.03 : -0.03) * dt;
+      }
+
+      pet.x += pet.vx * dt;
+      pet.y += pet.vy * dt;
+      pet.rot += pet.angVel * dt;
+
+      if (pet.x < 6) { pet.x = 6; pet.vx = Math.abs(pet.vx) * 0.9; pet.facing = 1; }
+      if (pet.x > W - PET_SIZE - 6) { pet.x = W - PET_SIZE - 6; pet.vx = -Math.abs(pet.vx) * 0.9; pet.facing = -1; }
+      if (pet.y > floor) {
+        pet.y = floor;
+        if (pet.vy > 0) {
+          pet.vy = -pet.vy * 0.42;
+          pet.vx *= 0.9;
+          pet.angVel *= 0.85;
+          if (Math.abs(pet.vy) < 1.0) pet.vy = 0;
+        }
+      }
+      if (Math.abs(pet.vx) > 0.2) pet.facing = pet.vx >= 0 ? 1 : -1;
+      pet.rot *= 0.985; pet.angVel *= 0.99;
     }
-    var lastTime = performance.now();
-    function loop(t) { var dt = Math.min(80, t - lastTime); lastTime = t; update(dt); if (hoverEl.classList.contains('show')) positionHover(); draw(); requestAnimationFrame(loop); }
+    var lastT = performance.now();
+    function loop(t) {
+      var dt = Math.min(60, t - lastT); lastT = t;
+      step(dt);
+      if (hoverEl.classList.contains('show')) positionHover();
+      draw();
+      reportHitbox();
+      requestAnimationFrame(loop);
+    }
 
     // -------- Bubbles --------
     var MONOLOGUES = ['摸鱼快乐 🐟', '这个 tab 好熟悉…', '要不然睡一会?', '再看一眼就干活…', '有零食吗 🍪', '好想去买个玩具', '老板别过来', '再摸一下嘛~'];
     function showBubble(text, ms) { if (state.dnd) return; pet.bubbleText = text; pet.bubbleUntil = performance.now() + (ms || 1600); }
     setInterval(function () { if (state.dnd) return; if (Math.random() < 0.5) showBubble(MONOLOGUES[(Math.random() * MONOLOGUES.length) | 0], 1800); }, 9000);
 
-    // -------- Hit test --------
-    function petHit(px, py) { return px >= pet.x && px <= pet.x + PET_SIZE && py >= pet.y && py <= pet.y + PET_SIZE; }
-    function localPoint(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+    // -------- Hitbox reporting to parent (viewport coords) --------
+    var lastHitboxKey = '';
+    function reportHitbox() {
+      if (!inIframe) return;
+      var msg;
+      if (radialOpen) {
+        msg = { type: 'kaka:hitbox', fullscreen: true };
+      } else {
+        var pad = 6;
+        var x = Math.max(0, pet.x - pad);
+        var y = Math.max(0, pet.y - pad);
+        var w = PET_SIZE + pad * 2;
+        var h = PET_SIZE + pad * 2;
+        // 若气泡存在，将其纳入 hitbox（并集）
+        if (lastBubbleRect) {
+          var minX = Math.min(x, lastBubbleRect.x);
+          var minY = Math.min(y, lastBubbleRect.y);
+          var maxX = Math.max(x + w, lastBubbleRect.x + lastBubbleRect.w);
+          var maxY = Math.max(y + h, lastBubbleRect.y + lastBubbleRect.h);
+          x = minX; y = minY; w = maxX - minX; h = maxY - minY;
+        }
+        msg = { type: 'kaka:hitbox', rect: { x: x, y: y, w: w, h: h } };
+      }
+      var key = msg.fullscreen ? 'F' : ('R' + (msg.rect.x | 0) + ',' + (msg.rect.y | 0) + ',' + (msg.rect.w | 0) + ',' + (msg.rect.h | 0));
+      if (key === lastHitboxKey) return;
+      lastHitboxKey = key;
+      try { parent.postMessage(msg, '*'); } catch (e) {}
+    }
 
-    // -------- Left click = pat --------
-    canvas.addEventListener('click', function (e) {
-      var p = localPoint(e); if (!petHit(p.x, p.y)) { closeRadial(); return; }
-      closeRadial(); if (state.dnd) return;
-      state.mood = clamp(state.mood + 4, 0, 100); state.affinity = clamp(state.affinity + 1, 0, 100);
-      var now = performance.now(); showBubble(now - pet.pattedAt < 400 ? '喵～ 别摸了 🫣' : '摸摸～', now - pet.pattedAt < 400 ? 1500 : 1200);
+    // -------- Interaction (real DOM events OR forwarded from parent) --------
+    // 事件坐标是视口坐标；canvas 与视口 1:1，故直接用 clientX/Y。
+    function hitPet(px, py) { return pointInRect(px, py, petRect()); }
+    var lastMouse = { x: 0, y: 0 };
+    var hoverArmed = false, hoverTimer = null, hoverHideTimer = null;
+    var radialOpen = false;
+
+    function doPat() {
+      if (state.dnd) return;
+      state.mood = clamp(state.mood + 4, 0, 100);
+      state.affinity = clamp(state.affinity + 1, 0, 100);
+      var now = performance.now();
+      showBubble(now - pet.pattedAt < 400 ? '喵～ 别摸了 🫣' : '摸摸～', now - pet.pattedAt < 400 ? 1500 : 1200);
       pet.pattedAt = now; scheduleSave();
-    });
-
-    // -------- Right click on Kaka = radial menu --------
-    canvas.addEventListener('contextmenu', function (e) {
-      e.preventDefault(); var p = localPoint(e); if (!petHit(p.x, p.y)) return; openRadial();
-    });
-    // touch long-press → radial
-    var touchTimer = null;
-    canvas.addEventListener('touchstart', function (e) { if (!e.touches[0]) return; var r = canvas.getBoundingClientRect(); var p = { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; if (petHit(p.x, p.y)) touchTimer = setTimeout(openRadial, 300); }, { passive: true });
-    canvas.addEventListener('touchmove', function () { if (touchTimer) { clearTimeout(touchTimer); touchTimer = null; } });
-    canvas.addEventListener('touchend', function () { if (touchTimer) { clearTimeout(touchTimer); touchTimer = null; } });
+    }
+    function toggleDnd() { state.dnd = !state.dnd; body.classList.toggle('dnd', !!state.dnd); scheduleSave(); showBubble(state.dnd ? '🔕 已勿扰' : '👋 我又出现啦', 1400); }
+    function openExternal(url) {
+      if (inIframe) { try { parent.postMessage({ type: 'kaka:open', url: url }, '*'); return; } catch (e) {} }
+      try { window.open(url, '_blank', 'noopener,noreferrer'); } catch (e) {}
+    }
+    function handleAction(a) {
+      if (a === 'feed') { state.hunger = clamp(state.hunger + 25, 0, 100); state.mood = clamp(state.mood + 8, 0, 100); showBubble('好吃好吃 🍪', 1600); }
+      else if (a === 'pat') { doPat(); }
+      else if (a === 'dnd') { toggleDnd(); }
+      else if (a === 'open') { openExternal('https://ustiniankw.github.io/Kaka/'); }
+      scheduleSave();
+    }
 
     function openRadial() {
       if (state.dnd) { toggleDnd(); return; }
       var cx = pet.x + PET_SIZE / 2, cy = pet.y + PET_SIZE / 2;
-      cx = clamp(cx, 50, CANVAS_W - 50); cy = clamp(cy, 50, CANVAS_H - 46);
       radialEl.style.left = cx + 'px'; radialEl.style.top = cy + 'px';
-      var btns = radialEl.querySelectorAll('.rad-btn'), n = btns.length, R = 48;
+      var btns = radialEl.querySelectorAll('.rad-btn'), n = btns.length, R = 78;
       for (var i = 0; i < n; i++) {
         var ang = (-90 + i * (360 / n)) * Math.PI / 180;
-        btns[i].style.left = (Math.cos(ang) * R) + 'px'; btns[i].style.top = (Math.sin(ang) * R) + 'px';
+        btns[i].style.left = (cx + Math.cos(ang) * R) + 'px';
+        btns[i].style.top = (cy + Math.sin(ang) * R) + 'px';
         btns[i].style.transitionDelay = (i * 40) + 'ms';
       }
       radialEl.classList.add('show'); radialOpen = true; hideHover();
@@ -190,27 +293,88 @@
     radialEl.querySelectorAll('.rad-btn').forEach(function (b) {
       b.addEventListener('click', function (e) { e.stopPropagation(); var a = b.getAttribute('data-a'); closeRadial(); handleAction(a); });
     });
-    document.addEventListener('click', function (e) { if (radialOpen && !e.target.closest('.rad-btn') && e.target !== canvas) closeRadial(); });
 
-    function openExternal(url) { if (inIframe) { try { parent.postMessage({ type: 'kaka:open', url: url }, '*'); return; } catch (e) {} } try { window.open(url, '_blank', 'noopener,noreferrer'); } catch (e) {} }
-    function toggleDnd() { state.dnd = !state.dnd; body.classList.toggle('dnd', !!state.dnd); scheduleSave(); showBubble(state.dnd ? '🔕 已勿扰' : '👋 我又出现啦', 1400); }
-    function handleAction(a) {
-      if (a === 'feed') { state.hunger = clamp(state.hunger + 25, 0, 100); state.mood = clamp(state.mood + 8, 0, 100); showBubble('好吃好吃 🍪', 1600); }
-      else if (a === 'pat') { state.mood = clamp(state.mood + 6, 0, 100); state.affinity = clamp(state.affinity + 2, 0, 100); showBubble('摸摸～', 1400); }
-      else if (a === 'dnd') { toggleDnd(); }
-      else if (a === 'open') { openExternal('https://ustiniankw.github.io/Kaka/'); }
-      scheduleSave();
+    // -------- Pointer handlers (accept both real events and synthetic) --------
+    var tapCount = 0, tapTimer = null;
+    function onPointerDown(x, y, button) {
+      if (button !== 0) return;
+      if (radialOpen) { closeRadial(); }
+      if (!hitPet(x, y)) return;
+      if (state.dnd) return;
+      pet.dragging = true;
+      pet.dragOffX = x - pet.x; pet.dragOffY = y - pet.y;
+      pet.dragHistory = [{ t: performance.now(), x: x, y: y }];
+      hideHover();
     }
-
-    // -------- Hover status card (hover Kaka > 1s) --------
-    canvas.addEventListener('mousemove', function (e) {
-      var p = localPoint(e); var over = !state.dnd && petHit(p.x, p.y);
+    function onPointerMove(x, y) {
+      lastMouse.x = x; lastMouse.y = y;
+      if (pet.dragging) {
+        pet.x = clamp(x - pet.dragOffX, 6, W - PET_SIZE - 6);
+        pet.y = clamp(y - pet.dragOffY, 6, floorY());
+        pet.dragHistory.push({ t: performance.now(), x: x, y: y });
+        if (pet.dragHistory.length > 6) pet.dragHistory.shift();
+        var last = pet.dragHistory[pet.dragHistory.length - 2];
+        if (last) { var dx = x - last.x; pet.angVel = clamp(dx * 0.003, -0.12, 0.12); }
+        return;
+      }
+      var over = !state.dnd && hitPet(x, y);
       canvas.style.cursor = over ? 'pointer' : 'default';
       if (over) { if (!hoverArmed) { hoverArmed = true; clearTimeout(hoverTimer); hoverTimer = setTimeout(showHover, 1000); } }
       else { hoverArmed = false; clearTimeout(hoverTimer); hideHover(); }
+    }
+    function onPointerUp(x, y) {
+      if (!pet.dragging) return;
+      pet.dragging = false;
+      var h = pet.dragHistory;
+      if (h.length >= 2) {
+        var a = h[0], b = h[h.length - 1], dt = Math.max(10, b.t - a.t);
+        pet.vx = clamp((b.x - a.x) / dt * 16.67, -18, 18);
+        pet.vy = clamp((b.y - a.y) / dt * 16.67, -22, 22);
+        pet.angVel = clamp(pet.vx * 0.01, -0.16, 0.16);
+      }
+      pet.dragHistory = [];
+    }
+    function onClickAt(x, y) {
+      if (!hitPet(x, y)) { closeRadial(); return; }
+      closeRadial();
+      if (state.dnd) return;
+      doPat();
+    }
+    function onContextMenuAt(x, y) {
+      if (!hitPet(x, y)) return;
+      openRadial();
+    }
+
+    // ------- Bind real events (works in dev/standalone; also handles radial button clicks) -------
+    canvas.addEventListener('mousedown', function (e) { onPointerDown(e.clientX, e.clientY, e.button); });
+    canvas.addEventListener('mousemove', function (e) { onPointerMove(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', function (e) { onPointerUp(e.clientX, e.clientY); });
+    canvas.addEventListener('click', function (e) { onClickAt(e.clientX, e.clientY); });
+    canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); onContextMenuAt(e.clientX, e.clientY); });
+    document.addEventListener('click', function (e) { if (radialOpen && !e.target.closest('.rad-btn')) closeRadial(); });
+
+    // ------- Accept forwarded pointer events from parent (extension mode) -------
+    window.addEventListener('message', function (event) {
+      var d = event && event.data;
+      if (!d || typeof d !== 'object') return;
+      if (d.type === 'kaka:pointer') {
+        if (d.event === 'mousedown') onPointerDown(d.clientX, d.clientY, d.button || 0);
+        else if (d.event === 'mousemove') onPointerMove(d.clientX, d.clientY);
+        else if (d.event === 'mouseup') onPointerUp(d.clientX, d.clientY);
+        else if (d.event === 'click') onClickAt(d.clientX, d.clientY);
+        else if (d.event === 'dblclick') { /* no-op for embed */ }
+        else if (d.event === 'contextmenu') onContextMenuAt(d.clientX, d.clientY);
+      } else if (d.type === 'kaka:viewport') {
+        // parent hinted viewport size; window.innerWidth 通常足够，但显式响应一下
+        resize();
+      }
     });
-    canvas.addEventListener('mouseleave', function () { hoverArmed = false; clearTimeout(hoverTimer); hideHover(); });
-    function positionHover() { hoverEl.style.left = (pet.x + PET_SIZE / 2) + 'px'; hoverEl.style.top = (pet.y - 6) + 'px'; }
+
+    // -------- Hover status card --------
+    function positionHover() {
+      hoverEl.style.left = (pet.x + PET_SIZE / 2) + 'px';
+      hoverEl.style.top = (pet.y - 6) + 'px';
+    }
     function showHover() {
       if (state.dnd) return;
       hoverEl.innerHTML = '<span class="i">🍚 <b>' + Math.round(state.hunger) + '</b></span><span class="i">😊 <b>' + Math.round(state.mood) + '</b></span><span class="i">💛 <b>' + Math.round(state.affinity) + '</b></span>';
@@ -219,14 +383,20 @@
     }
     function hideHover() { hoverEl.classList.remove('show'); }
 
-    // -------- DND hotkey Ctrl+Shift+H --------
+    // -------- DND hotkey (works when Kaka canvas has focus) --------
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { closeRadial(); hideHover(); }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'H' || e.key === 'h')) { toggleDnd(); e.preventDefault(); }
     });
 
     // -------- Boot --------
-    notifyReady(); hydrate(); draw(); requestAnimationFrame(loop);
+    window.addEventListener('resize', resize);
+    resize();
+    pet.y = floorY();
+    notifyReady();
+    hydrate();
+    draw();
+    requestAnimationFrame(loop);
   })();
   </script>
 </body>
