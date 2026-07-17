@@ -1,0 +1,75 @@
+name: Build Desktop
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'desktop/**', '.github/workflows/release-desktop.yml' ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+          - os: windows-latest
+          - os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Install
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+      - name: Build
+        working-directory: desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --publish onTag
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaka-desktop-${{ matrix.os }}
+          path: |
+            desktop/dist/*.dmg
+            desktop/dist/*.zip
+            desktop/dist/*.exe
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+          if-no-files-found: ignore
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read version
+        id: ver
+        run: echo "version=$(node -p 'require(\"./desktop/package.json\").version')" >> $GITHUB_OUTPUT
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: List
+        run: ls -R dist
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop-v${{ steps.ver.outputs.version }}
+          name: Kaka Desktop v${{ steps.ver.outputs.version }}
+          body: |
+            ## 一次安装，永远最新
+
+            桌面版 Kaka 会从 GitHub Pages 加载最新 UI，功能升级**无需重新安装**。
+
+            ### 下载
+            - macOS: `.dmg` / `.zip`
+            - Windows: `.exe` (安装版) / `-portable.exe` (免安装)
+            - Linux: `.AppImage` / `.deb`
+          files: dist/**/*
+          fail_on_unmatched_files: false
