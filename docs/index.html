@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <title>Kaka 🐱 · 你的浏览器桌面宠物</title>
+  <title>Kaka 🐱 · 你的桌面/浏览器宠物</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="description" content="Kaka 是一只会在浏览器 / 桌面上乱走、乱拉、卖萌的宠物 —— 3 秒试玩，30 秒装扩展。" />
+  <meta name="description" content="Kaka 是一只会在桌面 / 浏览器上乱走、卖萌、掉零食币的宠物 —— 3 秒试玩，30 秒安装。" />
   <style>
     :root {
       --bg-1: #FDF7FF;
@@ -45,6 +45,7 @@
       background: radial-gradient(closest-side, rgba(10, 132, 255, .3), transparent 70%);
       z-index: 0; pointer-events: none; filter: blur(20px);
     }
+
     .page {
       position: relative; z-index: 1; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -65,31 +66,45 @@
     }
     h1 .cat { display: inline-block; animation: bob 2.4s ease-in-out infinite; }
     @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg);} 50%{transform:translateY(-6px) rotate(3deg);} }
-    p.tag { margin: 0 0 40px; font-size: clamp(15px, 2vw, 18px); color: var(--sub); }
+
+    p.tag { margin: 0 0 26px; font-size: clamp(15px, 2vw, 18px); color: var(--sub); }
     p.tag b { color: var(--text); }
 
     .cta {
       display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-      max-width: 780px; width: 100%;
+      max-width: 860px; width: 100%;
     }
     .cta a {
-      flex: 1 1 220px; min-width: 220px; max-width: 260px;
+      flex: 1 1 220px; min-width: 220px; max-width: 290px;
       display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
       padding: 22px 24px; border-radius: 22px;
-      font-size: 18px; font-weight: 700; text-decoration: none;
+      font-size: 18px; font-weight: 800; text-decoration: none;
       transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
       backdrop-filter: blur(8px);
+      position: relative;
     }
     .cta a .icon { font-size: 34px; line-height: 1; }
-    .cta a .sub { font-size: 12px; font-weight: 500; opacity: .75; letter-spacing: .02em; }
+    .cta a .sub { font-size: 12px; font-weight: 600; opacity: .78; letter-spacing: .02em; }
     .cta a:hover { transform: translateY(-3px); filter: brightness(1.05); }
     .cta a:active { transform: translateY(0); }
 
-    .cta a.primary { background: var(--accent); color: #fff; box-shadow: 0 14px 32px rgba(0, 122, 255, .32); }
-    .cta a.pink { background: var(--accent-2); color: #fff; box-shadow: 0 14px 32px rgba(255, 107, 107, .3); }
-    .cta a.dark { background: #111827; color: #fff; box-shadow: 0 14px 32px rgba(0, 0, 0, .3); }
+    .cta a.primary { background: var(--accent); color: #fff; box-shadow: 0 14px 34px rgba(0, 122, 255, .34); }
+    .cta a.pink { background: var(--accent-2); color: #fff; box-shadow: 0 14px 32px rgba(255, 107, 107, .30); }
+    .cta a.orange { background: var(--accent-3); color: #0B1220; box-shadow: 0 14px 32px rgba(255, 179, 71, .32); }
+    .cta a.dark { background: #111827; color: #fff; box-shadow: 0 14px 32px rgba(0, 0, 0, .28); }
     @media (prefers-color-scheme: dark) {
+      .cta a.orange { color: #0B1220; }
       .cta a.dark { background: #F5F5F7; color: #0B1220; }
+    }
+
+    .badge {
+      position: absolute; top: 12px; right: 12px;
+      font-size: 11px; font-weight: 800;
+      padding: 4px 8px; border-radius: 999px;
+      background: rgba(255, 255, 255, .22);
+      border: 1px solid rgba(255, 255, 255, .28);
+      color: #fff;
+      letter-spacing: .02em;
     }
 
     @media (max-width: 640px) {
@@ -97,14 +112,29 @@
       .cta a { max-width: none; }
     }
 
-    /* 3-step install */
+    .explain {
+      max-width: 860px; width: 100%;
+      margin: 16px auto 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      text-align: left;
+      backdrop-filter: blur(12px);
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .explain b { color: var(--text); }
+
+    /* 3-step install (extension) */
     .steps {
       display: flex; gap: 14px; align-items: stretch; justify-content: center;
-      flex-wrap: wrap; max-width: 780px; width: 100%;
-      margin: 46px auto 8px;
+      flex-wrap: wrap; max-width: 860px; width: 100%;
+      margin: 28px auto 8px;
     }
     .step {
-      flex: 1 1 200px; min-width: 180px; max-width: 240px;
+      flex: 1 1 200px; min-width: 180px; max-width: 260px;
       background: var(--card); border: 1px solid var(--border);
       border-radius: 16px; padding: 14px 16px;
       display: flex; align-items: center; gap: 12px; text-align: left;
@@ -112,20 +142,20 @@
     }
     .step .num {
       width: 32px; height: 32px; border-radius: 50%;
-      background: var(--accent); color: #fff; font-weight: 700;
+      background: var(--accent); color: #fff; font-weight: 800;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .step .txt { font-size: 13px; line-height: 1.4; }
-    .step .txt b { font-size: 14px; display: block; }
+    .step .txt { font-size: 13px; line-height: 1.4; color: var(--sub); }
+    .step .txt b { font-size: 14px; display: block; color: var(--text); }
     .step .txt code {
       font-family: ui-monospace, Menlo, monospace; font-size: 11px;
       background: rgba(120, 120, 128, .16); padding: 1px 5px; border-radius: 4px;
     }
 
     .readme-link {
-      margin-top: 24px; font-size: 14px; color: var(--sub);
+      margin-top: 18px; font-size: 14px; color: var(--sub);
     }
-    .readme-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .readme-link a { color: var(--accent); text-decoration: none; font-weight: 700; }
     .readme-link a:hover { text-decoration: underline; }
 
     /* Walking cat at bottom */
@@ -159,18 +189,24 @@
     </header>
 
     <h1>Kaka <span class="cat">🐱</span></h1>
-    <p class="tag">你的<b>浏览器桌面宠物</b> —— 摸鱼、划水、卖萌、掉零食币。</p>
+    <p class="tag">你的<b>桌面/浏览器宠物</b> —— 摸鱼、划水、卖萌、掉零食币。</p>
 
     <nav class="cta" aria-label="主要入口">
-      <a class="primary" href="https://d1346a0046a9.aime-app.bytedance.net" target="_blank" rel="noreferrer">
-        <span class="icon">🎮</span>
-        <span>在线试玩</span>
-        <span class="sub">无需安装 · 一秒进入</span>
+      <a class="primary" href="https://github.com/ustiniankw/Kaka/releases/latest" target="_blank" rel="noreferrer">
+        <span class="badge">推荐</span>
+        <span class="icon">🖥</span>
+        <span>下载桌面版（浮在屏幕最上层）</span>
+        <span class="sub">真正的桌面宠物 · 支持 Win/mac/Linux</span>
       </a>
       <a class="pink" href="https://github.com/ustiniankw/Kaka/releases/latest" target="_blank" rel="noreferrer">
-        <span class="icon">📦</span>
-        <span>一键安装扩展</span>
-        <span class="sub">下载最新 ZIP · 支持自动更新</span>
+        <span class="icon">🧩</span>
+        <span>安装浏览器扩展（浏览器内）</span>
+        <span class="sub">只在网页里陪你 · 轻量入口</span>
+      </a>
+      <a class="orange" href="https://08c7e4ef7824.aime-app.bytedance.net" target="_blank" rel="noreferrer">
+        <span class="icon">🎮</span>
+        <span>在线试玩</span>
+        <span class="sub">单页体验 · 无需安装</span>
       </a>
       <a class="dark" href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">
         <span class="icon">⭐</span>
@@ -179,10 +215,16 @@
       </a>
     </nav>
 
+    <section class="explain" aria-label="形态说明">
+      <div><b>桌面版</b>：真正浮在所有窗口之上（推荐）</div>
+      <div><b>浏览器扩展</b>：只在网页里陪你</div>
+      <div><b>Web 试玩</b>：单页体验</div>
+    </section>
+
     <section class="steps" aria-label="30 秒安装扩展">
       <div class="step">
         <div class="num">1</div>
-        <div class="txt"><b>📥 下载 ZIP</b>点击「一键安装扩展」下载 latest release。</div>
+        <div class="txt"><b>📥 下载 ZIP</b>点击「安装浏览器扩展」下载 latest release。</div>
       </div>
       <div class="step">
         <div class="num">2</div>
@@ -195,7 +237,7 @@
     </section>
 
     <p class="readme-link">
-      细节 / 玩法 / 桌面 Python 版请看 <a href="https://github.com/ustiniankw/Kaka#readme" target="_blank" rel="noreferrer">README ↗</a>
+      细节 / 玩法 / 自动更新说明请看 <a href="https://github.com/ustiniankw/Kaka#readme" target="_blank" rel="noreferrer">README ↗</a>
     </p>
   </main>
 
