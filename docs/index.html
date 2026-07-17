@@ -126,6 +126,22 @@
       line-height: 1.6;
     }
     .explain b { color: var(--text); }
+    .explain code,
+    .install-help code {
+      font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+      background: rgba(120, 120, 128, .16); padding: 1px 5px; border-radius: 4px;
+    }
+    .explain pre {
+      margin: 8px 0 0; padding: 10px 12px; overflow-x: auto;
+      background: rgba(120, 120, 128, .14); border-radius: 10px;
+      color: var(--text);
+    }
+    .install-help {
+      max-width: 860px; width: 100%; margin: 20px auto 8px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 12px 14px; backdrop-filter: blur(12px); text-align: left;
+    }
+    .install-help summary { cursor: pointer; font-weight: 800; color: var(--text); }
 
     /* 3-step install (extension) */
     .steps {
@@ -151,6 +167,10 @@
       font-family: ui-monospace, Menlo, monospace; font-size: 11px;
       background: rgba(120, 120, 128, .16); padding: 1px 5px; border-radius: 4px;
     }
+    .arrow {
+      align-self: center; color: var(--sub); font-size: 22px; font-weight: 800;
+    }
+    @media (max-width: 640px) { .arrow { display: none; } }
 
     .readme-link {
       margin-top: 18px; font-size: 14px; color: var(--sub);
@@ -191,53 +211,63 @@
     <h1>Kaka <span class="cat">🐱</span></h1>
     <p class="tag">你的<b>桌面/浏览器宠物</b> —— 摸鱼、划水、卖萌、掉零食币。</p>
 
-    <nav class="cta" aria-label="主要入口">
-      <a class="primary" href="https://github.com/ustiniankw/Kaka/releases/latest" target="_blank" rel="noreferrer">
-        <span class="badge">推荐</span>
-        <span class="icon">🖥</span>
-        <span>下载桌面版（浮在屏幕最上层）</span>
-        <span class="sub">真正的桌面宠物 · 支持 Win/mac/Linux</span>
-      </a>
-      <a class="pink" href="https://github.com/ustiniankw/Kaka/releases/latest" target="_blank" rel="noreferrer">
+    <nav class="cta" aria-label="下载入口">
+      <a class="pink" href="https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip" target="_blank" rel="noreferrer">
+        <span class="badge">浏览器</span>
         <span class="icon">🧩</span>
-        <span>安装浏览器扩展（浏览器内）</span>
-        <span class="sub">只在网页里陪你 · 轻量入口</span>
+        <span>Chrome 扩展 ZIP</span>
+        <span class="sub">下载 kaka-extension-v1.1.0.zip · 不是桌面版 ZIP</span>
       </a>
-      <a class="orange" href="https://08c7e4ef7824.aime-app.bytedance.net" target="_blank" rel="noreferrer">
-        <span class="icon">🎮</span>
-        <span>在线试玩</span>
-        <span class="sub">单页体验 · 无需安装</span>
+      <a class="primary" href="https://github.com/ustiniankw/Kaka/releases/tag/desktop-v" target="_blank" rel="noreferrer">
+        <span class="badge">macOS</span>
+        <span class="icon">🍎</span>
+        <span>macOS 桌面版</span>
+        <span class="sub">下载 .dmg / .zip · 浮在屏幕最上层</span>
       </a>
-      <a class="dark" href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">
-        <span class="icon">⭐</span>
-        <span>GitHub</span>
-        <span class="sub">Star / Fork / 提 Issue</span>
+      <a class="orange" href="https://github.com/ustiniankw/Kaka/releases/tag/desktop-v" target="_blank" rel="noreferrer">
+        <span class="badge">Windows</span>
+        <span class="icon">🪟</span>
+        <span>Windows 桌面版</span>
+        <span class="sub">下载 .exe / portable.exe</span>
+      </a>
+      <a class="dark" href="https://github.com/ustiniankw/Kaka/releases/tag/desktop-v" target="_blank" rel="noreferrer">
+        <span class="badge">Linux</span>
+        <span class="icon">🐧</span>
+        <span>Linux 桌面版</span>
+        <span class="sub">下载 .AppImage / .deb</span>
       </a>
     </nav>
 
-    <section class="explain" aria-label="形态说明">
-      <div><b>桌面版</b>：真正浮在所有窗口之上（推荐）</div>
-      <div><b>浏览器扩展</b>：只在网页里陪你</div>
-      <div><b>Web 试玩</b>：单页体验</div>
+    <section class="explain" aria-label="重要安装提示">
+      <div><b>Chrome 扩展</b>：请下载 <code>kaka-extension-v1.1.0.zip</code>；不要把 <code>Kaka-1.0.0-arm64-mac.zip</code> 当扩展加载。</div>
+      <div><b>macOS 提示“已损坏”</b>：这是未签名/未公证应用被 Gatekeeper 拦截，运行下方命令后再打开：</div>
+      <pre><code>xattr -cr ~/Downloads/Kaka-1.0.0-arm64.dmg && open ~/Downloads/Kaka-1.0.0-arm64.dmg</code></pre>
     </section>
 
-    <section class="steps" aria-label="30 秒安装扩展">
-      <div class="step">
-        <div class="num">1</div>
-        <div class="txt"><b>📥 下载 ZIP</b>点击「安装浏览器扩展」下载 latest release。</div>
-      </div>
-      <div class="step">
-        <div class="num">2</div>
-        <div class="txt"><b>⚙️ 打开扩展页</b>浏览器访问 <code>chrome://extensions</code> 开启开发者模式。</div>
-      </div>
-      <div class="step">
-        <div class="num">3</div>
-        <div class="txt"><b>🎉 加载已解压</b>选择解压后的 <code>extension/</code> 目录 —— Kaka 出现！</div>
-      </div>
-    </section>
+    <details class="install-help" open>
+      <summary>🧩 Chrome 扩展 30 秒安装步骤</summary>
+      <section class="steps" aria-label="30 秒安装扩展">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="txt"><b>📥 下载并解压</b><code>kaka-extension-v1.1.0.zip</code></div>
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="txt"><b>⚙️ 打开扩展页</b><code>chrome://extensions</code> → 开启开发者模式</div>
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="txt"><b>🎉 加载已解压</b>选择含 <code>manifest.json</code> 的文件夹</div>
+        </div>
+      </section>
+    </details>
 
     <p class="readme-link">
-      细节 / 玩法 / 自动更新说明请看 <a href="https://github.com/ustiniankw/Kaka#readme" target="_blank" rel="noreferrer">README ↗</a>
+      <a href="https://08c7e4ef7824.aime-app.bytedance.net" target="_blank" rel="noreferrer">🎮 在线试玩</a> ·
+      <a href="https://github.com/ustiniankw/Kaka" target="_blank" rel="noreferrer">⭐ GitHub</a> ·
+      <a href="https://github.com/ustiniankw/Kaka#readme" target="_blank" rel="noreferrer">README / 玩法 / 自动更新说明 ↗</a>
     </p>
   </main>
 
