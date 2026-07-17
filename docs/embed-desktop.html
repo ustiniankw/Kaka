@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Kaka Desktop Embed</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="Kaka 桌面版（Electron）全屏透明 UI" />
+  <style>
+    html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;user-select:none;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",system-ui,sans-serif;}
+    #stage{position:fixed;inset:0;}
+    canvas{display:block;width:100%;height:100%;touch-action:none;}
+    #menu{position:fixed;min-width:150px;background:rgba(28,28,30,.96);color:#fff;border-radius:12px;
+      padding:6px 0;box-shadow:0 10px 28px rgba(0,0,0,.35);font-size:12px;opacity:0;transform:translateY(4px);
+      pointer-events:none;transition:opacity .15s ease, transform .15s ease;z-index:10;}
+    #menu.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+    #menu button{all:unset;display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;cursor:pointer;box-sizing:border-box;}
+    #menu button:hover{background:rgba(255,255,255,.10);}
+    #menu hr{border:0;margin:4px 0;border-top:1px solid rgba(99,99,102,.45);}
+    body.dnd canvas{opacity:.18;filter:grayscale(.65);}
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <canvas id="kaka"></canvas>
+    <div id="menu" role="menu"></div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const STORAGE_KEY = 'kaka_desktop_state_v1';
+    const isElectron = !!(window.kaka && window.kaka.isElectron);
+
+    const canvas = document.getElementById('kaka');
+    const ctx = canvas.getContext('2d');
+    const menuEl = document.getElementById('menu');
+
+    let W = 0, H = 0, dpr = 1;
+    const PET_SIZE = 88;
+    const FLOOR_MARGIN = 10;
+
+    function resize(){
+      dpr = window.devicePixelRatio || 1;
+      W = Math.max(1, window.innerWidth|0);
+      H = Math.max(1, window.innerHeight|0);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ---------- state ----------
+    const clamp = (v, lo, hi) => v < lo ? lo : (v > hi ? hi : v);
+
+    let state = {
+      hunger: 70,
+      mood: 75,
+      affinity: 10,
+      dnd: false,
+      lastUpdated: Date.now(),
+      personality: 'desktop'
+    };
+
+    function applyLoadedState(loaded){
+      if(!loaded || typeof loaded !== 'object') return;
+      const now = Date.now();
+      const last = loaded.lastUpdated || now;
+      const hours = Math.max(0, (now - last) / 3600000);
+      state = Object.assign({}, state, loaded);
+      state.hunger = clamp((state.hunger || 0) - hours * 6, 0, 100);
+      state.mood = clamp((state.mood || 0) - hours * 3, 0, 100);
+      document.body.classList.toggle('dnd', !!state.dnd);
+    }
+
+    function hydrate(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(raw) applyLoadedState(JSON.parse(raw));
+      }catch(e){}
+    }
+
+    let saveTimer = null;
+    function scheduleSave(){
+      if(saveTimer) return;
+      saveTimer = setTimeout(() => {
+        saveTimer = null;
+        state.lastUpdated = Date.now();
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+      }, 1200);
+    }
+
+    // ---------- pet physics ----------
+    const pet = {
+      x: 60,
+      y: 0,
+      vx: 0.9,
+      vy: 0,
+      facing: 1,
+      rot: 0,
+      angVel: 0,
+      bubbleText: '',
+      bubbleUntil: 0,
+      pattedAt: 0,
+      dragging: false,
+      dragOffX: 0,
+      dragOffY: 0,
+      dragHistory: []
+    };
+
+    function floorY(){ return H - PET_SIZE - FLOOR_MARGIN; }
+
+    function petRect(){ return { x: pet.x, y: pet.y, w: PET_SIZE, h: PET_SIZE }; }
+
+    function pointInRect(px, py, r){ return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h; }
+
+    // ---------- drawing ----------
+    function drawPet(){
+      const size = PET_SIZE;
+      const g = 16;
+      const c = size / g;
+      const S = { body:'#F5C542', dark:'#C08A18', cheek:'#F58A8A', eye:'#222', white:'#fff' };
+
+      function R(px, py, w, h, col){
+        ctx.fillStyle = col;
+        ctx.fillRect(px * c, py * c, w * c, h * c);
+      }
+
+      ctx.save();
+      ctx.translate(pet.x + size/2, pet.y + size/2);
+      ctx.rotate(pet.rot);
+      if(pet.facing < 0) ctx.scale(-1, 1);
+      ctx.translate(-size/2, -size/2);
+      ctx.imageSmoothingEnabled = false;
+
+      // body
+      R(4, 3, 8, 1, S.body);
+      R(3, 4, 10, 1, S.body);
+      R(2, 5, 12, 6, S.body);
+      R(3, 11, 10, 1, S.body);
+      R(4, 12, 8, 1, S.body);
+      R(4, 13, 3, 1, S.body);
+      R(9, 13, 3, 1, S.body);
+      // belly
+      R(3, 10, 10, 1, S.dark);
+      R(4, 11, 8, 1, S.dark);
+      // face
+      R(5, 6, 2, 2, S.white);
+      R(9, 6, 2, 2, S.white);
+      R(6, 7, 1, 1, S.eye);
+      R(10, 7, 1, 1, S.eye);
+      R(4, 9, 1, 1, S.cheek);
+      R(11, 9, 1, 1, S.cheek);
+      // mouth
+      const hungry = state.hunger < 35;
+      if(hungry) R(7, 9, 2, 2, S.eye);
+      else R(7, 10, 2, 1, S.eye);
+
+      ctx.restore();
+    }
+
+    let lastBubbleRect = null;
+    function drawBubble(){
+      lastBubbleRect = null;
+      if(!pet.bubbleText || performance.now() > pet.bubbleUntil) return;
+      if(state.dnd) return;
+
+      const text = pet.bubbleText;
+      const cx = pet.x + PET_SIZE / 2;
+      const cy = pet.y - 12;
+
+      ctx.save();
+      ctx.font = '12px -apple-system, "PingFang SC", system-ui';
+      const w = ctx.measureText(text).width + 18;
+      const h = 24;
+      const x = cx - w/2;
+      const y = cy - h;
+      const r = 10;
+
+      // store rect for hit-test (CSS px)
+      lastBubbleRect = { x, y, w, h: h + 8 };
+
+      ctx.fillStyle = 'rgba(28,28,30,.92)';
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(cx + 6, y + h);
+      ctx.lineTo(cx, y + h + 6);
+      ctx.lineTo(cx - 6, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, cx, y + h/2);
+      ctx.restore();
+    }
+
+    function drawFloor(){
+      const y = H - FLOOR_MARGIN;
+      ctx.strokeStyle = 'rgba(60,60,67,.12)';
+      ctx.setLineDash([6, 8]);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      drawFloor();
+      if(state.dnd){ ctx.save(); ctx.globalAlpha = 0.15; drawPet(); ctx.restore(); }
+      else drawPet();
+      drawBubble();
+    }
+
+    // ---------- bubbles ----------
+    const MONOLOGUES = [
+      '摸鱼快乐 🐟','你在干嘛呀','再摸一下嘛~','有零食吗 🍪','今天也要加油','我会一直在这儿','喵～'
+    ];
+    function showBubble(text, ms){
+      if(state.dnd) return;
+      pet.bubbleText = text;
+      pet.bubbleUntil = performance.now() + (ms || 1600);
+    }
+    setInterval(() => {
+      if(state.dnd) return;
+      if(Math.random() < 0.45) showBubble(MONOLOGUES[(Math.random()*MONOLOGUES.length)|0], 1800);
+    }, 9000);
+
+    // ---------- update loop ----------
+    function step(dtMs){
+      const dt = dtMs / 16.67;
+      const floor = floorY();
+
+      // stats decay
+      const minutes = dtMs / 60000;
+      state.hunger = clamp(state.hunger - minutes * 3.5, 0, 100);
+      state.mood = clamp(state.mood - minutes * 1.4, 0, 100);
+      if(state.hunger > 70) state.mood = clamp(state.mood + minutes * 1.6, 0, 100);
+      scheduleSave();
+
+      if(pet.dragging){
+        pet.vx = 0; pet.vy = 0;
+        pet.rot *= 0.8;
+        pet.angVel *= 0.7;
+        return;
+      }
+
+      // gravity
+      const g = 0.55;
+      pet.vy += g * dt;
+
+      // walk if nearly grounded
+      const onGround = Math.abs((pet.y - floor)) < 0.5 && Math.abs(pet.vy) < 0.8;
+      if(onGround && !state.dnd){
+        const walk = 0.9;
+        // gently steer towards walking if not recently thrown
+        pet.vx = clamp(pet.vx, -4, 4);
+        if(Math.abs(pet.vx) < walk) pet.vx += (pet.facing > 0 ? 0.03 : -0.03) * dt;
+      }
+
+      pet.x += pet.vx * dt;
+      pet.y += pet.vy * dt;
+      pet.rot += pet.angVel * dt;
+
+      // walls
+      if(pet.x < 6){ pet.x = 6; pet.vx = Math.abs(pet.vx) * 0.9; pet.facing = 1; }
+      if(pet.x > W - PET_SIZE - 6){ pet.x = W - PET_SIZE - 6; pet.vx = -Math.abs(pet.vx) * 0.9; pet.facing = -1; }
+
+      // floor bounce
+      if(pet.y > floor){
+        pet.y = floor;
+        if(pet.vy > 0){
+          pet.vy = -pet.vy * 0.45;
+          pet.vx *= 0.92;
+          pet.angVel *= 0.85;
+          // snap upright when slow
+          if(Math.abs(pet.vy) < 1.0) pet.vy = 0;
+        }
+      }
+
+      // face by velocity when moving
+      if(Math.abs(pet.vx) > 0.2) pet.facing = pet.vx >= 0 ? 1 : -1;
+
+      // stabilize rotation over time
+      pet.rot *= 0.985;
+      pet.angVel *= 0.99;
+    }
+
+    let lastT = performance.now();
+    function loop(t){
+      const dt = Math.min(60, t - lastT);
+      lastT = t;
+      step(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // ---------- interaction ----------
+    function canvasPointFromEvent(e){
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    function hideMenu(){ menuEl.classList.remove('show'); }
+
+    function buildMenu(){
+      const dndLabel = state.dnd ? '关闭勿扰' : '开启勿扰';
+      const quitLabel = isElectron ? '退出桌面版' : '退出（仅桌面版）';
+      menuEl.innerHTML = ''
+        + '<button data-a="feed">🍪 <span>喂点吃的</span></button>'
+        + '<button data-a="pat">🤚 <span>摸摸头</span></button>'
+        + '<hr />'
+        + '<button data-a="dnd">🔕 <span>'+dndLabel+'</span></button>'
+        + '<button data-a="quit">🛑 <span>'+quitLabel+'</span></button>';
+    }
+
+    function showMenuAt(clientX, clientY){
+      buildMenu();
+      const pad = 8;
+      menuEl.style.left = Math.round(clientX) + 'px';
+      menuEl.style.top = Math.round(clientY) + 'px';
+      menuEl.classList.add('show');
+
+      // clamp to viewport
+      const rect = menuEl.getBoundingClientRect();
+      let x = rect.left, y = rect.top;
+      if(rect.right > window.innerWidth - pad) x -= (rect.right - (window.innerWidth - pad));
+      if(rect.bottom > window.innerHeight - pad) y -= (rect.bottom - (window.innerHeight - pad));
+      if(x < pad) x = pad;
+      if(y < pad) y = pad;
+      menuEl.style.left = Math.round(x) + 'px';
+      menuEl.style.top = Math.round(y) + 'px';
+
+      if(isElectron) setClickThrough(false);
+    }
+
+    function handleAction(a){
+      if(a === 'feed'){
+        state.hunger = clamp(state.hunger + 25, 0, 100);
+        state.mood = clamp(state.mood + 8, 0, 100);
+        showBubble('好吃好吃 🍪', 1600);
+      } else if(a === 'pat'){
+        state.mood = clamp(state.mood + 6, 0, 100);
+        state.affinity = clamp(state.affinity + 2, 0, 100);
+        showBubble('摸摸～', 1400);
+      } else if(a === 'dnd'){
+        state.dnd = !state.dnd;
+        document.body.classList.toggle('dnd', !!state.dnd);
+        showBubble(state.dnd ? '🔕 已勿扰' : '👋 我又出现啦', 1400);
+      } else if(a === 'quit'){
+        if(isElectron){
+          try{ window.kaka.quit(); }catch(e){}
+        } else {
+          showBubble('这个按钮只在桌面版生效', 1600);
+        }
+      }
+      scheduleSave();
+    }
+
+    menuEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const a = btn.getAttribute('data-a');
+      hideMenu();
+      handleAction(a);
+    });
+
+    document.addEventListener('click', (e) => {
+      if(menuEl.contains(e.target)) return;
+      hideMenu();
+    });
+
+    function onPointerDown(e){
+      if(e.button !== 0) return;
+      hideMenu();
+      const p = canvasPointFromEvent(e);
+      const r = petRect();
+      if(!pointInRect(p.x, p.y, r)) return;
+      pet.dragging = true;
+      pet.dragOffX = p.x - pet.x;
+      pet.dragOffY = p.y - pet.y;
+      pet.dragHistory = [{t: performance.now(), x: p.x, y: p.y}];
+      if(isElectron) setClickThrough(false);
+      canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }
+
+    function onPointerMove(e){
+      if(!pet.dragging) return;
+      const p = canvasPointFromEvent(e);
+      pet.x = clamp(p.x - pet.dragOffX, 6, W - PET_SIZE - 6);
+      pet.y = clamp(p.y - pet.dragOffY, 6, floorY());
+      pet.dragHistory.push({t: performance.now(), x: p.x, y: p.y});
+      if(pet.dragHistory.length > 6) pet.dragHistory.shift();
+      // spin a bit while dragging
+      const last = pet.dragHistory[pet.dragHistory.length-2];
+      if(last){
+        const dx = p.x - last.x;
+        pet.angVel = clamp(dx * 0.003, -0.12, 0.12);
+      }
+      e.preventDefault();
+    }
+
+    function onPointerUp(e){
+      if(!pet.dragging) return;
+      pet.dragging = false;
+
+      // compute throw velocity
+      const h = pet.dragHistory;
+      if(h.length >= 2){
+        const a = h[0];
+        const b = h[h.length - 1];
+        const dt = Math.max(10, b.t - a.t);
+        pet.vx = clamp((b.x - a.x) / dt * 16.67, -18, 18);
+        pet.vy = clamp((b.y - a.y) / dt * 16.67, -22, 22);
+        pet.angVel = clamp(pet.vx * 0.01, -0.16, 0.16);
+      }
+      pet.dragHistory = [];
+      e.preventDefault();
+    }
+
+    function onClick(e){
+      const p = canvasPointFromEvent(e);
+      if(!pointInRect(p.x, p.y, petRect())) return;
+      if(state.dnd) return;
+      state.mood = clamp(state.mood + 4, 0, 100);
+      state.affinity = clamp(state.affinity + 1, 0, 100);
+      const now = performance.now();
+      if(now - pet.pattedAt < 420) showBubble('喵～ 别摸了 🫣', 1500);
+      else showBubble('摸摸～', 1200);
+      pet.pattedAt = now;
+      scheduleSave();
+    }
+
+    function onContextMenu(e){
+      const p = canvasPointFromEvent(e);
+      if(!pointInRect(p.x, p.y, petRect())) return;
+      e.preventDefault();
+      showMenuAt(e.clientX, e.clientY);
+    }
+
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
+    canvas.addEventListener('click', onClick);
+    canvas.addEventListener('contextmenu', onContextMenu);
+
+    // ---------- Electron click-through: auto toggle ----------
+    let ct = false;
+    function setClickThrough(v){
+      if(!isElectron) return;
+      const nv = !!v;
+      if(nv === ct) return;
+      ct = nv;
+      try{ window.kaka.setClickThrough(nv); }catch(e){}
+    }
+
+    function isPointerOverInteractive(clientX, clientY){
+      const r = canvas.getBoundingClientRect();
+      const x = clientX - r.left;
+      const y = clientY - r.top;
+      if(pointInRect(x, y, petRect())) return true;
+      if(lastBubbleRect && pointInRect(x, y, lastBubbleRect)) return true;
+      if(menuEl.classList.contains('show')){
+        const mr = menuEl.getBoundingClientRect();
+        if(clientX >= mr.left && clientX <= mr.right && clientY >= mr.top && clientY <= mr.bottom) return true;
+      }
+      return false;
+    }
+
+    if(isElectron){
+      let raf = 0; let mx = 0; let my = 0;
+      document.addEventListener('mousemove', (e) => {
+        mx = e.clientX; my = e.clientY;
+        if(raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          if(pet.dragging) { setClickThrough(false); return; }
+          const over = isPointerOverInteractive(mx, my);
+          setClickThrough(!over);
+        });
+      });
+      // initial: default click-through (so it doesn't block desktop)
+      setTimeout(() => setClickThrough(true), 500);
+    }
+
+    // ---------- boot ----------
+    hydrate();
+    pet.y = floorY();
+    draw();
+    requestAnimationFrame(loop);
+  })();
+  </script>
+</body>
+</html>
