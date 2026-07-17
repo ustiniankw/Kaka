@@ -1,0 +1,39 @@
+name: Package Chrome Extension
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'extension/**', '.github/workflows/release-extension.yml' ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read version
+        id: ver
+        run: echo "version=$(node -p 'require(\"./extension/manifest.json\").version')" >> $GITHUB_OUTPUT
+      - name: Zip extension
+        run: |
+          cd extension && zip -r ../kaka-extension-v${{ steps.ver.outputs.version }}.zip . -x '*.md' 'gen-icons.js'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaka-extension
+          path: kaka-extension-v${{ steps.ver.outputs.version }}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: extension-v${{ steps.ver.outputs.version }}
+          name: Kaka Extension v${{ steps.ver.outputs.version }}
+          body: |
+            ## 一键安装
+
+            1. 下载下方的 ZIP
+            2. 解压
+            3. `chrome://extensions` → 开启开发者模式 → 加载已解压扩展 → 选解压后的文件夹
+
+            所有 UI 逻辑通过 GitHub Pages 远程加载，未来功能升级**无需重新安装**。
+          files: kaka-extension-v${{ steps.ver.outputs.version }}.zip
+          fail_on_unmatched_files: true
