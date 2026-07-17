@@ -7,11 +7,11 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/Landing-GitHub%20Pages-24292e?logo=github)](https://ustiniankw.github.io/Kaka/)
 [![Desktop](https://img.shields.io/badge/Desktop-Electron-blue?logo=electron)](https://github.com/ustiniankw/Kaka/releases/tag/desktop-v)
-[![Extension](https://img.shields.io/badge/Chrome%20Extension-v1.1.0-brightgreen?logo=googlechrome)](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)
+[![Extension](https://img.shields.io/badge/Chrome%20Extension-v1.2.0-brightgreen?logo=googlechrome)](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.2.0/kaka-extension-v1.2.0.zip)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)](https://www.python.org/)
 
 **[🖥 下载桌面版（推荐）](https://github.com/ustiniankw/Kaka/releases/tag/desktop-v)** ·
-**[🧩 安装浏览器扩展](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)** ·
+**[🧩 安装浏览器扩展](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.2.0/kaka-extension-v1.2.0.zip)** ·
 **[🎮 在线试玩](https://08c7e4ef7824.aime-app.bytedance.net)** ·
 **[⭐ GitHub](https://github.com/ustiniankw/Kaka)** ·
 **[🌐 Landing](https://ustiniankw.github.io/Kaka/)**
@@ -80,10 +80,10 @@ open ~/Downloads/Kaka-1.0.0-arm64.dmg
 在**任意网页右下角**挂一只小 Kaka，跨页面同步状态，看到哪一页玩到哪一页。
 **只需装一次**，未来所有新功能都会自动同步（原理见「[自动更新](#-自动更新原理)」）。
 
-- 👉 [直接下载 Chrome 扩展 ZIP](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)
+- 👉 [直接下载 Chrome 扩展 ZIP](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.2.0/kaka-extension-v1.2.0.zip)
 - 详细安装步骤见 [Chrome 扩展安装](#-chrome-扩展安装)
 
-> 注意：Chrome 扩展需要下载 `kaka-extension-v1.1.0.zip`；`Kaka-1.0.0-arm64-mac.zip` 是 macOS 桌面版，不能作为浏览器扩展加载。
+> 注意：Chrome 扩展需要下载 `kaka-extension-v1.2.0.zip`；`Kaka-1.0.0-arm64-mac.zip` 是 macOS 桌面版，不能作为浏览器扩展加载。
 
 ### 🎮 Web 版（推荐先玩）
 
@@ -117,10 +117,11 @@ python -m http.server 8080
 ### 🧩 Chrome 扩展安装
 
 从 v1.1.0 开始扩展改造成了**薄壳 + GitHub Pages 远端 UI**，安装完就再也不用手动升级了。
+从 **v1.2.0** 开始，如果 GitHub Pages 3 秒内不可达，会自动切到扩展内置的备用 `embed.html`，不用再担心右下角完全空白。
 
 **30 秒安装流程**：
 
-1. 下载 [kaka-extension-v1.1.0.zip](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)（不要下载桌面版的 `Kaka-*-mac.zip`）
+1. 下载 [kaka-extension-v1.2.0.zip](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.2.0/kaka-extension-v1.2.0.zip)（不要下载桌面版的 `Kaka-*-mac.zip`）
 2. 解压到任意目录
 3. Chrome / Edge 访问 `chrome://extensions/`，开启 **开发者模式**
 4. 点 **「加载已解压的扩展程序」**，选中解压出来的目录（如果里面能看到 `manifest.json` 就选对了）
