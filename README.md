@@ -6,12 +6,12 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/Landing-GitHub%20Pages-24292e?logo=github)](https://ustiniankw.github.io/Kaka/)
-[![Desktop](https://img.shields.io/badge/Desktop-Electron-blue?logo=electron)](https://github.com/ustiniankw/Kaka/releases/latest)
-[![Extension](https://img.shields.io/badge/Chrome%20Extension-v1.1.0-brightgreen?logo=googlechrome)](https://github.com/ustiniankw/Kaka/releases/latest)
+[![Desktop](https://img.shields.io/badge/Desktop-Electron-blue?logo=electron)](https://github.com/ustiniankw/Kaka/releases/tag/desktop-v)
+[![Extension](https://img.shields.io/badge/Chrome%20Extension-v1.1.0-brightgreen?logo=googlechrome)](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)](https://www.python.org/)
 
-**[🖥 下载桌面版（推荐）](https://github.com/ustiniankw/Kaka/releases/latest)** ·
-**[🧩 安装浏览器扩展](https://github.com/ustiniankw/Kaka/releases/latest)** ·
+**[🖥 下载桌面版（推荐）](https://github.com/ustiniankw/Kaka/releases/tag/desktop-v)** ·
+**[🧩 安装浏览器扩展](https://github.com/ustiniankw/Kaka/releases/download/extension-v1.1.0/kaka-extension-v1.1.0.zip)** ·
 **[🎮 在线试玩](https://08c7e4ef7824.aime-app.bytedance.net)** ·
 **[⭐ GitHub](https://github.com/ustiniankw/Kaka)** ·
 **[🌐 Landing](https://ustiniankw.github.io/Kaka/)**
@@ -44,7 +44,7 @@
 
 真正意义上的**透明桌面宠物窗口** —— 覆盖全屏、总在最前、可选鼠标穿透；适合把 Kaka 当成「真的桌面宠物」。
 
-- 👉 下载：<https://github.com/ustiniankw/Kaka/releases/latest>
+- 👉 下载：<https://github.com/ustiniankw/Kaka/releases/tag/desktop-v>
 
 #### macOS 打开提示“已损坏”怎么办
 
