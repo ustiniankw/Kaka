@@ -1,13 +1,16 @@
-/* Kaka 扩展 · 薄壳容器样式（其余 UI 全部在 iframe 内） */
+/* Kaka 扩展 · 薄壳容器样式（其余 UI 全部在 iframe 内）
+ * v1.3.0 起：容器覆盖整个视口，iframe 本身 pointer-events:none，
+ * 通过父页面上的 hitbox 元素只在 Kaka 命中区域捕获鼠标事件，
+ * 页面其它区域完全不受影响（可正常滚动/点击）。 */
 #kaka-ext-container {
   position: fixed;
-  bottom: 0;
-  right: 20px;
-  width: 260px;
-  height: 210px;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 2147483647;
   pointer-events: none;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+  overflow: hidden;
 }
 
 #kaka-ext-container #kaka-ext-frame {
@@ -15,14 +18,37 @@
   height: 100%;
   border: 0;
   background: transparent;
-  pointer-events: auto;
+  /* iframe 只做视觉呈现；输入通过 hitbox → postMessage 转发。 */
+  pointer-events: none;
   color-scheme: normal;
+  display: block;
 }
 
-#kaka-ext-container #kaka-ext-status {
+/* 输入命中区域 —— 只覆盖 Kaka 当前包围盒；菜单/面板打开时改为整屏。 */
+#kaka-ext-container #kaka-ext-hitbox {
   position: absolute;
-  right: 0;
-  bottom: calc(100% + 8px);
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+  background: transparent;
+  cursor: pointer;
+  display: none;
+}
+
+#kaka-ext-container #kaka-ext-hitbox.kaka-hb-fullscreen {
+  left: 0;
+  top: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* 状态提示 badge（远端不可达 → 回退到本地版时使用） */
+#kaka-ext-container #kaka-ext-status {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
   max-width: 260px;
   padding: 8px 10px;
   border-radius: 10px;
@@ -34,6 +60,7 @@
   transform: translateY(6px);
   transition: opacity 0.18s ease, transform 0.18s ease;
   white-space: normal;
+  pointer-events: none;
 }
 
 #kaka-ext-container #kaka-ext-status.show {

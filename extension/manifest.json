@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Kaka — 桌面宠物",
-  "version": "1.2.0",
-  "description": "在浏览器里养一只 Kaka 桌面宠物 🐱 —— 薄壳自动更新版：优先远端加载 GitHub Pages，失败时自动回退到扩展内置备用页面。",
+  "version": "1.3.0",
+  "description": "在浏览器里养一只 Kaka 桌面宠物 🐱 —— v1.3 全屏漫游版：Kaka 可以在整块浏览器视口自由跑动、有重力和抛掷手感；不阻塞页面滚动/点击（仅 Kaka 命中区域接收鼠标）。",
   "permissions": ["storage"],
   "host_permissions": ["<all_urls>"],
   "action": {

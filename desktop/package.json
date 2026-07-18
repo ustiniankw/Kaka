@@ -1,7 +1,7 @@
 {
   "name": "kaka-desktop",
-  "version": "1.0.0",
-  "description": "Kaka 桌面宠物 — 透明总在最前 Electron 壳",
+  "version": "1.1.0",
+  "description": "Kaka 桌面宠物 — 透明 Electron 壳，支持顶层/桌面层切换",
   "main": "main.js",
   "author": "ustiniankw",
   "license": "MIT",

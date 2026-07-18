@@ -2,7 +2,20 @@
 
 从 **v1.1.0** 开始，Kaka Chrome 扩展改造成了 **薄壳（thin shell）** 架构：
 
-## v1.2.0 这次修了什么
+## v1.3.0 这次修了什么
+
+- **全屏漫游**：容器不再是右下角 260×210 的小格子，而是覆盖整个浏览器视口（`100vw × 100vh`）。
+  Kaka 可以在整块视口里自由跑动、被抛掷、落地弹跳，物理上多了重力和摩擦。
+- **不阻塞页面**：容器整体 `pointer-events: none`，iframe 本身也是 `pointer-events: none`；
+  真正接收鼠标的是父页面上的一个 hitbox 元素，它 **只覆盖 Kaka 当前包围盒（和气泡）**。
+  这样页面的滚动、点击、拖拽、右键都完全不受影响，只有真的点/摸/拖到 Kaka 时事件才被捕获。
+- **事件转发协议**：iframe 每帧通过 `postMessage` 把命中盒（视口坐标）报给内容脚本；
+  hitbox 触发的鼠标/触摸事件会以 `{type:'kaka:pointer'}` 转发回 iframe，
+  由 iframe 内部的物理系统消化（拖拽 → 抛掷、点击 → 摸摸、右键 → 环形菜单）。
+- 环形菜单打开时 hitbox 自动扩为全屏，确保按钮全都能点到。
+- 打包版本：`v1.3.0`。
+
+## v1.2.0 修了什么
 
 - `host_permissions` 扩大到 `<all_urls>`，确保 MV3 扩展能在普通网页上稳定注入内容脚本。
 - 新增扩展内置 `embed.html` 作为本地备用页；远端 `https://ustiniankw.github.io/Kaka/embed.html` 3 秒内不可用时会自动回退。
@@ -51,7 +64,7 @@ https://ustiniankw.github.io/Kaka/embed.html?ts=2026-07-17
 
 ## 相关文件
 
-- `extension/manifest.json` — MV3 清单（v1.2.0）
+- `extension/manifest.json` — MV3 清单（v1.3.0）
 - `extension/content.js` — 薄壳内容脚本（远端优先 + 本地回退）
 - `extension/content.css` — 容器定位、投影与回退提示样式
 - `extension/embed.html` — 扩展内置备用页（web_accessible_resources）
